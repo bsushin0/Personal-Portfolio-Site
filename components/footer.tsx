@@ -8,19 +8,19 @@ export default function Footer() {
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row justify-between items-center">
           <div className="mb-6 md:mb-0">
-            <h3 className="text-xl font-bold text-emerald-600 dark:text-emerald-400 mb-2">Alex Johnson</h3>
-            <p className="text-gray-600 dark:text-gray-400">AI & Cybersecurity Specialist</p>
+            <h3 className="text-xl font-bold text-emerald-600 dark:text-emerald-400 mb-2">Sushin Bandha</h3>
+            <p className="text-gray-600 dark:text-gray-400">Building Secure, Smart Systems</p>
           </div>
 
           <div className="flex space-x-6 mb-6 md:mb-0">
             <a
-              href="#"
+              href="https://github.com/bsushin0"
               className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
             >
               <Github size={20} />
             </a>
             <a
-              href="#"
+              href="https://linkedin.com/in/sushinbandha"
               className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
             >
               <Linkedin size={20} />
@@ -40,7 +40,7 @@ export default function Footer() {
           </div>
 
           <div className="text-gray-500 dark:text-gray-500 text-sm">
-            © {currentYear} Alex Johnson. All rights reserved.
+            © {currentYear} Sushin Bandha. All rights reserved.
           </div>
         </div>
 

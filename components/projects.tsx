@@ -19,42 +19,12 @@ type Project = {
 const projects: Project[] = [
   {
     id: 1,
-    title: "AI Threat Detection System",
+    title: "Weather AI Chatbot",
     description:
-      "A machine learning-based system that detects potential security threats in real-time using anomaly detection algorithms.",
-    tags: ["Python", "TensorFlow", "Cybersecurity", "Docker"],
+      "An intelligent LLM-powered tool that analyzes and summarizes weather trends using BASF meteorological datasets. Features natural language processing for weather data interpretation and trend analysis.",
+    tags: ["Python", "LLM", "AI/ML", "Data Analysis", "Natural Language Processing"],
     image: "/placeholder.svg?height=200&width=400",
-    githubUrl: "#",
-    liveUrl: "#",
-  },
-  {
-    id: 2,
-    title: "Secure Chat Application",
-    description:
-      "End-to-end encrypted messaging platform with advanced security features and biometric authentication.",
-    tags: ["React", "Node.js", "Encryption", "WebSockets"],
-    image: "/placeholder.svg?height=200&width=400",
-    githubUrl: "#",
-  },
-  {
-    id: 3,
-    title: "Vulnerability Scanner",
-    description:
-      "Automated tool for identifying security vulnerabilities in web applications and network infrastructure.",
-    tags: ["Python", "Security", "API", "Automation"],
-    image: "/placeholder.svg?height=200&width=400",
-    githubUrl: "#",
-    liveUrl: "#",
-  },
-  {
-    id: 4,
-    title: "Neural Network Visualizer",
-    description:
-      "Interactive visualization tool for understanding and exploring neural network architectures and decision processes.",
-    tags: ["JavaScript", "D3.js", "Machine Learning", "Visualization"],
-    image: "/placeholder.svg?height=200&width=400",
-    githubUrl: "#",
-    liveUrl: "#",
+    githubUrl: "https://github.com/bsushin0",
   },
 ]
 
@@ -66,8 +36,7 @@ export default function Projects() {
       <div className="text-center mb-16">
         <h2 className="text-3xl md:text-4xl font-bold mb-4">Featured Projects</h2>
         <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-          A collection of my work in AI, machine learning, and cybersecurity. Each project demonstrates different skills
-          and technologies.
+          Innovative projects combining AI, data analysis, and practical applications to solve real-world problems.
         </p>
       </div>
 
@@ -113,6 +82,7 @@ export default function Projects() {
                 variant="ghost"
                 size="sm"
                 className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
+                onClick={() => window.open(project.githubUrl, "_blank")}
               >
                 <Github className="mr-2 h-4 w-4" />
                 Code

@@ -13,35 +13,19 @@ type Certification = {
 const certifications: Certification[] = [
   {
     id: 1,
-    title: "Certified Ethical Hacker (CEH)",
-    issuer: "EC-Council",
-    date: "2023",
-    description: "Professional certification for ethical hackers and penetration testers.",
-    icon: "🔐",
+    title: "CompTIA Security+ (In Progress)",
+    issuer: "CompTIA",
+    date: "Present",
+    description: "Industry-standard certification for cybersecurity fundamentals and best practices.",
+    icon: "🛡️",
   },
   {
     id: 2,
-    title: "TensorFlow Developer Certificate",
+    title: "Google Cybersecurity Certificate",
     issuer: "Google",
-    date: "2022",
-    description: "Certification for proficiency in using TensorFlow for deep learning applications.",
-    icon: "🧠",
-  },
-  {
-    id: 3,
-    title: "AWS Certified Security Specialist",
-    issuer: "Amazon Web Services",
-    date: "2023",
-    description: "Specialized certification for implementing security controls in AWS.",
-    icon: "☁️",
-  },
-  {
-    id: 4,
-    title: "CompTIA Security+",
-    issuer: "CompTIA",
-    date: "2021",
-    description: "Foundational certification covering network security concepts and best practices.",
-    icon: "🛡️",
+    date: "2024",
+    description: "Comprehensive program covering cybersecurity principles, tools, and practices.",
+    icon: "🔒",
   },
 ]
 
@@ -51,7 +35,7 @@ export default function Certifications() {
       <div className="text-center mb-16">
         <h2 className="text-3xl md:text-4xl font-bold mb-4">Certifications</h2>
         <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-          Professional certifications and qualifications in cybersecurity, AI, and related fields.
+          Professional certifications demonstrating expertise in cybersecurity and industry best practices.
         </p>
       </div>
 

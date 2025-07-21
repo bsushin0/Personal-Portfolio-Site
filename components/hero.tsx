@@ -10,14 +10,14 @@ export default function Hero() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
         <div className="order-2 md:order-1">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 bg-gradient-to-r from-emerald-600 to-blue-600 dark:from-emerald-400 dark:to-blue-500 text-transparent bg-clip-text">
-            Alex Johnson
+            Sushin Bandha
           </h1>
           <h2 className="text-xl md:text-2xl font-medium text-gray-700 dark:text-gray-300 mb-6">
-            AI & Cybersecurity Specialist
+            Building Secure, Smart Systems for the Future
           </h2>
           <p className="text-gray-600 dark:text-gray-400 mb-8 text-lg">
-            Computer Science student passionate about artificial intelligence, machine learning, and cybersecurity.
-            Building innovative solutions to complex problems with a focus on security and ethical AI development.
+            Computer Science student at Purdue University with a passion for AI-driven innovation and cybersecurity.
+            Transforming ideas into intelligent, secure, and scalable systems.
           </p>
 
           <div className="flex flex-wrap gap-4">
@@ -34,13 +34,13 @@ export default function Hero() {
 
           <div className="flex mt-8 space-x-4">
             <a
-              href="#"
+              href="https://github.com/sushinbandha"
               className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
             >
               <Github size={24} />
             </a>
             <a
-              href="#"
+              href="https://www.linkedin.com/in/sushinbandha/"
               className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
             >
               <Linkedin size={24} />
