@@ -53,14 +53,4 @@ export const projects: Project[] = [
     githubUrl: "https://github.com/your-username/nn-visualizer",
     liveUrl: "https://your-live-demo-url.com",
   },
-  {
-    id: 5,
-    title: "Google Cloud Compute Portfolio",
-    description:
-      "A scalable portfolio website containerized with Docker and deployed on Google Cloud via Cloud Code, demonstrating modern cloud-native development workflows.",
-    tags: ["Google Cloud", "Cloud Run", "Docker", "Skaffold", "DevOps"],
-    // TODO: Replace with your own image
-    image: "/project-gce.png",
-    githubUrl: "https://github.com/your-username/gce-portfolio",
-  },
 ];

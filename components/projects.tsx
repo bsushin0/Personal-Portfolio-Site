@@ -31,7 +31,7 @@ export default function Projects() {
           >
             <div className="relative h-48 overflow-hidden">
               <img
-                src={project.image || "/placeholder.svg"}
+                src={project.image}
                 alt={project.title}
                 className="w-full h-full object-cover transition-transform duration-500 ease-in-out"
                 style={{
@@ -62,7 +62,6 @@ export default function Projects() {
                 variant="ghost"
                 size="sm"
                 className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
-                onClick={() => window.open(project.githubUrl, "_blank")}
               >
                 <a href={project.githubUrl} target="_blank" rel="noopener noreferrer">
                   <Github className="mr-2 h-4 w-4" />

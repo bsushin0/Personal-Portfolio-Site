@@ -25,7 +25,7 @@ const experiences: Experience[] = [
       "Collaborated with release teams to bundle development work into go-live deployments",
       "Supported business case documentation and functional specifications",
     ],
-    skills: ["Salesforce", "IAM", "Google Cloud Platform", "System Integration Testing", "Technical Documentation"],
+    skills: ["Salesforce", "IAM", "System Integration Testing", "Technical Documentation"],
   },
   {
     id: 2,
