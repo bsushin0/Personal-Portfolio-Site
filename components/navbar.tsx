@@ -6,6 +6,10 @@ import { Button } from "@/components/ui/button"
 import { ModeToggle } from "@/components/mode-toggle"
 import { cn } from "@/lib/utils"
 
+// TODO: Customize the logo
+const logoText = "CS.Portfolio"
+const logoHref = "#"
+
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
 
@@ -21,7 +25,7 @@ export default function Navbar() {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           <div className="flex-shrink-0 font-bold text-xl text-emerald-600 dark:text-emerald-500">
-            <a href="#">CS.Portfolio</a>
+            <a href={logoHref}>{logoText}</a>
           </div>
 
           {/* Desktop menu */}

@@ -1,49 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Award } from "lucide-react"
-
-type Certification = {
-  id: number
-  title: string
-  issuer: string
-  date: string
-  description: string
-  icon: string
-}
-
-const certifications: Certification[] = [
-  {
-    id: 1,
-    title: "Certified Ethical Hacker (CEH)",
-    issuer: "EC-Council",
-    date: "2023",
-    description: "Professional certification for ethical hackers and penetration testers.",
-    icon: "🔐",
-  },
-  {
-    id: 2,
-    title: "TensorFlow Developer Certificate",
-    issuer: "Google",
-    date: "2022",
-    description: "Certification for proficiency in using TensorFlow for deep learning applications.",
-    icon: "🧠",
-  },
-  {
-    id: 3,
-    title: "AWS Certified Security Specialist",
-    issuer: "Amazon Web Services",
-    date: "2023",
-    description: "Specialized certification for implementing security controls in AWS.",
-    icon: "☁️",
-  },
-  {
-    id: 4,
-    title: "CompTIA Security+",
-    issuer: "CompTIA",
-    date: "2021",
-    description: "Foundational certification covering network security concepts and best practices.",
-    icon: "🛡️",
-  },
-]
+import { certifications } from "@/lib/certifications"
 
 export default function Certifications() {
   return (

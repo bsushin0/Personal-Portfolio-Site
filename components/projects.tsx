@@ -5,58 +5,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { ExternalLink, Github } from "lucide-react"
-
-type Project = {
-  id: number
-  title: string
-  description: string
-  tags: string[]
-  image: string
-  githubUrl: string
-  liveUrl?: string
-}
-
-const projects: Project[] = [
-  {
-    id: 1,
-    title: "AI Threat Detection System",
-    description:
-      "A machine learning-based system that detects potential security threats in real-time using anomaly detection algorithms.",
-    tags: ["Python", "TensorFlow", "Cybersecurity", "Docker"],
-    image: "/placeholder.svg?height=200&width=400",
-    githubUrl: "#",
-    liveUrl: "#",
-  },
-  {
-    id: 2,
-    title: "Secure Chat Application",
-    description:
-      "End-to-end encrypted messaging platform with advanced security features and biometric authentication.",
-    tags: ["React", "Node.js", "Encryption", "WebSockets"],
-    image: "/placeholder.svg?height=200&width=400",
-    githubUrl: "#",
-  },
-  {
-    id: 3,
-    title: "Vulnerability Scanner",
-    description:
-      "Automated tool for identifying security vulnerabilities in web applications and network infrastructure.",
-    tags: ["Python", "Security", "API", "Automation"],
-    image: "/placeholder.svg?height=200&width=400",
-    githubUrl: "#",
-    liveUrl: "#",
-  },
-  {
-    id: 4,
-    title: "Neural Network Visualizer",
-    description:
-      "Interactive visualization tool for understanding and exploring neural network architectures and decision processes.",
-    tags: ["JavaScript", "D3.js", "Machine Learning", "Visualization"],
-    image: "/placeholder.svg?height=200&width=400",
-    githubUrl: "#",
-    liveUrl: "#",
-  },
-]
+import { projects } from "@/lib/projects"
 
 export default function Projects() {
   const [hoveredId, setHoveredId] = useState<number | null>(null)
@@ -110,21 +59,27 @@ export default function Projects() {
             </CardContent>
             <CardFooter className="flex justify-between">
               <Button
+                asChild
                 variant="ghost"
                 size="sm"
                 className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
               >
-                <Github className="mr-2 h-4 w-4" />
-                Code
+                <a href={project.githubUrl} target="_blank" rel="noopener noreferrer">
+                  <Github className="mr-2 h-4 w-4" />
+                  Code
+                </a>
               </Button>
               {project.liveUrl && (
                 <Button
+                  asChild
                   variant="ghost"
                   size="sm"
                   className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
                 >
-                  <ExternalLink className="mr-2 h-4 w-4" />
-                  Live Demo
+                  <a href={project.liveUrl} target="_blank" rel="noopener noreferrer">
+                    <ExternalLink className="mr-2 h-4 w-4" />
+                    Live Demo
+                  </a>
                 </Button>
               )}
             </CardFooter>
