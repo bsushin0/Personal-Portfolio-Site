@@ -15,8 +15,7 @@ export default function Projects() {
       <div className="text-center mb-16">
         <h2 className="text-3xl md:text-4xl font-bold mb-4">Featured Projects</h2>
         <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-          A collection of my work in AI, machine learning, and cybersecurity. Each project demonstrates different skills
-          and technologies.
+          Innovative projects combining AI, data analysis, and practical applications to solve real-world problems.
         </p>
       </div>
 
@@ -63,6 +62,7 @@ export default function Projects() {
                 variant="ghost"
                 size="sm"
                 className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
+                onClick={() => window.open(project.githubUrl, "_blank")}
               >
                 <a href={project.githubUrl} target="_blank" rel="noopener noreferrer">
                   <Github className="mr-2 h-4 w-4" />
