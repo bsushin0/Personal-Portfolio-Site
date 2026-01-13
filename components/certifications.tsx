@@ -1,33 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Award } from "lucide-react"
-
-type Certification = {
-  id: number
-  title: string
-  issuer: string
-  date: string
-  description: string
-  icon: string
-}
-
-const certifications: Certification[] = [
-  {
-    id: 1,
-    title: "CompTIA Security+ (In Progress)",
-    issuer: "CompTIA",
-    date: "Present",
-    description: "Industry-standard certification for cybersecurity fundamentals and best practices.",
-    icon: "🛡️",
-  },
-  {
-    id: 2,
-    title: "Google Cybersecurity Certificate",
-    issuer: "Google",
-    date: "2024",
-    description: "Comprehensive program covering cybersecurity principles, tools, and practices.",
-    icon: "🔒",
-  },
-]
+import { certifications } from "@/lib/certifications"
 
 export default function Certifications() {
   return (

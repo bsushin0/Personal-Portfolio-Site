@@ -5,28 +5,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { ExternalLink, Github } from "lucide-react"
-
-type Project = {
-  id: number
-  title: string
-  description: string
-  tags: string[]
-  image: string
-  githubUrl: string
-  liveUrl?: string
-}
-
-const projects: Project[] = [
-  {
-    id: 1,
-    title: "Weather AI Chatbot",
-    description:
-      "An intelligent LLM-powered tool that analyzes and summarizes weather trends using BASF meteorological datasets. Features natural language processing for weather data interpretation and trend analysis.",
-    tags: ["Python", "LLM", "AI/ML", "Data Analysis", "Natural Language Processing"],
-    image: "/placeholder.svg?height=200&width=400",
-    githubUrl: "https://github.com/bsushin0",
-  },
-]
+import { projects } from "@/lib/projects"
 
 export default function Projects() {
   const [hoveredId, setHoveredId] = useState<number | null>(null)
@@ -79,22 +58,28 @@ export default function Projects() {
             </CardContent>
             <CardFooter className="flex justify-between">
               <Button
+                asChild
                 variant="ghost"
                 size="sm"
                 className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
                 onClick={() => window.open(project.githubUrl, "_blank")}
               >
-                <Github className="mr-2 h-4 w-4" />
-                Code
+                <a href={project.githubUrl} target="_blank" rel="noopener noreferrer">
+                  <Github className="mr-2 h-4 w-4" />
+                  Code
+                </a>
               </Button>
               {project.liveUrl && (
                 <Button
+                  asChild
                   variant="ghost"
                   size="sm"
                   className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
                 >
-                  <ExternalLink className="mr-2 h-4 w-4" />
-                  Live Demo
+                  <a href={project.liveUrl} target="_blank" rel="noopener noreferrer">
+                    <ExternalLink className="mr-2 h-4 w-4" />
+                    Live Demo
+                  </a>
                 </Button>
               )}
             </CardFooter>
