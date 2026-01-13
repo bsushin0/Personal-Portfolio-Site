@@ -1,0 +1,11 @@
+apiVersion: skaffold/v4beta7
+kind: Config
+metadata:
+  name: personal-portfolio-site
+build:
+  artifacts:
+    - image: personal-portfolio-site
+      docker:
+        dockerfile: Dockerfile
+deploy:
+  cloudrun: {}

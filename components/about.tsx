@@ -11,7 +11,7 @@ export default function About() {
     {
       icon: <Code className="h-6 w-6" />,
       title: "Development",
-      description: "Full-stack development with AI integration",
+      description: "Full-stack development with Cloud & AI integration",
     },
     {
       icon: <Shield className="h-6 w-6" />,
@@ -31,7 +31,7 @@ export default function About() {
         <h2 className="text-3xl md:text-4xl font-bold mb-4">About Me</h2>
         <p className="text-gray-600 dark:text-gray-400 max-w-3xl mx-auto text-lg leading-relaxed">
           I'm a results-driven student combining technical expertise with strong communication and leadership. I aim to
-          innovate at the intersection of artificial intelligence and security. With hands-on experience at PSEG, Purdue
+          innovate at the intersection of artificial intelligence, cloud computing, and security. With hands-on experience at PSEG, Purdue
           research labs, and leadership roles on campus, I bring both technical depth and cross-functional teamwork to
           every project.
         </p>
