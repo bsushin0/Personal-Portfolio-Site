@@ -628,7 +628,7 @@ const AiAvatar: FC = () => {
               >
                 {/* Mouth outline */}
                 <path
-                  d={`M 20 45 Q 60 ${45 - smileCurve - mouthY} 100 45`}
+                  d={`M 20 45 Q 60 ${45 + smileCurve + mouthY} 100 45`}
                   stroke="currentColor"
                   strokeWidth="3"
                   fill="none"
@@ -641,7 +641,7 @@ const AiAvatar: FC = () => {
 
                 {/* Mouth fill (inner) */}
                 <path
-                  d={`M 20 45 Q 60 ${45 - smileCurve * 0.5 - mouthY} 100 45 Q 60 ${50 - mouthY} 20 45`}
+                  d={`M 20 45 Q 60 ${45 + smileCurve * 0.5 + mouthY} 100 45 Q 60 ${50 + mouthY} 20 45`}
                   fill="currentColor"
                   className="text-cyan-300/40 dark:text-cyan-300/50 transition-colors duration-200"
                 />

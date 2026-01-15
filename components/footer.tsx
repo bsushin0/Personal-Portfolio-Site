@@ -1,11 +1,10 @@
-import { Github, Linkedin, Mail, Twitter } from "lucide-react"
+import { Github, Linkedin, Mail } from "lucide-react"
 
 const name = "Sushin Bandha"
 const title = "AI & Cybersecurity Specialist"
 const githubUrl = "https://github.com/bsushin0"
 const linkedinUrl = "https://linkedin.com/in/sushin-bandha"
-const twitterUrl = "https://twitter.com/bsushin0"
-const emailUrl = "mailto:bandha@purdue.edu"
+const emailUrl = "mailto:Bsushin@outlook.com"
 
 export default function Footer() {
   const currentYear = new Date().getFullYear()
@@ -35,14 +34,6 @@ export default function Footer() {
               className="text-cyan-300 hover:text-cyan-100 hover:scale-110 transition-all duration-300 hover:drop-shadow-lg hover:drop-shadow-cyan-500/50"
             >
               <Linkedin size={20} />
-            </a>
-            <a
-              href={twitterUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-cyan-300 hover:text-cyan-100 hover:scale-110 transition-all duration-300 hover:drop-shadow-lg hover:drop-shadow-cyan-500/50"
-            >
-              <Twitter size={20} />
             </a>
             <a
               href={emailUrl}
