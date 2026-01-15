@@ -1,5 +1,7 @@
 import { Resend } from "resend"
 import { NextRequest, NextResponse } from "next/server"
+import fs from "fs"
+import path from "path"
 
 // Initialize Resend - Vercel will automatically provide RESEND_API_KEY
 const resend = new Resend(process.env.RESEND_API_KEY || "")
@@ -32,7 +34,11 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Send auto-reply to the user
+    // Read resume file
+    const resumePath = path.join(process.cwd(), "public", "sushin-bandha-resume.pdf")
+    const resumeBuffer = fs.readFileSync(resumePath)
+
+    // Send auto-reply to the user with resume attachment
     const userEmailResponse = await resend.emails.send({
       from: "noreply@sushinbandha.com",
       to: data.email,
@@ -41,12 +47,41 @@ export async function POST(request: NextRequest) {
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <h2 style="color: #00c1ff;">Thank you, ${data.name}!</h2>
           <p>I received your message about "${data.subject}" and appreciate you taking the time to reach out.</p>
-          <p>I'll review your message and get back to you within 24-48 hours. If you need my resume or have any urgent matters, feel free to reach out again.</p>
-          <p>Best regards,<br><strong>Sushin Bandha</strong><br>AI & Cybersecurity Specialist</p>
+          
           <hr style="border: none; border-top: 1px solid #ccc; margin: 20px 0;">
+          
+          <h3 style="color: #00c1ff; margin-top: 20px;">About Me</h3>
+          <p>I'm a Computer Science specialist with deep expertise in AI/ML systems, cybersecurity, and scalable architecture. My work focuses on building intelligent solutions that solve real-world problems through advanced algorithms, secure design principles, and thoughtful engineering.</p>
+          
+          <p>I'm passionate about:</p>
+          <ul style="color: #666; line-height: 1.8;">
+            <li><strong>AI & Machine Learning</strong> - Building intelligent systems and optimizing neural networks</li>
+            <li><strong>Cybersecurity</strong> - Designing secure systems and identifying vulnerabilities</li>
+            <li><strong>Full-Stack Development</strong> - Creating scalable, production-grade applications</li>
+            <li><strong>System Design</strong> - Architecting robust solutions for complex problems</li>
+          </ul>
+          
+          <p>I've attached my resume for your reference. I'm always interested in discussing challenging opportunities, collaborating on impactful projects, or exploring how my skills can add value to your team.</p>
+          
+          <hr style="border: none; border-top: 1px solid #ccc; margin: 20px 0;">
+          
+          <p>I'll review your message and get back to you within 24-48 hours. If you need anything else or have urgent matters, feel free to reach out again.</p>
+          
+          <p>Best regards,<br><strong>Sushin Bandha</strong><br>AI & Cybersecurity Specialist</p>
+          <p style="font-size: 12px; color: #999; margin-top: 20px;">
+            <a href="https://sushinbandha.com" style="color: #00c1ff; text-decoration: none;">Portfolio</a> | 
+            <a href="https://linkedin.com" style="color: #00c1ff; text-decoration: none;">LinkedIn</a> | 
+            <a href="https://github.com" style="color: #00c1ff; text-decoration: none;">GitHub</a>
+          </p>
           <p style="font-size: 12px; color: #999;">Your message: "${data.subject}"</p>
         </div>
       `,
+      attachments: [
+        {
+          filename: "Sushin-Bandha-Resume.pdf",
+          content: resumeBuffer,
+        },
+      ],
     })
 
     if (userEmailResponse.error) {
