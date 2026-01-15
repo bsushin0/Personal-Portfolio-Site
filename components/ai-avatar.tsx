@@ -25,7 +25,7 @@ export default function AiAvatar() {
   const rightPupilRef = useRef<HTMLDivElement>(null)
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
   const [expression, setExpression] = useState<ExpressionState>({
-    happiness: 0.5,
+    happiness: 1,
     surprise: 0,
     lookingAt: "center",
     blink: false,
@@ -89,13 +89,10 @@ export default function AiAvatar() {
     const distance = Math.sqrt(dx * dx + dy * dy)
     const angle = Math.atan2(dy, dx)
 
-    // Emotion based on proximity
-    let happiness = 0.5
+    // Emotion based on proximity - always keep smile, just track looking direction
     let lookingAt: ExpressionState["lookingAt"] = "center"
 
     if (distance < 500) {
-      happiness = Math.min(1, 0.5 + (500 - distance) / 1000)
-
       const angleDeg = (angle * 180) / Math.PI
       if (angleDeg > -45 && angleDeg < 45) lookingAt = "right"
       else if (angleDeg >= 45 && angleDeg < 135) lookingAt = "down"
@@ -105,7 +102,6 @@ export default function AiAvatar() {
 
     setExpression(prev => ({
       ...prev,
-      happiness,
       lookingAt,
     }))
 
@@ -123,7 +119,7 @@ export default function AiAvatar() {
     setExpression(prev => ({ ...prev, surprise: 1 }))
     createParticles()
     setTimeout(() => {
-      setExpression(prev => ({ ...prev, surprise: 0 }))
+      setExpression(prev => ({ ...prev, surprise: 0, happiness: 1 }))
     }, 300)
   }
 
@@ -132,14 +128,14 @@ export default function AiAvatar() {
     if (avatarRef.current) {
       setIsDragging(true)
       dragStartRef.current = { x: e.clientX, y: e.clientY }
-      setExpression(prev => ({ ...prev, surprise: 0.5 }))
+      setExpression(prev => ({ ...prev, surprise: 0.5, happiness: 1 }))
     }
   }
 
   const handleMouseUp = () => {
     setIsDragging(false)
     setDragOffset({ x: 0, y: 0 })
-    setExpression(prev => ({ ...prev, surprise: 0 }))
+    setExpression(prev => ({ ...prev, surprise: 0, happiness: 1 }))
   }
 
   useEffect(() => {
