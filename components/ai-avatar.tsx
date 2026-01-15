@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef, useState, useCallback, FC, MouseEvent } from "react"
+import { useEffect, useRef, useState, useCallback } from "react"
 
 interface ExpressionState {
   energy: number
@@ -30,7 +30,7 @@ interface TouchPoint {
   time: number
 }
 
-const AiAvatar: FC = () => {
+export default function AiAvatar() {
   const containerRef = useRef<HTMLDivElement>(null)
   const avatarRef = useRef<HTMLDivElement>(null)
   const leftPupilRef = useRef<HTMLDivElement>(null)
@@ -619,11 +619,11 @@ const AiAvatar: FC = () => {
             )}
 
             {/* Mouth */}
-            <div className="relative mt-8 w-40 h-20 flex items-center justify-center">
+            <div className="relative mt-8 w-40 h-24 flex items-center justify-center">
               <svg
                 width="120"
-                height="60"
-                viewBox="0 0 120 60"
+                height="80"
+                viewBox="0 0 120 80"
                 className="transition-all duration-200"
               >
                 {/* Mouth outline */}
@@ -712,5 +712,3 @@ const AiAvatar: FC = () => {
     </div>
   )
 }
-
-export default AiAvatar

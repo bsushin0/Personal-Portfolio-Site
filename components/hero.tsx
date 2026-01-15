@@ -21,9 +21,6 @@ export default function Hero() {
           </p>
 
           <div className="flex flex-wrap gap-4">
-            <Button className="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-white font-semibold shadow-lg shadow-cyan-500/50 hover:shadow-cyan-500/70 transition-all">
-              Download Resume
-            </Button>
             <Button
               variant="outline"
               className="border-cyan-400 text-cyan-300 hover:text-cyan-100 bg-transparent hover:bg-cyan-500/10 dark:border-cyan-400 dark:text-cyan-300 hover:shadow-lg hover:shadow-cyan-500/30 transition-all"
