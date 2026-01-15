@@ -47,8 +47,8 @@ export default function Experience() {
   return (
     <section id="experience" className="py-20">
       <div className="text-center mb-16">
-        <h2 className="text-3xl md:text-4xl font-bold mb-4">Experience</h2>
-        <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+        <h2 className="text-3xl md:text-4xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 to-purple-400">Experience</h2>
+        <p className="text-cyan-200/80 dark:text-cyan-200/70 max-w-2xl mx-auto">
           Professional experience combining technical expertise with leadership and collaboration.
         </p>
       </div>
@@ -57,27 +57,27 @@ export default function Experience() {
         {experiences.map((exp) => (
           <Card
             key={exp.id}
-            className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 hover:border-emerald-500/50 transition-all duration-300"
+            className="border-glow-purple bg-card hover:border-purple-400/60 transition-all duration-300"
           >
             <CardHeader>
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div>
-                  <CardTitle className="text-xl text-emerald-600 dark:text-emerald-400 flex items-center gap-2">
-                    <Building className="h-5 w-5" />
+                  <CardTitle className="text-xl text-cyan-300 dark:text-cyan-400 flex items-center gap-2">
+                    <Building className="h-5 w-5 text-purple-400" />
                     {exp.title}
                   </CardTitle>
-                  <CardDescription className="text-lg font-medium text-gray-700 dark:text-gray-300 mt-1">
+                  <CardDescription className="text-lg font-medium text-cyan-200 dark:text-cyan-300 mt-1">
                     {exp.company}
                   </CardDescription>
                 </div>
                 <div className="flex flex-col md:items-end gap-2">
-                  <Badge variant="outline" className="w-fit">
+                  <Badge variant="outline" className="w-fit border-cyan-500/50 text-cyan-300">
                     <Calendar className="h-3 w-3 mr-1" />
                     {exp.period}
                   </Badge>
                   <Badge
                     variant="secondary"
-                    className="w-fit bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-300"
+                    className="w-fit bg-purple-500/20 dark:bg-purple-500/30 text-purple-200 dark:text-purple-300 border border-purple-500/30"
                   >
                     {exp.type}
                   </Badge>
@@ -87,8 +87,8 @@ export default function Experience() {
             <CardContent>
               <ul className="space-y-2 mb-6">
                 {exp.description.map((item, index) => (
-                  <li key={index} className="flex items-start gap-2 text-gray-700 dark:text-gray-300">
-                    <span className="text-emerald-500 mt-1.5 text-xs">●</span>
+                  <li key={index} className="flex items-start gap-2 text-cyan-100/80 dark:text-cyan-100/70">
+                    <span className="text-cyan-400 mt-1.5 text-xs">●</span>
                     <span>{item}</span>
                   </li>
                 ))}
@@ -98,7 +98,7 @@ export default function Experience() {
                   <Badge
                     key={skill}
                     variant="secondary"
-                    className="bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300"
+                    className="bg-blue-500/20 dark:bg-blue-500/30 text-blue-200 dark:text-blue-300 border border-blue-500/30"
                   >
                     {skill}
                   </Badge>

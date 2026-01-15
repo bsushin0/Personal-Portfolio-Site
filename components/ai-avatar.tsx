@@ -326,9 +326,9 @@ const AiAvatar: FC = () => {
     const newParticles: Particle[] = []
     const types: Particle["type"][] = ["spark", "glow", "trail"]
     const colors = [
-      "from-amber-300 via-rose-400 to-cyan-400",
-      "from-purple-400 via-pink-400 to-blue-400",
-      "from-green-400 via-cyan-400 to-blue-400",
+      "from-cyan-300 via-blue-400 to-purple-400",
+      "from-purple-400 via-cyan-400 to-blue-400",
+      "from-cyan-400 via-purple-400 to-cyan-300",
     ]
 
     for (let i = 0; i < 20; i++) {
@@ -406,10 +406,10 @@ const AiAvatar: FC = () => {
             key={p.id}
             className={`absolute w-2 h-2 rounded-full blur-sm ${
               p.type === "spark"
-                ? "bg-gradient-to-r from-yellow-300 to-orange-400"
+                ? "bg-gradient-to-r from-cyan-300 to-purple-400"
                 : p.type === "glow"
-                  ? "bg-gradient-to-r from-cyan-300 to-blue-400"
-                  : "bg-gradient-to-r from-purple-300 to-pink-400"
+                  ? "bg-gradient-to-r from-cyan-400 to-blue-400"
+                  : "bg-gradient-to-r from-purple-300 to-cyan-400"
             }`}
             style={{
               left: `calc(50% + ${p.x}px)`,
@@ -440,7 +440,7 @@ const AiAvatar: FC = () => {
         <div
           className={`absolute inset-0 rounded-full blur-3xl transition-all duration-150 pointer-events-none`}
           style={{
-            background: `radial-gradient(circle, rgba(59, 130, 246, ${0.4 + expression.energy * 0.3}), rgba(139, 92, 246, ${0.2}), transparent)`,
+            background: `radial-gradient(circle, rgba(0, 193, 255, ${0.5 + expression.energy * 0.3}), rgba(157, 78, 221, ${0.25}), transparent)`,
             transform: `scale(${1.1 + expression.energy * 0.15})`,
           }}
         />
@@ -448,7 +448,7 @@ const AiAvatar: FC = () => {
         <div
           className={`absolute inset-0 rounded-full blur-2xl transition-all duration-150 pointer-events-none`}
           style={{
-            background: `radial-gradient(circle, rgba(168, 85, 247, ${0.3 + expression.energy * 0.2}), transparent)`,
+            background: `radial-gradient(circle, rgba(157, 78, 221, ${0.4 + expression.energy * 0.2}), transparent)`,
             transform: `scale(${1 + expression.energy * 0.1})`,
           }}
         />
@@ -457,11 +457,11 @@ const AiAvatar: FC = () => {
         <div
           className={`relative w-64 h-64 md:w-80 md:h-80 rounded-full transition-all duration-300 overflow-hidden border-4 shadow-2xl ${
             isHovering || isDragging
-              ? "border-yellow-300 shadow-yellow-400/60 bg-gradient-to-br from-blue-400 via-purple-400 to-pink-400 dark:from-blue-600 dark:via-purple-600 dark:to-pink-600"
-              : "border-cyan-300 shadow-cyan-400/50 bg-gradient-to-br from-blue-300 via-cyan-300 to-purple-300 dark:from-blue-700 dark:via-cyan-700 dark:to-purple-700"
+              ? "border-cyan-400 shadow-cyan-500/70 bg-gradient-to-br from-cyan-500 via-blue-500 to-purple-600 dark:from-cyan-600 dark:via-blue-600 dark:to-purple-700"
+              : "border-cyan-400 shadow-cyan-500/50 bg-gradient-to-br from-cyan-400 via-blue-400 to-purple-500 dark:from-cyan-500 dark:via-blue-500 dark:to-purple-600"
           }`}
           style={{
-            filter: "drop-shadow(0 0 30px rgba(59, 130, 246, 0.4))",
+            filter: "drop-shadow(0 0 30px rgba(0, 193, 255, 0.5))",
           }}
         >
           {/* Inner animated glow layer */}
@@ -513,7 +513,7 @@ const AiAvatar: FC = () => {
                   strokeWidth="3"
                   fill="none"
                   strokeLinecap="round"
-                  className="text-slate-900 dark:text-white drop-shadow-lg"
+                  className="text-cyan-100 dark:text-cyan-50 drop-shadow-lg"
                 />
               </svg>
 
@@ -544,7 +544,7 @@ const AiAvatar: FC = () => {
                   strokeWidth="3"
                   fill="none"
                   strokeLinecap="round"
-                  className="text-slate-900 dark:text-white drop-shadow-lg"
+                  className="text-cyan-100 dark:text-cyan-50 drop-shadow-lg"
                 />
               </svg>
             </div>
@@ -557,11 +557,11 @@ const AiAvatar: FC = () => {
                   expression.blink ? "scale-y-0" : "scale-y-100"
                 }`}
                 style={{
-                  background: "linear-gradient(135deg, rgba(255,255,255,0.9), rgba(148,163,247,0.6))",
-                  boxShadow: `0 0 20px rgba(59, 130, 246, ${0.4 + expression.energy * 0.3}), inset 0 0 10px rgba(255,255,255,0.3)`,
+                  background: "linear-gradient(135deg, rgba(255,255,255,0.9), rgba(0, 193, 255, 0.6))",
+                  boxShadow: `0 0 20px rgba(0, 193, 255, ${0.4 + expression.energy * 0.3}), inset 0 0 10px rgba(255,255,255,0.3)`,
                 }}
               >
-                <div className="absolute inset-1.5 rounded-full bg-gradient-to-br from-blue-200 to-cyan-200 dark:from-blue-400 dark:to-cyan-400" />
+                <div className="absolute inset-1.5 rounded-full bg-gradient-to-br from-cyan-200 to-blue-200 dark:from-cyan-400 dark:to-blue-400" />
                 <div
                   ref={leftPupilRef}
                   className="relative w-8 h-8 rounded-full bg-gradient-to-br from-slate-950 to-slate-800 shadow-md transition-transform duration-100"
@@ -571,7 +571,7 @@ const AiAvatar: FC = () => {
                 >
                   <div className="absolute inset-1 rounded-full bg-slate-700 dark:bg-slate-300 opacity-60" />
                   <div className="absolute top-1.5 left-1.5 w-3 h-3 bg-white rounded-full opacity-100 blur-[0.3px]" />
-                  <div className="absolute top-2 left-2 w-1.5 h-1.5 bg-blue-300 rounded-full opacity-80" />
+                  <div className="absolute top-2 left-2 w-1.5 h-1.5 bg-cyan-300 rounded-full opacity-80" />
                 </div>
               </div>
 
@@ -581,11 +581,11 @@ const AiAvatar: FC = () => {
                   expression.blink ? "scale-y-0" : "scale-y-100"
                 }`}
                 style={{
-                  background: "linear-gradient(135deg, rgba(255,255,255,0.9), rgba(148,163,247,0.6))",
-                  boxShadow: `0 0 20px rgba(59, 130, 246, ${0.4 + expression.energy * 0.3}), inset 0 0 10px rgba(255,255,255,0.3)`,
+                  background: "linear-gradient(135deg, rgba(255,255,255,0.9), rgba(0, 193, 255, 0.6))",
+                  boxShadow: `0 0 20px rgba(0, 193, 255, ${0.4 + expression.energy * 0.3}), inset 0 0 10px rgba(255,255,255,0.3)`,
                 }}
               >
-                <div className="absolute inset-1.5 rounded-full bg-gradient-to-br from-blue-200 to-cyan-200 dark:from-blue-400 dark:to-cyan-400" />
+                <div className="absolute inset-1.5 rounded-full bg-gradient-to-br from-cyan-200 to-blue-200 dark:from-cyan-400 dark:to-blue-400" />
                 <div
                   ref={rightPupilRef}
                   className="relative w-8 h-8 rounded-full bg-gradient-to-br from-slate-950 to-slate-800 shadow-md transition-transform duration-100"
@@ -595,7 +595,7 @@ const AiAvatar: FC = () => {
                 >
                   <div className="absolute inset-1 rounded-full bg-slate-700 dark:bg-slate-300 opacity-60" />
                   <div className="absolute top-1.5 left-1.5 w-3 h-3 bg-white rounded-full opacity-100 blur-[0.3px]" />
-                  <div className="absolute top-2 left-2 w-1.5 h-1.5 bg-blue-300 rounded-full opacity-80" />
+                  <div className="absolute top-2 left-2 w-1.5 h-1.5 bg-cyan-300 rounded-full opacity-80" />
                 </div>
               </div>
             </div>
@@ -604,13 +604,13 @@ const AiAvatar: FC = () => {
             {(expression.energy > 0.6 || expression.emotion === "happy") && (
               <>
                 <div
-                  className="absolute top-32 left-12 w-10 h-7 bg-gradient-to-r from-pink-400 to-rose-300 rounded-full blur-2xl transition-all duration-300"
+                  className="absolute top-32 left-12 w-10 h-7 bg-gradient-to-r from-purple-400 to-pink-300 rounded-full blur-2xl transition-all duration-300"
                   style={{
                     opacity: (expression.energy - 0.6) * 0.5 + (expression.emotion === "happy" ? 0.3 : 0),
                   }}
                 />
                 <div
-                  className="absolute top-32 right-12 w-10 h-7 bg-gradient-to-r from-pink-400 to-rose-300 rounded-full blur-2xl transition-all duration-300"
+                  className="absolute top-32 right-12 w-10 h-7 bg-gradient-to-r from-purple-400 to-pink-300 rounded-full blur-2xl transition-all duration-300"
                   style={{
                     opacity: (expression.energy - 0.6) * 0.5 + (expression.emotion === "happy" ? 0.3 : 0),
                   }}
@@ -633,7 +633,7 @@ const AiAvatar: FC = () => {
                   strokeWidth="3"
                   fill="none"
                   strokeLinecap="round"
-                  className="text-rose-500 dark:text-rose-400 drop-shadow-lg transition-colors"
+                  className="text-cyan-400 dark:text-cyan-300 drop-shadow-lg transition-colors"
                   style={{
                     filter: expression.emotion === "focused" ? "brightness(1.2)" : "brightness(1)",
                   }}
@@ -643,7 +643,7 @@ const AiAvatar: FC = () => {
                 <path
                   d={`M 20 45 Q 60 ${45 - smileCurve * 0.5 - mouthY} 100 45 Q 60 ${50 - mouthY} 20 45`}
                   fill="currentColor"
-                  className="text-rose-300/40 dark:text-rose-300/50 transition-colors duration-200"
+                  className="text-cyan-300/40 dark:text-cyan-300/50 transition-colors duration-200"
                 />
 
                 {/* Surprised/excited mouth (grows bigger) */}
@@ -653,7 +653,7 @@ const AiAvatar: FC = () => {
                     cy={42 + expression.surprise * 4}
                     r={6 + expression.surprise * 4}
                     fill="currentColor"
-                    className="text-rose-400/60 dark:text-rose-300/60 transition-all duration-200"
+                    className="text-purple-400/60 dark:text-purple-300/60 transition-all duration-200"
                   />
                 )}
 
@@ -665,7 +665,7 @@ const AiAvatar: FC = () => {
                     rx="5"
                     ry="6"
                     fill="currentColor"
-                    className="text-rose-300 opacity-70 transition-all duration-200"
+                    className="text-purple-300 opacity-70 transition-all duration-200"
                   />
                 )}
               </svg>
@@ -693,7 +693,7 @@ const AiAvatar: FC = () => {
 
             {/* Accent glow when dragging */}
             {isDragging && (
-              <div className="absolute bottom-6 w-28 h-4 bg-gradient-to-r from-transparent via-yellow-300 to-transparent rounded-full blur-lg opacity-90 animate-pulse" />
+              <div className="absolute bottom-6 w-28 h-4 bg-gradient-to-r from-transparent via-cyan-300 to-transparent rounded-full blur-lg opacity-90 animate-pulse" />
             )}
           </div>
         </div>

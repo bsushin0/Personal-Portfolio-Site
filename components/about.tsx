@@ -26,10 +26,10 @@ export default function About() {
   ]
 
   return (
-    <section id="about" className="py-20 bg-gray-100 dark:bg-gray-950">
+    <section id="about" className="py-20 bg-gradient-futuristic border-t border-cyan-500/20">
       <div className="text-center mb-16">
-        <h2 className="text-3xl md:text-4xl font-bold mb-4">About Me</h2>
-        <p className="text-gray-600 dark:text-gray-400 max-w-3xl mx-auto text-lg leading-relaxed">
+        <h2 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-cyan-300 to-purple-400 bg-clip-text text-transparent mb-4">About Me</h2>
+        <p className="text-cyan-200/70 dark:text-cyan-200/60 max-w-3xl mx-auto text-lg leading-relaxed">
           I'm a results-driven student combining technical expertise with strong communication and leadership. I aim to
           innovate at the intersection of artificial intelligence, cloud computing, and security. With hands-on experience at PSEG, Purdue
           research labs, and leadership roles on campus, I bring both technical depth and cross-functional teamwork to
@@ -41,16 +41,16 @@ export default function About() {
         {highlights.map((item, index) => (
           <Card
             key={index}
-            className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 hover:border-emerald-500/50 transition-all duration-300 hover:transform hover:scale-105"
+            className="bg-card dark:bg-gray-900 border-glow-purple hover:scale-[1.05] transition-all duration-300 hover:border-purple-400/60"
           >
             <CardHeader className="text-center">
-              <div className="mx-auto w-12 h-12 bg-emerald-100 dark:bg-emerald-500/10 rounded-full flex items-center justify-center text-emerald-600 dark:text-emerald-400 mb-4">
+              <div className="mx-auto w-12 h-12 bg-purple-500/20 dark:bg-purple-500/20 rounded-full flex items-center justify-center text-purple-400 dark:text-purple-400 mb-4 border border-purple-500/30">
                 {item.icon}
               </div>
-              <CardTitle className="text-lg">{item.title}</CardTitle>
+              <CardTitle className="text-lg text-cyan-300 dark:text-cyan-400">{item.title}</CardTitle>
             </CardHeader>
             <CardContent>
-              <CardDescription className="text-center text-gray-600 dark:text-gray-400">
+              <CardDescription className="text-center text-cyan-200/70 dark:text-cyan-200/60">
                 {item.description}
               </CardDescription>
             </CardContent>
