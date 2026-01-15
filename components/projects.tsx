@@ -13,8 +13,8 @@ export default function Projects() {
   return (
     <section id="projects" className="py-20">
       <div className="text-center mb-16">
-        <h2 className="text-3xl md:text-4xl font-bold mb-4">Featured Projects</h2>
-        <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+        <h2 className="text-3xl md:text-4xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 to-purple-400">Featured Projects</h2>
+        <p className="text-cyan-200/80 dark:text-cyan-200/70 max-w-2xl mx-auto">
           Innovative projects combining AI, data analysis, and practical applications to solve real-world problems.
         </p>
       </div>
@@ -23,25 +23,26 @@ export default function Projects() {
         {projects.map((project) => (
           <Card
             key={project.id}
-            className={`bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 overflow-hidden transition-all duration-300 ${
-              hoveredId === project.id ? "transform scale-[1.02] shadow-lg shadow-emerald-500/10" : ""
+            className={`border-glow-purple bg-card overflow-hidden transition-all duration-300 ${
+              hoveredId === project.id ? "transform scale-[1.02] shadow-2xl shadow-purple-500/30" : ""
             }`}
             onMouseEnter={() => setHoveredId(project.id)}
             onMouseLeave={() => setHoveredId(null)}
           >
             <div className="relative h-48 overflow-hidden">
               <img
-                src={project.image || "/placeholder.svg"}
+                src={project.image}
                 alt={project.title}
                 className="w-full h-full object-cover transition-transform duration-500 ease-in-out"
                 style={{
                   transform: hoveredId === project.id ? "scale(1.05)" : "scale(1)",
                 }}
               />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
             </div>
             <CardHeader>
-              <CardTitle className="text-emerald-600 dark:text-emerald-400">{project.title}</CardTitle>
-              <CardDescription className="text-gray-600 dark:text-gray-400">{project.description}</CardDescription>
+              <CardTitle className="text-cyan-300 dark:text-cyan-400">{project.title}</CardTitle>
+              <CardDescription className="text-cyan-200/70 dark:text-cyan-200/60">{project.description}</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="flex flex-wrap gap-2">
@@ -49,7 +50,7 @@ export default function Projects() {
                   <Badge
                     key={tag}
                     variant="secondary"
-                    className="bg-gray-100 dark:bg-gray-800 text-emerald-700 dark:text-emerald-300"
+                    className="bg-purple-500/20 dark:bg-purple-500/30 text-purple-200 dark:text-purple-300 border border-purple-500/30"
                   >
                     {tag}
                   </Badge>
@@ -61,8 +62,7 @@ export default function Projects() {
                 asChild
                 variant="ghost"
                 size="sm"
-                className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
-                onClick={() => window.open(project.githubUrl, "_blank")}
+                className="text-cyan-300 hover:text-cyan-100 hover:bg-cyan-500/10"
               >
                 <a href={project.githubUrl} target="_blank" rel="noopener noreferrer">
                   <Github className="mr-2 h-4 w-4" />
@@ -74,7 +74,7 @@ export default function Projects() {
                   asChild
                   variant="ghost"
                   size="sm"
-                  className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
+                  className="text-cyan-300 hover:text-cyan-100 hover:bg-cyan-500/10"
                 >
                   <a href={project.liveUrl} target="_blank" rel="noopener noreferrer">
                     <ExternalLink className="mr-2 h-4 w-4" />

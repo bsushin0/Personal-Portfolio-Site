@@ -5,6 +5,7 @@ export type Certification = {
   date: string;
   image: string;
   credentialUrl: string;
+  description: string;
 };
 
 export const certifications: Certification[] = [
@@ -13,15 +14,17 @@ export const certifications: Certification[] = [
     title: "Google Cloud Associate Cloud Engineer",
     issuer: "Google Cloud",
     date: "2024",
-    image: "/placeholder.svg?height=100&width=100",
-    credentialUrl: "#",
+    image: "/google-cloud-badge.png",
+    credentialUrl: "https://www.credential.net/",
+    description: "Demonstrates proficiency in deploying and managing infrastructure on Google Cloud Platform.",
   },
   {
     id: 2,
     title: "CompTIA Security+",
     issuer: "CompTIA",
     date: "2023",
-    image: "/placeholder.svg?height=100&width=100",
-    credentialUrl: "#",
+    image: "/comptia-badge.png",
+    credentialUrl: "https://www.comptia.org/certifications/security",
+    description: "Validates baseline skills necessary to perform core security functions and pursue an IT security career.",
   },
 ];

@@ -8,9 +8,8 @@ import { SpeedInsights } from "@vercel/speed-insights/next"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Alex Johnson - AI & Cybersecurity Portfolio",
-  description: "Computer Science student specializing in AI and Cybersecurity",
-    generator: 'v0.dev'
+  title: "Sushin Bandha - AI & Cybersecurity Portfolio",
+  description: "Computer Science student at Purdue University specializing in AI, Cybersecurity, and Cloud Computing",
 }
 
 export default function RootLayout({
