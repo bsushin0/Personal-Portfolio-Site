@@ -12,7 +12,8 @@ interface ContactFormData {
 }
 
 export async function POST(request: NextRequest) {
-  tr// Check if API key is configured
+  try {
+    // Check if API key is configured
     if (!process.env.RESEND_API_KEY) {
       console.error("RESEND_API_KEY is not configured")
       return NextResponse.json(
@@ -21,9 +22,18 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    y {
     const data: ContactFormData = await request.json()
-const userEmailResponse = await resend.emails.send({
+
+    // Validate required fields
+    if (!data.name || !data.email || !data.subject || !data.message) {
+      return NextResponse.json(
+        { error: "Missing required fields" },
+        { status: 400 }
+      )
+    }
+
+    // Send auto-reply to the user
+    const userEmailResponse = await resend.emails.send({
       from: "noreply@sushinbandha.com",
       to: data.email,
       subject: "Thanks for reaching out!",
@@ -50,7 +60,7 @@ const userEmailResponse = await resend.emails.send({
     // Send notification email to you
     const notificationResponse = await resend.emails.send({
       from: "noreply@sushinbandha.com",
-      to: "Bsushin@outlook.com",
+      to: "bsushin1@gmail.com",
       subject: `New Contact Form Submission: ${data.subject}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -72,17 +82,7 @@ const userEmailResponse = await resend.emails.send({
     if (notificationResponse.error) {
       console.error("Failed to send notification email:", notificationResponse.error)
       // Don't fail the request if notification email fails - user's email was sent
-    }    <p><strong>Subject:</strong> ${data.subject}</p>
-          <hr style="border: none; border-top: 1px solid #ccc; margin: 20px 0;">
-          <h3>Message:</h3>
-          <p style="background: #f5f5f5; padding: 15px; border-left: 4px solid #00c1ff;">
-            ${data.message.replace(/\n/g, "<br>")}
-          </p>
-          <hr style="border: none; border-top: 1px solid #ccc; margin: 20px 0;">
-          <p style="font-size: 12px; color: #999;">Received at ${new Date().toLocaleString()}</p>
-        </div>
-      `,
-    })
+    }
 
     return NextResponse.json(
       { success: true, message: "Email sent successfully" },
