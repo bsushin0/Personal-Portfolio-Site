@@ -3,10 +3,11 @@
 import { useEffect, useRef, useState } from "react"
 
 interface ExpressionState {
-  happiness: number
+  energy: number
   surprise: number
   lookingAt: "center" | "left" | "right" | "up" | "down"
   blink: boolean
+  bounce: number
 }
 
 interface Particle {
@@ -25,10 +26,11 @@ export default function AiAvatar() {
   const rightPupilRef = useRef<HTMLDivElement>(null)
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
   const [expression, setExpression] = useState<ExpressionState>({
-    happiness: 1,
+    energy: 0.8,
     surprise: 0,
     lookingAt: "center",
     blink: false,
+    bounce: 0,
   })
   const [isHovering, setIsHovering] = useState(false)
   const [isDragging, setIsDragging] = useState(false)
@@ -37,6 +39,21 @@ export default function AiAvatar() {
   const blinkIntervalRef = useRef<NodeJS.Timeout | null>(null)
   const dragStartRef = useRef({ x: 0, y: 0 })
   const particleIdRef = useRef(0)
+  const bounceIntervalRef = useRef<NodeJS.Timeout | null>(null)
+
+  // Idle bounce animation
+  useEffect(() => {
+    bounceIntervalRef.current = setInterval(() => {
+      setExpression(prev => ({
+        ...prev,
+        bounce: Math.sin(Date.now() / 300) * 0.3,
+      }))
+    }, 30)
+
+    return () => {
+      if (bounceIntervalRef.current) clearInterval(bounceIntervalRef.current)
+    }
+  }, [])
 
   // Blink animation
   useEffect(() => {
@@ -89,7 +106,7 @@ export default function AiAvatar() {
     const distance = Math.sqrt(dx * dx + dy * dy)
     const angle = Math.atan2(dy, dx)
 
-    // Emotion based on proximity - always keep smile, just track looking direction
+    // Always high energy! Track looking direction
     let lookingAt: ExpressionState["lookingAt"] = "center"
 
     if (distance < 500) {
@@ -103,10 +120,11 @@ export default function AiAvatar() {
     setExpression(prev => ({
       ...prev,
       lookingAt,
+      energy: Math.min(1, 0.8 + (distance < 400 ? 0.2 : 0)),
     }))
 
     // Eye movement
-    const maxEyeMovement = 8
+    const maxEyeMovement = 12
     const eyeX = Math.cos(angle) * maxEyeMovement
     const eyeY = Math.sin(angle) * maxEyeMovement
 
@@ -114,13 +132,14 @@ export default function AiAvatar() {
     rightPupilRef.current.style.transform = `translate(${eyeX}px, ${eyeY}px)`
   }, [mousePosition])
 
-  // Click handler
+  // Click handler - big celebration
   const handleClick = () => {
-    setExpression(prev => ({ ...prev, surprise: 1 }))
+    setExpression(prev => ({ ...prev, surprise: 1, energy: 1 }))
+    createParticles()
     createParticles()
     setTimeout(() => {
-      setExpression(prev => ({ ...prev, surprise: 0, happiness: 1 }))
-    }, 300)
+      setExpression(prev => ({ ...prev, surprise: 0, energy: 0.8 }))
+    }, 400)
   }
 
   // Drag handlers
@@ -128,14 +147,14 @@ export default function AiAvatar() {
     if (avatarRef.current) {
       setIsDragging(true)
       dragStartRef.current = { x: e.clientX, y: e.clientY }
-      setExpression(prev => ({ ...prev, surprise: 0.5, happiness: 1 }))
+      setExpression(prev => ({ ...prev, surprise: 0.6, energy: 1 }))
     }
   }
 
   const handleMouseUp = () => {
     setIsDragging(false)
     setDragOffset({ x: 0, y: 0 })
-    setExpression(prev => ({ ...prev, surprise: 0, happiness: 1 }))
+    setExpression(prev => ({ ...prev, surprise: 0, energy: 0.8 }))
   }
 
   useEffect(() => {
@@ -162,9 +181,9 @@ export default function AiAvatar() {
   // Particle creation
   const createParticles = () => {
     const newParticles: Particle[] = []
-    for (let i = 0; i < 8; i++) {
-      const angle = (i / 8) * Math.PI * 2
-      const velocity = 3 + Math.random() * 2
+    for (let i = 0; i < 12; i++) {
+      const angle = (i / 12) * Math.PI * 2
+      const velocity = 2 + Math.random() * 4
       newParticles.push({
         id: particleIdRef.current++,
         x: 0,
@@ -174,7 +193,7 @@ export default function AiAvatar() {
         life: 1,
       })
     }
-    setParticles(newParticles)
+    setParticles(prev => [...prev, ...newParticles])
   }
 
   // Particle animation
@@ -188,8 +207,8 @@ export default function AiAvatar() {
             ...p,
             x: p.x + p.vx,
             y: p.y + p.vy,
-            vy: p.vy + 0.1,
-            life: p.life - 0.05,
+            vy: p.vy + 0.08,
+            life: p.life - 0.04,
           }))
           .filter(p => p.life > 0)
       )
@@ -198,8 +217,9 @@ export default function AiAvatar() {
     return () => clearInterval(interval)
   }, [particles.length])
 
-  const smileCurve = expression.happiness * 25
-  const mouthY = expression.surprise * 5
+  const smileCurve = 30 + expression.energy * 10
+  const mouthY = expression.surprise * 8
+  const eyeScale = 0.95 + expression.energy * 0.1
 
   return (
     <div ref={containerRef} className="relative w-full h-full flex items-center justify-center">
@@ -208,11 +228,11 @@ export default function AiAvatar() {
         {particles.map(p => (
           <div
             key={p.id}
-            className="absolute w-2 h-2 bg-gradient-to-r from-emerald-400 to-cyan-400 rounded-full blur-sm"
+            className="absolute w-2 h-2 bg-gradient-to-r from-amber-300 via-rose-400 to-cyan-400 rounded-full blur-sm"
             style={{
               left: `calc(50% + ${p.x}px)`,
               top: `calc(50% + ${p.y}px)`,
-              opacity: p.life,
+              opacity: p.life * 0.8,
               transform: "translate(-50%, -50%)",
             }}
           />
@@ -228,29 +248,41 @@ export default function AiAvatar() {
           isDragging ? "scale-105" : "scale-100"
         }`}
         style={{
-          transform: `translate(${dragOffset.x}px, ${dragOffset.y}px) ${
-            isDragging ? "scale(1.05)" : "scale(1)"
+          transform: `translate(${dragOffset.x}px, ${dragOffset.y + expression.bounce * 5}px) ${
+            isDragging ? "scale(1.08)" : "scale(1)"
           }`,
         }}
       >
+        {/* Aura/Energy glow */}
+        <div
+          className={`absolute inset-0 rounded-full blur-2xl transition-all duration-200 pointer-events-none ${
+            isHovering || isDragging ? "opacity-70" : "opacity-50"
+          }`}
+          style={{
+            background: `radial-gradient(circle, rgba(59, 130, 246, ${0.3 + expression.energy * 0.2}), transparent)`,
+            transform: `scale(${1 + expression.energy * 0.1})`,
+          }}
+        />
+
         {/* Face background */}
         <div
-          className={`relative w-64 h-64 md:w-80 md:h-80 rounded-full transition-all duration-300 ${
-            isHovering
-              ? "bg-gradient-to-br from-emerald-100 to-cyan-100 dark:from-emerald-900/40 dark:to-cyan-900/40 border-2 border-emerald-400 shadow-2xl shadow-emerald-500/30"
-              : "bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-900 border-2 border-emerald-500/20 shadow-lg shadow-slate-500/10"
+          className={`relative w-64 h-64 md:w-80 md:h-80 rounded-full transition-all duration-300 overflow-hidden ${
+            isHovering || isDragging
+              ? "bg-gradient-to-br from-blue-300 via-purple-300 to-pink-300 dark:from-blue-700 dark:via-purple-700 dark:to-pink-700 border-3 border-yellow-400 shadow-2xl shadow-yellow-400/50"
+              : "bg-gradient-to-br from-blue-200 via-cyan-200 to-purple-200 dark:from-blue-700 dark:via-cyan-700 dark:to-purple-700 border-3 border-cyan-400 shadow-xl shadow-cyan-500/30"
           }`}
         >
-          {/* Inner face glow */}
+          {/* Inner animated glow */}
           <div
-            className={`absolute inset-2 rounded-full bg-gradient-to-br from-transparent via-transparent to-emerald-500/5 transition-opacity duration-300 ${
-              isHovering ? "opacity-100" : "opacity-50"
-            }`}
+            className={`absolute inset-2 rounded-full bg-gradient-to-br from-white/20 via-transparent to-transparent transition-all duration-300 animate-pulse`}
+            style={{
+              opacity: 0.4 + expression.energy * 0.3,
+            }}
           />
 
           {/* Face content */}
           <div className="absolute inset-0 flex flex-col items-center justify-center">
-            {/* Eyebrows */}
+            {/* Eyebrows - super expressive */}
             <div className="absolute top-20 flex space-x-16">
               {/* Left eyebrow */}
               <svg
@@ -260,20 +292,20 @@ export default function AiAvatar() {
                 className="transition-all duration-200"
                 style={{
                   transform:
-                    expression.surprise > 0.3
-                      ? "rotate(-15deg)"
-                      : expression.happiness > 0.7
-                        ? "rotate(10deg)"
-                        : "rotate(0deg)",
+                    expression.surprise > 0.4
+                      ? "rotate(-20deg) scale(1.1)"
+                      : expression.energy > 0.7
+                        ? "rotate(15deg) scale(1.05)"
+                        : "rotate(5deg)",
                 }}
               >
                 <path
                   d="M 5 8 Q 20 2 35 8"
                   stroke="currentColor"
-                  strokeWidth="2.5"
+                  strokeWidth="3"
                   fill="none"
                   strokeLinecap="round"
-                  className="text-slate-700 dark:text-slate-300"
+                  className="text-slate-800 dark:text-slate-100 drop-shadow"
                 />
               </svg>
 
@@ -285,20 +317,20 @@ export default function AiAvatar() {
                 className="transition-all duration-200"
                 style={{
                   transform:
-                    expression.surprise > 0.3
-                      ? "rotate(15deg)"
-                      : expression.happiness > 0.7
-                        ? "rotate(-10deg)"
-                        : "rotate(0deg)",
+                    expression.surprise > 0.4
+                      ? "rotate(20deg) scale(1.1)"
+                      : expression.energy > 0.7
+                        ? "rotate(-15deg) scale(1.05)"
+                        : "rotate(-5deg)",
                 }}
               >
                 <path
                   d="M 5 8 Q 20 2 35 8"
                   stroke="currentColor"
-                  strokeWidth="2.5"
+                  strokeWidth="3"
                   fill="none"
                   strokeLinecap="round"
-                  className="text-slate-700 dark:text-slate-300"
+                  className="text-slate-800 dark:text-slate-100 drop-shadow"
                 />
               </svg>
             </div>
@@ -307,40 +339,60 @@ export default function AiAvatar() {
             <div className="flex space-x-16 mb-6 mt-4">
               {/* Left eye */}
               <div
-                className={`relative w-16 h-16 rounded-full bg-gradient-to-br from-emerald-200 to-emerald-300 dark:from-emerald-700 dark:to-emerald-800 flex items-center justify-center shadow-inner transition-all duration-200 overflow-hidden ${
+                className={`relative w-16 h-16 rounded-full bg-gradient-to-br from-white to-blue-100 dark:from-blue-200 dark:to-blue-300 flex items-center justify-center shadow-inner transition-all duration-200 overflow-hidden ${
                   expression.blink ? "scale-y-0" : "scale-y-100"
                 }`}
+                style={{
+                  boxShadow: `0 0 15px rgba(59, 130, 246, ${0.3 + expression.energy * 0.3})`,
+                }}
               >
-                <div className="absolute inset-1 rounded-full bg-gradient-to-br from-emerald-100 to-emerald-200 dark:from-emerald-600 dark:to-emerald-700" />
+                <div className="absolute inset-1.5 rounded-full bg-gradient-to-br from-blue-100 to-cyan-100 dark:from-blue-300 dark:to-cyan-300" />
                 <div
                   ref={leftPupilRef}
-                  className="relative w-8 h-8 rounded-full bg-gradient-to-br from-emerald-600 to-emerald-700 dark:from-emerald-400 dark:to-emerald-500 shadow-md transition-transform duration-100"
+                  className="relative w-8 h-8 rounded-full bg-gradient-to-br from-slate-900 to-slate-800 shadow-md transition-transform duration-100"
+                  style={{
+                    transform: `scale(${eyeScale})`,
+                  }}
                 >
                   {/* Iris detail */}
-                  <div className="absolute inset-1 rounded-full bg-emerald-700 dark:bg-emerald-300 opacity-40" />
+                  <div className="absolute inset-1 rounded-full bg-slate-700 dark:bg-slate-300 opacity-50" />
                   {/* Shine effect */}
-                  <div className="absolute top-1.5 left-1.5 w-3 h-3 bg-white rounded-full opacity-80 blur-[0.5px]" />
+                  <div className="absolute top-1 left-1 w-4 h-4 bg-white rounded-full opacity-90 blur-[0.5px]" />
                 </div>
               </div>
 
               {/* Right eye */}
               <div
-                className={`relative w-16 h-16 rounded-full bg-gradient-to-br from-emerald-200 to-emerald-300 dark:from-emerald-700 dark:to-emerald-800 flex items-center justify-center shadow-inner transition-all duration-200 overflow-hidden ${
+                className={`relative w-16 h-16 rounded-full bg-gradient-to-br from-white to-blue-100 dark:from-blue-200 dark:to-blue-300 flex items-center justify-center shadow-inner transition-all duration-200 overflow-hidden ${
                   expression.blink ? "scale-y-0" : "scale-y-100"
                 }`}
+                style={{
+                  boxShadow: `0 0 15px rgba(59, 130, 246, ${0.3 + expression.energy * 0.3})`,
+                }}
               >
-                <div className="absolute inset-1 rounded-full bg-gradient-to-br from-emerald-100 to-emerald-200 dark:from-emerald-600 dark:to-emerald-700" />
+                <div className="absolute inset-1.5 rounded-full bg-gradient-to-br from-blue-100 to-cyan-100 dark:from-blue-300 dark:to-cyan-300" />
                 <div
                   ref={rightPupilRef}
-                  className="relative w-8 h-8 rounded-full bg-gradient-to-br from-emerald-600 to-emerald-700 dark:from-emerald-400 dark:to-emerald-500 shadow-md transition-transform duration-100"
+                  className="relative w-8 h-8 rounded-full bg-gradient-to-br from-slate-900 to-slate-800 shadow-md transition-transform duration-100"
+                  style={{
+                    transform: `scale(${eyeScale})`,
+                  }}
                 >
                   {/* Iris detail */}
-                  <div className="absolute inset-1 rounded-full bg-emerald-700 dark:bg-emerald-300 opacity-40" />
+                  <div className="absolute inset-1 rounded-full bg-slate-700 dark:bg-slate-300 opacity-50" />
                   {/* Shine effect */}
-                  <div className="absolute top-1.5 left-1.5 w-3 h-3 bg-white rounded-full opacity-80 blur-[0.5px]" />
+                  <div className="absolute top-1 left-1 w-4 h-4 bg-white rounded-full opacity-90 blur-[0.5px]" />
                 </div>
               </div>
             </div>
+
+            {/* Blush - appears when happy */}
+            {expression.energy > 0.6 && (
+              <>
+                <div className="absolute top-32 left-12 w-8 h-6 bg-pink-400/30 rounded-full blur-xl transition-opacity duration-300" />
+                <div className="absolute top-32 right-12 w-8 h-6 bg-pink-400/30 rounded-full blur-xl transition-opacity duration-300" />
+              </>
+            )}
 
             {/* Mouth */}
             <div className="relative mt-8 w-40 h-20 flex items-center justify-center">
@@ -352,47 +404,52 @@ export default function AiAvatar() {
               >
                 {/* Mouth outline */}
                 <path
-                  d={`M 25 45 Q 60 ${45 - smileCurve - mouthY} 95 45`}
+                  d={`M 20 45 Q 60 ${45 - smileCurve - mouthY} 100 45`}
                   stroke="currentColor"
-                  strokeWidth="2.5"
+                  strokeWidth="3"
                   fill="none"
                   strokeLinecap="round"
-                  className={`transition-colors duration-200 ${
-                    expression.happiness > 0.7
-                      ? "text-emerald-600 dark:text-emerald-400"
-                      : "text-slate-600 dark:text-slate-400"
-                  }`}
+                  className="text-rose-500 dark:text-rose-400 drop-shadow"
                 />
 
                 {/* Mouth fill (inner) */}
-                {expression.happiness > 0.5 && (
-                  <path
-                    d={`M 25 45 Q 60 ${45 - smileCurve * 0.6 - mouthY} 95 45 Q 60 ${48 - mouthY} 25 45`}
-                    fill="currentColor"
-                    className={`transition-colors duration-200 ${
-                      expression.happiness > 0.7
-                        ? "text-emerald-500/15 dark:text-emerald-400/15"
-                        : "text-slate-400/10 dark:text-slate-400/10"
-                    }`}
-                  />
-                )}
+                <path
+                  d={`M 20 45 Q 60 ${45 - smileCurve * 0.5 - mouthY} 100 45 Q 60 ${50 - mouthY} 20 45`}
+                  fill="currentColor"
+                  className="text-rose-300/30 dark:text-rose-300/40 transition-colors duration-200"
+                />
 
-                {/* Surprised/concerned mouth (inverted arc) */}
+                {/* Surprised/excited mouth (grows bigger) */}
                 {expression.surprise > 0.3 && (
                   <circle
                     cx="60"
-                    cy={42 + expression.surprise * 3}
-                    r={5 + expression.surprise * 3}
+                    cy={42 + expression.surprise * 4}
+                    r={6 + expression.surprise * 4}
                     fill="currentColor"
-                    className="text-slate-600/30 dark:text-slate-400/30 transition-all duration-200"
+                    className="text-rose-400/50 dark:text-rose-300/50 transition-all duration-200"
                   />
                 )}
               </svg>
             </div>
 
+            {/* Energy star twinkles when hovering */}
+            {(isHovering || isDragging) && (
+              <>
+                <div className="absolute -top-8 left-10 text-2xl animate-bounce" style={{ animationDelay: "0s" }}>
+                  ✨
+                </div>
+                <div className="absolute -top-4 right-8 text-2xl animate-bounce" style={{ animationDelay: "0.2s" }}>
+                  ⭐
+                </div>
+                <div className="absolute -bottom-6 -left-4 text-2xl animate-bounce" style={{ animationDelay: "0.1s" }}>
+                  💫
+                </div>
+              </>
+            )}
+
             {/* Accent glow when dragging */}
             {isDragging && (
-              <div className="absolute bottom-8 w-20 h-2 bg-gradient-to-r from-transparent via-emerald-500 to-transparent rounded-full blur-lg opacity-60 animate-pulse" />
+              <div className="absolute bottom-8 w-24 h-3 bg-gradient-to-r from-transparent via-yellow-400 to-transparent rounded-full blur-lg opacity-80 animate-pulse" />
             )}
           </div>
         </div>
