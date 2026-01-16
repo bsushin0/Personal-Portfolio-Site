@@ -42,7 +42,6 @@ export function middleware(request: NextRequest) {
 
   // Check if IP is allowed
   if (!allowedIPs.includes(ip)) {
-  if (!allowedIPs.includes(ip)) {
     return new NextResponse(
       `
       <!DOCTYPE html>
