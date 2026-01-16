@@ -7,27 +7,41 @@ export const config = {
 }
 
 export function middleware(request: NextRequest) {
-  // Get the visitor's IP address - try multiple sources for Vercel compatibility
+  // Try multiple IP sources for Vercel compatibility
   let ip = ipAddress(request) || 'unknown'
 
-  // If ipAddress() returns Vercel's internal IP, check X-Forwarded-For header
-  if (ip.startsWith('2606:') || ip.includes('vercel') || ip === 'unknown') {
-    const xForwardedFor = request.headers.get('x-forwarded-for')
-    if (xForwardedFor) {
-      // X-Forwarded-For can contain multiple IPs, get the first one (client IP)
-      ip = xForwardedFor.split(',')[0].trim()
-    }
+  // Check multiple header sources that Vercel/Cloudflare might use
+  const headers = {
+    'ipAddress': ip,
+    'x-forwarded-for': request.headers.get('x-forwarded-for'),
+    'x-real-ip': request.headers.get('x-real-ip'),
+    'cf-connecting-ip': request.headers.get('cf-connecting-ip'),
+    'true-client-ip': request.headers.get('true-client-ip'),
+  }
+
+  // Priority order for IP detection
+  if (headers['cf-connecting-ip']) {
+    ip = headers['cf-connecting-ip']
+  } else if (headers['true-client-ip']) {
+    ip = headers['true-client-ip']
+  } else if (headers['x-real-ip']) {
+    ip = headers['x-real-ip']
+  } else if (headers['x-forwarded-for']) {
+    ip = headers['x-forwarded-for'].split(',')[0].trim()
   }
 
   // Get whitelist from environment variable, fallback to localhost only
   const whitelistEnv = process.env.IP_WHITELIST || '127.0.0.1'
   const allowedIPs = whitelistEnv.split(',').map(ip => ip.trim())
 
-  console.log(`Access attempt from IP: ${ip}`)
-  console.log(`X-Forwarded-For header: ${request.headers.get('x-forwarded-for')}`)
+  console.log(`=== IP Whitelist Debug ===`)
+  console.log(`Detected IP: ${ip}`)
+  console.log(`Headers: ${JSON.stringify(headers)}`)
   console.log(`Allowed IPs: ${allowedIPs.join(', ')}`)
+  console.log(`IP Allowed: ${allowedIPs.includes(ip)}`)
 
   // Check if IP is allowed
+  if (!allowedIPs.includes(ip)) {
   if (!allowedIPs.includes(ip)) {
     return new NextResponse(
       `
