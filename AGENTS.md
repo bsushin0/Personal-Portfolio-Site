@@ -1,7 +1,7 @@
 # AGENTS.md - Personal Portfolio Site
 
 ## Project Context
-**Personal portfolio website** showcasing excellence in Computer Science and AI systems. Maintained on **GitHub** (github.com/bsushin0/Personal-Portfolio-Site), deployed on **Vercel**. Purpose: demonstrate deep technical knowledge, project accomplishments, and expertise in CS/AI through a polished, modern web experience.
+**Personal portfolio website** showcasing excellence in AI. Maintained on **GitHub** (github.com/bsushin0/Personal-Portfolio-Site), deployed on **Vercel**. Purpose: demonstrate deep technical knowledge, project accomplishments, and expertise in CS/AI through a polished, modern web experience.
 
 ## Build & Commands
 - **Build**: `pnpm build`
