@@ -7,14 +7,24 @@ export const config = {
 }
 
 export function middleware(request: NextRequest) {
-  // Get the visitor's IP address
-  const ip = ipAddress(request) || 'unknown'
+  // Get the visitor's IP address - try multiple sources for Vercel compatibility
+  let ip = ipAddress(request) || 'unknown'
+
+  // If ipAddress() returns Vercel's internal IP, check X-Forwarded-For header
+  if (ip.startsWith('2606:') || ip.includes('vercel') || ip === 'unknown') {
+    const xForwardedFor = request.headers.get('x-forwarded-for')
+    if (xForwardedFor) {
+      // X-Forwarded-For can contain multiple IPs, get the first one (client IP)
+      ip = xForwardedFor.split(',')[0].trim()
+    }
+  }
 
   // Get whitelist from environment variable, fallback to localhost only
   const whitelistEnv = process.env.IP_WHITELIST || '127.0.0.1'
   const allowedIPs = whitelistEnv.split(',').map(ip => ip.trim())
 
   console.log(`Access attempt from IP: ${ip}`)
+  console.log(`X-Forwarded-For header: ${request.headers.get('x-forwarded-for')}`)
   console.log(`Allowed IPs: ${allowedIPs.join(', ')}`)
 
   // Check if IP is allowed
