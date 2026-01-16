@@ -1,0 +1,23 @@
+{
+  "whitelist": {
+    "description": "IP Whitelist Configuration for Portfolio Access Control",
+    "lastUpdated": "2026-01-15",
+    "allowedIPs": [
+      {
+        "ip": "127.0.0.1",
+        "description": "Localhost - Local development",
+        "active": true
+      },
+      {
+        "ip": "72.12.197.21",
+        "description": "Primary access IP",
+        "active": true
+      }
+    ],
+    "documentation": {
+      "format": "This file documents the IP whitelist for the portfolio site",
+      "updateInstructions": "Update the environment variable IP_WHITELIST in .env.local or Vercel dashboard",
+      "gitHubNotice": "This is a reference document. The actual whitelist is controlled via IP_WHITELIST environment variable"
+    }
+  }
+}
