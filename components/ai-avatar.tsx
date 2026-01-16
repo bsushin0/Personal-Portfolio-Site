@@ -399,28 +399,8 @@ export default function AiAvatar() {
         </defs>
       </svg>
 
-      {/* Particles */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        {particles.map((p: Particle) => (
-          <div
-            key={p.id}
-            className={`absolute w-2 h-2 rounded-full blur-sm ${
-              p.type === "spark"
-                ? "bg-gradient-to-r from-cyan-300 to-purple-400"
-                : p.type === "glow"
-                  ? "bg-gradient-to-r from-cyan-400 to-blue-400"
-                  : "bg-gradient-to-r from-purple-300 to-cyan-400"
-            }`}
-            style={{
-              left: `calc(50% + ${p.x}px)`,
-              top: `calc(50% + ${p.y}px)`,
-              opacity: Math.max(0, Math.min(1, p.life * 0.9)),
-              transform: "translate(-50%, -50%)",
-              boxShadow: `0 0 ${8 + p.life * 8}px currentColor`,
-            }}
-          />
-        ))}
-      </div>
+      {/* Particles - disabled */}
+      {/* Removed particle rendering to clean up avatar face */}
 
       {/* Main Avatar Container */}
       <div

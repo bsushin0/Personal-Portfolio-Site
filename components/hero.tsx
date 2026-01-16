@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import AiAvatar from "./ai-avatar"
-import { ArrowDown, Github, Linkedin, Twitter } from "lucide-react"
+import { ArrowDown, Github, Linkedin } from "lucide-react"
 
 export default function Hero() {
   return (
@@ -16,7 +16,7 @@ export default function Hero() {
             Building Secure, Smart Systems for the Future
           </h2>
           <p className="text-cyan-100/80 dark:text-cyan-100/70 mb-8 text-lg">
-            Computer Science student at Purdue University with a passion for AI-driven innovation and cybersecurity.
+            Artificial Intellingence student at Purdue University with a passion for AI-driven innovation and cybersecurity.
             Transforming ideas into intelligent, secure, and scalable systems.
           </p>
 
@@ -45,14 +45,6 @@ export default function Hero() {
               className="text-cyan-300 hover:text-cyan-100 hover:scale-110 transition-all duration-300"
             >
               <Linkedin size={24} />
-            </a>
-            <a
-              href="https://twitter.com/bsushin0"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-cyan-300 hover:text-cyan-100 hover:scale-110 transition-all duration-300"
-            >
-              <Twitter size={24} />
             </a>
           </div>
         </div>
