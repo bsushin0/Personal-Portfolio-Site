@@ -626,17 +626,6 @@ export default function AiAvatar() {
                   className="text-cyan-300/40 dark:text-cyan-300/50 transition-colors duration-200"
                 />
 
-                {/* Surprised/excited mouth (grows bigger) */}
-                {expression.surprise > 0.3 && (
-                  <circle
-                    cx="60"
-                    cy={42 + expression.surprise * 4}
-                    r={6 + expression.surprise * 4}
-                    fill="currentColor"
-                    className="text-purple-400/60 dark:text-purple-300/60 transition-all duration-200"
-                  />
-                )}
-
                 {/* Tongue peek when thinking */}
                 {expression.emotion === "thinking" && expression.energy > 0.6 && (
                   <ellipse
