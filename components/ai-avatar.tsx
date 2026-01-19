@@ -288,7 +288,7 @@ export default function AiAvatar() {
   // Drag handlers
   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
     // Disable drag on mobile devices
-    if (typeof window !== \"undefined\" && window.innerWidth < 768) {
+    if (typeof window !== "undefined" && window.innerWidth < 768) {
       return
     }
     if (avatarRef.current) {
