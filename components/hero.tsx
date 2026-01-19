@@ -49,7 +49,7 @@ export default function Hero() {
           </div>
         </div>
 
-        <div className="order-1 md:order-2 flex justify-center">
+        <div className="order-1 md:order-2 hidden md:flex justify-center">
           <AiAvatar />
         </div>
       </div>
