@@ -58,14 +58,14 @@ export default function ContactForm() {
   }
 
   return (
-    <section id="contact" className="py-20 bg-gradient-futuristic border-t border-cyan-500/20">
-      <div className="max-w-3xl mx-auto px-4">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-cyan-300 to-purple-400 bg-clip-text text-transparent mb-4">Get In Touch</h2>
-          <p className="text-cyan-200/70 dark:text-cyan-200/60 mb-3">
+    <section id="contact" className="py-16 md:py-20 bg-gradient-futuristic-light dark:bg-gradient-futuristic border-t border-blue-200 dark:border-cyan-500/20">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6">
+        <div className="text-center mb-10 md:mb-12">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-600 via-cyan-500 to-purple-600 dark:from-cyan-300 dark:to-purple-400 bg-clip-text text-transparent mb-4">Get In Touch</h2>
+          <p className="text-gray-700 dark:text-cyan-200/70 mb-3 text-sm sm:text-base">
             Interested in collaborating or have questions about my work? Let's connect!
           </p>
-          <p className="text-cyan-300/80 dark:text-cyan-300/70 text-sm">
+          <p className="text-gray-600 dark:text-cyan-300/70 text-xs sm:text-sm">
             Fill out the form below and send me a message. I'll get back to you promptly to discuss opportunities, share my resume, or chat about AI and cybersecurity.
           </p>
         </div>
@@ -87,9 +87,9 @@ export default function ContactForm() {
               </div>
             )}
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
               <div className="space-y-2">
-                <Label htmlFor="name" className="text-cyan-200 dark:text-cyan-200">
+                <Label htmlFor="name" className="text-gray-700 dark:text-cyan-200 text-sm md:text-base">
                   Name
                 </Label>
                 <Input
@@ -99,11 +99,11 @@ export default function ContactForm() {
                   onChange={handleChange}
                   placeholder="Your name"
                   required
-                  className="bg-gray-900/50 border-cyan-500/30 dark:border-cyan-500/30 focus:border-cyan-400 focus:ring-cyan-500/20 text-cyan-100 placeholder:text-cyan-400/50"
+                  className="h-12 bg-white dark:bg-gray-900/50 border-blue-200 dark:border-cyan-500/30 text-gray-900 dark:text-cyan-100 placeholder:text-gray-400 dark:placeholder:text-cyan-400/50 focus:border-blue-500 dark:focus:border-cyan-400 focus:ring-blue-500/20 dark:focus:ring-cyan-500/20"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="email" className="text-cyan-200 dark:text-cyan-200">
+                <Label htmlFor="email" className="text-gray-700 dark:text-cyan-200 text-sm md:text-base">
                   Email
                 </Label>
                 <Input
@@ -114,13 +114,13 @@ export default function ContactForm() {
                   onChange={handleChange}
                   placeholder="your.email@example.com"
                   required
-                  className="bg-gray-900/50 border-cyan-500/30 dark:border-cyan-500/30 focus:border-cyan-400 focus:ring-cyan-500/20 text-cyan-100 placeholder:text-cyan-400/50"
+                  className="h-12 bg-white dark:bg-gray-900/50 border-blue-200 dark:border-cyan-500/30 text-gray-900 dark:text-cyan-100 placeholder:text-gray-400 dark:placeholder:text-cyan-400/50 focus:border-blue-500 dark:focus:border-cyan-400 focus:ring-blue-500/20 dark:focus:ring-cyan-500/20"
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="subject" className="text-cyan-200 dark:text-cyan-200">
+              <Label htmlFor="subject" className="text-gray-700 dark:text-cyan-200 text-sm md:text-base">
                 Subject
               </Label>
               <Input
@@ -130,12 +130,12 @@ export default function ContactForm() {
                 onChange={handleChange}
                 placeholder="What is this regarding?"
                 required
-                className="bg-gray-900/50 border-cyan-500/30 dark:border-cyan-500/30 focus:border-cyan-400 focus:ring-cyan-500/20 text-cyan-100 placeholder:text-cyan-400/50"
+                className="h-12 bg-white dark:bg-gray-900/50 border-blue-200 dark:border-cyan-500/30 text-gray-900 dark:text-cyan-100 placeholder:text-gray-400 dark:placeholder:text-cyan-400/50 focus:border-blue-500 dark:focus:border-cyan-400 focus:ring-blue-500/20 dark:focus:ring-cyan-500/20"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="message" className="text-cyan-200 dark:text-cyan-200">
+              <Label htmlFor="message" className="text-gray-700 dark:text-cyan-200 text-sm md:text-base">
                 Message
               </Label>
               <Textarea
@@ -144,16 +144,16 @@ export default function ContactForm() {
                 value={formData.message}
                 onChange={handleChange}
                 placeholder="Your message..."
-                rows={6}
+                rows={5}
                 required
-                className="bg-gray-900/50 border-cyan-500/30 dark:border-cyan-500/30 focus:border-cyan-400 focus:ring-cyan-500/20 text-cyan-100 placeholder:text-cyan-400/50"
+                className="min-h-32 bg-white dark:bg-gray-900/50 border-blue-200 dark:border-cyan-500/30 text-gray-900 dark:text-cyan-100 placeholder:text-gray-400 dark:placeholder:text-cyan-400/50 focus:border-blue-500 dark:focus:border-cyan-400 focus:ring-blue-500/20 dark:focus:ring-cyan-500/20 resize-none"
               />
             </div>
 
             <Button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 dark:from-cyan-600 dark:to-blue-600 dark:hover:from-cyan-700 dark:hover:to-blue-700 shadow-lg shadow-cyan-500/50 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full h-12 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 dark:from-cyan-600 dark:to-blue-600 dark:hover:from-cyan-700 dark:hover:to-blue-700 text-white shadow-lg shadow-blue-500/50 dark:shadow-cyan-500/50 disabled:opacity-50 disabled:cursor-not-allowed text-base font-semibold"
             >
               <Send className="mr-2 h-4 w-4" />
               {loading ? "Sending..." : "Send Message"}

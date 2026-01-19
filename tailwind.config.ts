@@ -111,6 +111,7 @@ const config = {
       },
       backgroundImage: {
         "gradient-futuristic": "linear-gradient(135deg, #0a0e27 0%, #1a1a3e 50%, #0f0f2e 100%)",
+        "gradient-futuristic-light": "linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #dbeafe 100%)",
         "gradient-cyan-glow": "linear-gradient(135deg, rgba(0, 193, 255, 0.1) 0%, rgba(0, 193, 255, 0) 100%)",
         "gradient-purple-glow": "linear-gradient(135deg, rgba(157, 78, 221, 0.1) 0%, rgba(157, 78, 221, 0) 100%)",
       },

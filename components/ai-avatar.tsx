@@ -287,6 +287,10 @@ export default function AiAvatar() {
 
   // Drag handlers
   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+    // Disable drag on mobile devices
+    if (typeof window !== \"undefined\" && window.innerWidth < 768) {
+      return
+    }
     if (avatarRef.current) {
       setIsDragging(true)
       dragStartRef.current = { x: e.clientX, y: e.clientY }
@@ -435,7 +439,7 @@ export default function AiAvatar() {
 
         {/* Face background with dynamic gradient */}
         <div
-          className={`relative w-64 h-64 md:w-80 md:h-80 rounded-full transition-all duration-300 overflow-hidden border-4 shadow-2xl ${
+          className={`relative w-48 h-48 sm:w-56 sm:h-56 md:w-64 md:h-64 lg:w-80 lg:h-80 rounded-full transition-all duration-300 overflow-hidden border-4 shadow-2xl ${
             isHovering || isDragging
               ? "border-cyan-400 shadow-cyan-500/70 bg-gradient-to-br from-cyan-500 via-blue-500 to-purple-600 dark:from-cyan-600 dark:via-blue-600 dark:to-purple-700"
               : "border-cyan-400 shadow-cyan-500/50 bg-gradient-to-br from-cyan-400 via-blue-400 to-purple-500 dark:from-cyan-500 dark:via-blue-500 dark:to-purple-600"
