@@ -13,11 +13,11 @@ export default function Hero() {
             Sushin Bandha
           </h1>
           <h2 className="text-xl md:text-2xl font-medium text-gray-700 dark:text-cyan-200 mb-6">
-            Building Secure, Smart Systems for the Future
+            AI Student | Product Management & Innovation
           </h2>
           <p className="text-gray-600 dark:text-cyan-100/80 mb-8 text-lg">
-            Artificial Intelligence student at Purdue University with a passion for AI-driven innovation and cybersecurity.
-            Transforming ideas into intelligent, secure, and scalable systems.
+            Purdue AI student specializing in user-centric products at the intersection of machine learning and business strategy.
+            Proven leader who directed a 25-member team, now seeking to build and launch innovative, AI-powered solutions.
           </p>
 
           <div className="flex flex-wrap gap-4">

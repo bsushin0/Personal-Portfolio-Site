@@ -1,0 +1,6 @@
+# Exclude private documents from Vercel deployment
+# These files are needed server-side but should not be publicly accessible
+private/documents/
+
+# Keep private/resume for email attachments (server-side only)
+# This folder is NOT served to the public web
