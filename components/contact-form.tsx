@@ -63,10 +63,10 @@ export default function ContactForm() {
         <div className="text-center mb-10 md:mb-12">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-600 via-cyan-500 to-purple-600 dark:from-cyan-300 dark:to-purple-400 bg-clip-text text-transparent mb-4">Get In Touch</h2>
           <p className="text-gray-700 dark:text-cyan-200/70 mb-3 text-sm sm:text-base">
-            Interested in collaborating or have questions about my work? Let's connect!
+            Interested in collaborating or have questions about my work? Let&apos;s connect!
           </p>
           <p className="text-gray-600 dark:text-cyan-300/70 text-xs sm:text-sm">
-            Fill out the form below and send me a message. I'll get back to you promptly to discuss opportunities, share my resume, or chat about AI and cybersecurity.
+            Fill out the form below and send me a message. I&apos;ll get back to you promptly to discuss opportunities, share my resume, or chat about AI and cybersecurity.
           </p>
         </div>
 
@@ -75,7 +75,7 @@ export default function ContactForm() {
             <CheckCircle className="mx-auto mb-3 text-green-400" size={32} />
             <h3 className="text-lg font-semibold text-green-300 mb-2">Message Sent!</h3>
             <p className="text-green-200/70">
-              Thanks for reaching out. I'll get back to you within 24-48 hours. You should receive a confirmation email shortly.
+              Thanks for reaching out. I&apos;ll get back to you within 24-48 hours. You should receive a confirmation email shortly.
             </p>
           </div>
         ) : (

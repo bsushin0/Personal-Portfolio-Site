@@ -233,7 +233,7 @@ export default function AiAvatar() {
       window.removeEventListener("touchmove", handleTouchMove as EventListener)
       window.removeEventListener("touchend", handleTouchEnd)
     }
-  }, [])
+  }, [createParticles])
 
   // Eye tracking and emotion
   useEffect(() => {
@@ -325,35 +325,7 @@ export default function AiAvatar() {
     }
   }, [isDragging])
 
-  // Particle creation with multiple types
-  const createParticles = useCallback(() => {
-    const newParticles: Particle[] = []
-    const types: Particle["type"][] = ["spark", "glow", "trail"]
-    const colors = [
-      "from-cyan-300 via-blue-400 to-purple-400",
-      "from-purple-400 via-cyan-400 to-blue-400",
-      "from-cyan-400 via-purple-400 to-cyan-300",
-    ]
-
-    for (let i = 0; i < 20; i++) {
-      const angle = (i / 20) * Math.PI * 2
-      const velocity = 2 + Math.random() * 5
-      const type = types[Math.floor(Math.random() * types.length)]
-      const color = colors[Math.floor(Math.random() * colors.length)]
-
-      newParticles.push({
-        id: particleIdRef.current++,
-        x: 0,
-        y: 0,
-        vx: Math.cos(angle) * velocity,
-        vy: Math.sin(angle) * velocity,
-        life: 1,
-        type,
-        color,
-      })
-    }
-    setParticles((prev: Particle[]) => [...prev, ...newParticles])
-  }, [])
+  
 
   // Particle animation
   useEffect(() => {
@@ -461,7 +433,7 @@ export default function AiAvatar() {
           <div
             className="absolute inset-0 rounded-full"
             style={{
-              background: `conic-gradient(from ${Date.now() / 10}deg, transparent, rgba(255,255,255,${expression.energy * 0.15}), transparent)`,
+              background: `conic-gradient(from 0deg, transparent, rgba(255,255,255,${expression.energy * 0.15}), transparent)`,
               animation: `spin 8s linear infinite`,
             }}
           />

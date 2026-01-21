@@ -16,7 +16,7 @@ const skillCategories: SkillCategory[] = [
     id: 1,
     title: "Programming Languages",
     icon: <Code className="h-5 w-5" />,
-    skills: ["Python", "Java", "C", "JavaScript", "TypeScript", "SQL"],
+    skills: ["Python", "Java", "C", "JavaScript", "TypeScript", "SQL", "R", "C++", "Power Fx"],
     color: "bg-blue-500/20 dark:bg-blue-500/30 text-blue-200 dark:text-blue-300 border border-blue-500/30",
   },
   {
