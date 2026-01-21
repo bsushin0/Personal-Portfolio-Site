@@ -145,8 +145,8 @@ export async function POST(req: NextRequest) {
 
     // Generate response
     const { text: responseText } = await generateText({
-      // Use stable, generally-available Gemini model
-      model: google('models/gemini-1.5-flash'),
+      // Use Gemini 2.5 Flash-Lite (efficient, fast model)
+      model: google('gemini-2.5-flash-lite'),
       messages: messages_with_context.filter(m => m.role !== 'system').slice(-5) as Message[], // Keep recent messages
       system: SYSTEM_PROMPT + `\n\n**Context:**\n${context}`,
       temperature: 0.7,
