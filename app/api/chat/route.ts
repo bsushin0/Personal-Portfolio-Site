@@ -1,8 +1,10 @@
 import { google } from '@ai-sdk/google';
-import { generateText, Message } from 'ai';
+import { generateText } from 'ai';
 import { NextRequest, NextResponse } from 'next/server';
 import { searchSimilarChunks, formatContextForLLM } from '@/lib/vector-search';
 import type { EmbeddingChunk } from '@/lib/vector-search';
+
+type ChatMessage = { role: 'user' | 'assistant' | 'system'; content: string }
 
 // Import pre-computed embeddings (generated at build time)
 let embeddingsData: EmbeddingChunk[] = [];
@@ -78,10 +80,10 @@ When referencing specific experiences or projects, cite them naturally (e.g., "D
 
 export async function POST(req: NextRequest) {
   try {
-    const { messages }: { messages: Message[] } = await req.json();
+    const { messages }: { messages: ChatMessage[] } = await req.json();
 
     // Rate limiting check (use IP or session ID)
-    const sessionId = req.headers.get('x-forwarded-for') || req.ip || 'default';
+    const sessionId = (req.headers.get('x-forwarded-for')?.split(',')[0].trim()) || 'default';
     const rateLimit = checkRateLimit(sessionId);
 
     if (!rateLimit.allowed) {
@@ -123,7 +125,7 @@ export async function POST(req: NextRequest) {
     );
 
     // Construct messages with RAG context
-    const messages_with_context: Message[] = [
+    const messages_with_context: ChatMessage[] = [
       {
         role: 'system',
         content: SYSTEM_PROMPT,
@@ -147,10 +149,10 @@ export async function POST(req: NextRequest) {
     const { text: responseText } = await generateText({
       // Use Gemini 2.5 Flash-Lite (efficient, fast model)
       model: google('gemini-2.5-flash-lite'),
-      messages: messages_with_context.filter(m => m.role !== 'system').slice(-5) as Message[], // Keep recent messages
+      messages: messages_with_context.filter(m => m.role !== 'system').slice(-5) as ChatMessage[], // Keep recent messages
       system: SYSTEM_PROMPT + `\n\n**Context:**\n${context}`,
       temperature: 0.7,
-      maxTokens: 800,
+      maxOutputTokens: 800,
     });
 
     return NextResponse.json(
