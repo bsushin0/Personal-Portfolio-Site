@@ -60,6 +60,11 @@ export default function AiAvatar() {
   const [isKeyboardInteracting, setIsKeyboardInteracting] = useState(false)
   const [focusEnergy, setFocusEnergy] = useState(0)
 
+  // Placeholder particle generator to prevent runtime errors in production
+  const createParticles = useCallback(() => {
+    // Particle visuals are currently disabled; keep no-op to avoid reference errors
+  }, [])
+
   // Optimized animation loop with requestAnimationFrame
   useEffect(() => {
     let startTime = Date.now()
