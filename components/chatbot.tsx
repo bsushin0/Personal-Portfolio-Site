@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from 'react';
-import { X, Send, Loader2, Sparkles } from 'lucide-react';
+import { X, Send, Loader2, Sparkles, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
@@ -105,7 +105,7 @@ export function Chatbot() {
               </div>
               <div>
                 <h3 className="font-semibold text-cyan-900 dark:text-cyan-100">
-                  Sushin's AI Assistant
+                  Sushin&apos;s AI Assistant
                 </h3>
                 <p className="text-xs text-cyan-700 dark:text-cyan-300">
                   Powered by Gemini
@@ -120,6 +120,16 @@ export function Chatbot() {
             >
               <X className="w-5 h-5" />
             </Button>
+          </div>
+
+          {/* Learning Notice */}
+          <div className="px-4 py-2 border-b border-yellow-200 dark:border-yellow-800/40 bg-yellow-50 dark:bg-yellow-900/30">
+            <div className="flex items-start gap-2 text-yellow-900 dark:text-yellow-100">
+              <AlertCircle className="w-4 h-4 mt-0.5 text-yellow-700 dark:text-yellow-300" />
+              <p className="text-xs">
+                This AI assistant was developed in-house. It is still learning and may make mistakes.
+              </p>
+            </div>
           </div>
 
           {/* Messages Area */}
@@ -163,7 +173,7 @@ export function Chatbot() {
               <Input
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="Ask about Sushin's experience..."
+                placeholder="Ask about Sushin&apos;s experience..."
                 disabled={isLoading}
                 className={cn(
                   "flex-1 bg-white/50 dark:bg-gray-900/50",
@@ -191,7 +201,7 @@ export function Chatbot() {
               </Button>
             </form>
             <p className="text-xs text-cyan-600/70 dark:text-cyan-400/70 mt-2 text-center">
-              Powered by Google Gemini • Free & In-House
+              Powered by Google Gemini • Developed In-House
             </p>
           </div>
         </div>
