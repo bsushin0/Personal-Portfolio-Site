@@ -135,14 +135,18 @@ export async function POST(req: NextRequest) {
       ...messages,
     ];
 
-    // Check for API key
+    // Check for API key with graceful failure
     if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
-      throw new Error('GOOGLE_GENERATIVE_AI_API_KEY not configured');
+      return NextResponse.json(
+        { error: 'Chat is temporarily unavailable: missing API key configuration.' },
+        { status: 503 }
+      );
     }
 
     // Generate response
     const { text: responseText } = await generateText({
-      model: google('gemini-2.0-flash-exp'),
+      // Use stable, generally-available Gemini model
+      model: google('models/gemini-1.5-flash'),
       messages: messages_with_context.filter(m => m.role !== 'system').slice(-5) as Message[], // Keep recent messages
       system: SYSTEM_PROMPT + `\n\n**Context:**\n${context}`,
       temperature: 0.7,
