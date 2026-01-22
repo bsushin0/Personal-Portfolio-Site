@@ -22,8 +22,8 @@ export default function Hero() {
 
           <div className="flex flex-wrap gap-4">
             <Button
-              variant="outline"
-              className="border-blue-500 text-blue-600 hover:text-blue-700 bg-transparent hover:bg-blue-50 dark:border-cyan-400 dark:text-cyan-300 dark:hover:text-cyan-100 dark:hover:bg-cyan-500/10 hover:shadow-lg hover:shadow-blue-500/30 dark:hover:shadow-cyan-500/30 transition-all"
+              onClick={() => document.getElementById("projects")?.scrollIntoView({ behavior: "smooth" })}
+              className="border-blue-500 text-white bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 dark:from-cyan-600 dark:to-blue-600 dark:hover:from-cyan-700 dark:hover:to-blue-700 shadow-lg shadow-blue-500/50 dark:shadow-cyan-500/50 transition-all"
             >
               View Projects
             </Button>

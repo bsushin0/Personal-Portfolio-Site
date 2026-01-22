@@ -39,6 +39,32 @@ const experiences: Experience[] = [
     ],
     skills: ["Product Strategy", "Cross-functional Leadership", "Automation", "POC Development", "Salesforce"],
   },
+  {
+    id: 3,
+    title: "Tech Lead",
+    company: "BGR",
+    period: "September 2023 - May 2024",
+    type: "Volunteer",
+    description: [
+      "Directed technical strategy and architecture decisions for nonprofit software initiatives, mentoring peer developers on best practices and system design patterns",
+      "Architected and implemented scalable solutions for community-focused projects, ensuring alignment with organizational mission and user needs",
+      "Collaborated cross-functionally with stakeholders to translate requirements into robust technical implementations",
+    ],
+    skills: ["Technical Leadership", "Software Architecture", "Mentorship", "Project Management", "Full-Stack Development"],
+  },
+  {
+    id: 4,
+    title: "Tutor",
+    company: "Kumon",
+    period: "June 2022 - August 2023",
+    type: "Part-time",
+    description: [
+      "Taught mathematics and English to elementary and middle school students, customizing instruction to individual learning styles and pace",
+      "Developed engaging lesson plans and assessments that improved student proficiency and test scores",
+      "Mentored struggling students through patient, one-on-one instruction and positive reinforcement",
+    ],
+    skills: ["Teaching", "Curriculum Development", "Student Mentoring", "Communication", "Patience"],
+  },
 ]
 
 export default function Experience() {
