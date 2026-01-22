@@ -41,7 +41,7 @@ const experiences: Experience[] = [
   },
   {
     id: 3,
-    title: "Tech Lead",
+    title: "BGR Team Leader",
     company: "BGR",
     period: "September 2023 - May 2024",
     type: "Volunteer",
