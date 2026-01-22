@@ -6,12 +6,12 @@ export default function About() {
     {
       icon: <GraduationCap className="h-6 w-6" />,
       title: "Education",
-      description: "Computer Science at Purdue University",
+      description: "B.S. in Artificial Intelligence at Purdue University (Expected May 2027)",
     },
     {
       icon: <Code className="h-6 w-6" />,
-      title: "Development",
-      description: "Full-stack development with Cloud & AI integration",
+      title: "Product & ML",
+      description: "Product Management, Machine Learning, and MLOps",
     },
     {
       icon: <Shield className="h-6 w-6" />,
@@ -30,10 +30,10 @@ export default function About() {
       <div className="text-center mb-16">
         <h2 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-cyan-300 to-purple-400 bg-clip-text text-transparent mb-4">About Me</h2>
         <p className="text-cyan-200/70 dark:text-cyan-200/60 max-w-3xl mx-auto text-lg leading-relaxed">
-          I'm a results-driven student combining technical expertise with strong communication and leadership. I aim to
-          innovate at the intersection of artificial intelligence, cloud computing, and security. With hands-on experience at PSEG, Purdue
-          research labs, and leadership roles on campus, I bring both technical depth and cross-functional teamwork to
-          every project.
+          I&apos;m a results-driven AI student combining technical expertise with strong communication and leadership. I specialize in
+          user-centric products at the intersection of machine learning and business strategy. With hands-on experience as a
+          Product Intern at PSEG, leading cross-functional teams, and building ML solutions for BASF, I bring both technical
+          depth and strategic thinking to every project.
         </p>
       </div>
 

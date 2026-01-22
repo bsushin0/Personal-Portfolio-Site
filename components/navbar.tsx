@@ -21,10 +21,10 @@ export default function Navbar() {
   ]
 
   return (
-    <nav className="sticky top-0 z-50 glass-effect border-b border-cyan-500/20">
+    <nav className="sticky top-0 z-50 glass-effect border-b border-cyan-500/20 dark:border-cyan-500/20 border-blue-200 dark:border-blue-500/20">
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
-          <div className="flex-shrink-0 font-bold text-xl bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
+        <div className="flex items-center justify-between h-14 md:h-16">
+          <div className="flex-shrink-0 font-bold text-lg md:text-xl bg-gradient-to-r from-blue-600 via-cyan-500 to-purple-600 dark:from-cyan-400 dark:to-purple-400 bg-clip-text text-transparent">
             <a href={logoHref}>{logoText}</a>
           </div>
 
@@ -35,7 +35,7 @@ export default function Navbar() {
                 <a
                   key={item.name}
                   href={item.href}
-                  className="px-3 py-2 rounded-md text-sm font-medium text-cyan-100 hover:text-cyan-300 hover:bg-cyan-500/10 transition-all duration-300"
+                  className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-cyan-100 hover:text-blue-600 dark:hover:text-cyan-300 hover:bg-blue-50 dark:hover:bg-cyan-500/10 transition-all duration-300"
                 >
                   {item.name}
                 </a>
@@ -51,7 +51,7 @@ export default function Navbar() {
               variant="ghost"
               size="icon"
               onClick={() => setIsOpen(!isOpen)}
-              className="text-cyan-300 hover:text-cyan-100 hover:bg-cyan-500/10"
+              className="text-gray-700 dark:text-cyan-300 hover:text-blue-600 dark:hover:text-cyan-100 hover:bg-blue-50 dark:hover:bg-cyan-500/10"
             >
               {isOpen ? <X size={24} /> : <Menu size={24} />}
             </Button>
@@ -61,12 +61,12 @@ export default function Navbar() {
 
       {/* Mobile menu */}
       <div className={cn("md:hidden", isOpen ? "block" : "hidden")}>
-        <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 border-t border-cyan-500/20">
+        <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 border-t border-blue-200 dark:border-cyan-500/20">
           {navItems.map((item) => (
             <a
               key={item.name}
               href={item.href}
-              className="block px-3 py-2 rounded-md text-base font-medium text-cyan-100 hover:text-cyan-300 hover:bg-cyan-500/10 transition-all duration-300"
+              className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-cyan-100 hover:text-blue-600 dark:hover:text-cyan-300 hover:bg-blue-50 dark:hover:bg-cyan-500/10 transition-all duration-300"
               onClick={() => setIsOpen(false)}
             >
               {item.name}

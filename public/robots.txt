@@ -1,0 +1,7 @@
+# robots.txt for Personal Portfolio Site
+# Allow all crawlers to index the site
+User-agent: *
+Allow: /
+
+# Optional: add your sitemap when available
+# Sitemap: https://your-domain.example/sitemap.xml

@@ -1,16 +1,29 @@
 import type React from "react"
-import type { Metadata } from "next"
+import type { Metadata, Viewport } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { SpeedInsights } from "@vercel/speed-insights/next"
-import { Analytics } from "@vercel/analytics/next"
+import { Chatbot } from "@/components/chatbot"
+import DevelopmentBanner from "@/components/development-banner"
 
 const inter = Inter({ subsets: ["latin"] })
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  userScalable: true,
+}
 
 export const metadata: Metadata = {
   title: "Sushin Bandha - AI & Cybersecurity Portfolio",
   description: "Computer Science student at Purdue University specializing in AI, Cybersecurity, and Cloud Computing",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "Sushin Bandha",
+  },
 }
 
 export default function RootLayout({
@@ -22,10 +35,11 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
+          <DevelopmentBanner />
           {children}
+          <Chatbot />
         </ThemeProvider>
         <SpeedInsights />
-        <Analytics />
       </body>
     </html>
   )

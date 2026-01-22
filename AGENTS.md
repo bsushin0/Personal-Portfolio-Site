@@ -3,6 +3,11 @@
 ## Project Context
 **Personal portfolio website** showcasing excellence in AI. Maintained on **GitHub** (github.com/bsushin0/Personal-Portfolio-Site), deployed on **Vercel**. Purpose: demonstrate deep technical knowledge, project accomplishments, and expertise in CS/AI through a polished, modern web experience.
 
+## Latest Improvements
+- Conversational portfolio chatbot powered by embeddings-backed vector search
+- Document processing pipeline and embedding generation script for fresh content ingestion
+- Tailored chatbot UI section added to the site layout
+
 ## Build & Commands
 - **Build**: `pnpm build`
 - **Dev**: `pnpm dev` (localhost:3000)
@@ -29,4 +34,4 @@
 - **Error handling**: Components fail gracefully; no error boundaries needed for portfolio
 
 ## Strategic Direction
-Build with polished UX/design to reflect excellence in engineering. Showcase CS fundamentals, AI/ML knowledge, and scalable system design through visual presentation and content quality.
+Build an AI-first portfolio that demonstrates engineering rigor and product polish. Keep content authoritative and current via automated embedding refresh, pair strong storytelling with interactive chat UX, and highlight CS/AI depth alongside shipped, real-world projects.

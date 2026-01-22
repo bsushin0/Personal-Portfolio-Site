@@ -60,6 +60,11 @@ export default function AiAvatar() {
   const [isKeyboardInteracting, setIsKeyboardInteracting] = useState(false)
   const [focusEnergy, setFocusEnergy] = useState(0)
 
+  // Placeholder particle generator to prevent runtime errors in production
+  const createParticles = useCallback(() => {
+    // Particle visuals are currently disabled; keep no-op to avoid reference errors
+  }, [])
+
   // Optimized animation loop with requestAnimationFrame
   useEffect(() => {
     let startTime = Date.now()
@@ -233,7 +238,7 @@ export default function AiAvatar() {
       window.removeEventListener("touchmove", handleTouchMove as EventListener)
       window.removeEventListener("touchend", handleTouchEnd)
     }
-  }, [])
+  }, [createParticles])
 
   // Eye tracking and emotion
   useEffect(() => {
@@ -287,6 +292,10 @@ export default function AiAvatar() {
 
   // Drag handlers
   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+    // Disable drag on mobile devices
+    if (typeof window !== "undefined" && window.innerWidth < 768) {
+      return
+    }
     if (avatarRef.current) {
       setIsDragging(true)
       dragStartRef.current = { x: e.clientX, y: e.clientY }
@@ -321,35 +330,7 @@ export default function AiAvatar() {
     }
   }, [isDragging])
 
-  // Particle creation with multiple types
-  const createParticles = useCallback(() => {
-    const newParticles: Particle[] = []
-    const types: Particle["type"][] = ["spark", "glow", "trail"]
-    const colors = [
-      "from-cyan-300 via-blue-400 to-purple-400",
-      "from-purple-400 via-cyan-400 to-blue-400",
-      "from-cyan-400 via-purple-400 to-cyan-300",
-    ]
-
-    for (let i = 0; i < 20; i++) {
-      const angle = (i / 20) * Math.PI * 2
-      const velocity = 2 + Math.random() * 5
-      const type = types[Math.floor(Math.random() * types.length)]
-      const color = colors[Math.floor(Math.random() * colors.length)]
-
-      newParticles.push({
-        id: particleIdRef.current++,
-        x: 0,
-        y: 0,
-        vx: Math.cos(angle) * velocity,
-        vy: Math.sin(angle) * velocity,
-        life: 1,
-        type,
-        color,
-      })
-    }
-    setParticles((prev: Particle[]) => [...prev, ...newParticles])
-  }, [])
+  
 
   // Particle animation
   useEffect(() => {
@@ -399,28 +380,8 @@ export default function AiAvatar() {
         </defs>
       </svg>
 
-      {/* Particles */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        {particles.map((p: Particle) => (
-          <div
-            key={p.id}
-            className={`absolute w-2 h-2 rounded-full blur-sm ${
-              p.type === "spark"
-                ? "bg-gradient-to-r from-cyan-300 to-purple-400"
-                : p.type === "glow"
-                  ? "bg-gradient-to-r from-cyan-400 to-blue-400"
-                  : "bg-gradient-to-r from-purple-300 to-cyan-400"
-            }`}
-            style={{
-              left: `calc(50% + ${p.x}px)`,
-              top: `calc(50% + ${p.y}px)`,
-              opacity: Math.max(0, Math.min(1, p.life * 0.9)),
-              transform: "translate(-50%, -50%)",
-              boxShadow: `0 0 ${8 + p.life * 8}px currentColor`,
-            }}
-          />
-        ))}
-      </div>
+      {/* Particles - disabled */}
+      {/* Removed particle rendering to clean up avatar face */}
 
       {/* Main Avatar Container */}
       <div
@@ -455,7 +416,7 @@ export default function AiAvatar() {
 
         {/* Face background with dynamic gradient */}
         <div
-          className={`relative w-64 h-64 md:w-80 md:h-80 rounded-full transition-all duration-300 overflow-hidden border-4 shadow-2xl ${
+          className={`relative w-48 h-48 sm:w-56 sm:h-56 md:w-64 md:h-64 lg:w-80 lg:h-80 rounded-full transition-all duration-300 overflow-hidden border-4 shadow-2xl ${
             isHovering || isDragging
               ? "border-cyan-400 shadow-cyan-500/70 bg-gradient-to-br from-cyan-500 via-blue-500 to-purple-600 dark:from-cyan-600 dark:via-blue-600 dark:to-purple-700"
               : "border-cyan-400 shadow-cyan-500/50 bg-gradient-to-br from-cyan-400 via-blue-400 to-purple-500 dark:from-cyan-500 dark:via-blue-500 dark:to-purple-600"
@@ -477,7 +438,7 @@ export default function AiAvatar() {
           <div
             className="absolute inset-0 rounded-full"
             style={{
-              background: `conic-gradient(from ${Date.now() / 10}deg, transparent, rgba(255,255,255,${expression.energy * 0.15}), transparent)`,
+              background: `conic-gradient(from 0deg, transparent, rgba(255,255,255,${expression.energy * 0.15}), transparent)`,
               animation: `spin 8s linear infinite`,
             }}
           />
@@ -645,17 +606,6 @@ export default function AiAvatar() {
                   fill="currentColor"
                   className="text-cyan-300/40 dark:text-cyan-300/50 transition-colors duration-200"
                 />
-
-                {/* Surprised/excited mouth (grows bigger) */}
-                {expression.surprise > 0.3 && (
-                  <circle
-                    cx="60"
-                    cy={42 + expression.surprise * 4}
-                    r={6 + expression.surprise * 4}
-                    fill="currentColor"
-                    className="text-purple-400/60 dark:text-purple-300/60 transition-all duration-200"
-                  />
-                )}
 
                 {/* Tongue peek when thinking */}
                 {expression.emotion === "thinking" && expression.energy > 0.6 && (

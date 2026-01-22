@@ -34,8 +34,8 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Read resume file
-    const resumePath = path.join(process.cwd(), "public", "sushin-bandha-resume.pdf")
+    // Read resume file from private folder (not accessible via web)
+    const resumePath = path.join(process.cwd(), "private", "resume", "sushin-bandha-resume.pdf")
     const resumeBuffer = fs.readFileSync(resumePath)
 
     // Send auto-reply to the user with resume attachment

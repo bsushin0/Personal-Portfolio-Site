@@ -1,11 +1,16 @@
 {
   "whitelist": {
     "description": "IP Whitelist Configuration for Portfolio Access Control",
-    "lastUpdated": "2026-01-15",
+    "lastUpdated": "2026-01-16",
     "allowedIPs": [
       {
         "ip": "127.0.0.1",
-        "description": "Localhost - Local development",
+        "description": "Localhost - IPv4 local development",
+        "active": true
+      },
+      {
+        "ip": "::1",
+        "description": "Localhost - IPv6 local development",
         "active": true
       },
       {

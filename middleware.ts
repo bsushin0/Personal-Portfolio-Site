@@ -7,6 +7,14 @@ export const config = {
 }
 
 export function middleware(request: NextRequest) {
+  // Check if IP whitelisting is enabled
+  const whitelistEnabled = process.env.IP_WHITELIST_ENABLED === 'true'
+  
+  // If whitelisting is disabled, allow all traffic
+  if (!whitelistEnabled) {
+    return NextResponse.next()
+  }
+
   // Try multiple IP sources for Vercel compatibility
   let ip = ipAddress(request) || 'unknown'
 
