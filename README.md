@@ -9,12 +9,11 @@
 
 A modern, AI-powered portfolio website showcasing technical expertise in AI, product management, and software engineering. Features a conversational RAG-backed chatbot for visitor engagement, production-ready security hardening, and responsive design with Tailwind CSS and Shadcn/UI components.
 
-**Live Site:** [https://sushin-bandha.vercel.app](https://sushin-bandha.vercel.app)
+**Live Site:** [www.sushinbandha.com](https://www.sushinbandha.com)
 
 ## Key Features
 
 - **AI-Powered Chatbot:** RAG (Retrieval-Augmented Generation) chatbot using Google Gemini with in-house embedding generation and vector search
-- **Active Development Banner:** Dismissible top-of-page notice encouraging feedback and suggestions via contact form
 - **Responsive Design:** Fully responsive across mobile, tablet, and desktop with dark/light theme support
 - **Production Security:** HSTS headers, X-Frame-Options, CSP, Permissions-Policy, and strict build validation
 - **Professional Portfolio Sections:**
