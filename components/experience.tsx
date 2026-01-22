@@ -42,15 +42,16 @@ const experiences: Experience[] = [
   {
     id: 3,
     title: "BGR Team Leader",
-    company: "BGR",
+    company: "Purdue University Orientation Programs — Boiler Gold Rush",
     period: "September 2023 - May 2024",
     type: "Volunteer",
     description: [
-      "Directed technical strategy and architecture decisions for nonprofit software initiatives, mentoring peer developers on best practices and system design patterns",
-      "Architected and implemented scalable solutions for community-focused projects, ensuring alignment with organizational mission and user needs",
-      "Collaborated cross-functionally with stakeholders to translate requirements into robust technical implementations",
+      "Served as a Team Leader (TL) during Boiler Gold Rush, responsible for welcoming, mentoring, and supporting a cohort of 20–25 first-year students through orientation programs",
+      "Guided and coordinated student groups through events, campus navigation, and resources to accelerate acclimation and build community while fostering an inclusive and welcoming environment",
+      "Coordinated closely with fellow Team Leaders to design and deliver a cohesive, immersive orientation experience across sessions, aligning activities and messaging for consistent student support",
+      "Provided ongoing peer mentorship and informal advising — acting as a resource, friend, and advocate — and collaborated with Orientation Programs staff to train volunteers and iterate on programming based on participant feedback",
     ],
-    skills: ["Technical Leadership", "Software Architecture", "Mentorship", "Project Management", "Full-Stack Development"],
+    skills: ["Leadership", "Group Facilitation", "Mentoring", "Event Coordination", "Campus Navigation", "Volunteer Training", "Community Building", "Team Collaboration"],
   },
   {
     id: 4,
