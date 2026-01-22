@@ -4,7 +4,7 @@ import { useState } from "react"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { ExternalLink, Github } from "lucide-react"
+import { ExternalLink } from "lucide-react"
 import { projects } from "@/lib/projects"
 
 export default function Projects() {
@@ -58,17 +58,6 @@ export default function Projects() {
               </div>
             </CardContent>
             <CardFooter className="flex justify-between">
-              <Button
-                asChild
-                variant="ghost"
-                size="sm"
-                className="text-cyan-300 hover:text-cyan-100 hover:bg-cyan-500/10"
-              >
-                <a href={project.githubUrl} target="_blank" rel="noopener noreferrer">
-                  <Github className="mr-2 h-4 w-4" />
-                  Code
-                </a>
-              </Button>
               {project.liveUrl && (
                 <Button
                   asChild
