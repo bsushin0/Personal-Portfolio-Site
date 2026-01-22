@@ -19,7 +19,7 @@ export default function DevelopmentBanner({ className }: DevelopmentBannerProps)
       {/* Fixed banner that stays visible on scroll */}
       <div
         className={cn(
-          "fixed top-0 left-0 right-0 z-50",
+          "fixed top-0 left-0 right-0 z-[60]",
           "w-full",
           "border-b border-white/20 dark:border-white/10",
           // High-contrast attention-grabbing gradient
