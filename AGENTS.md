@@ -67,3 +67,7 @@ Key rules:
 
 ## Strategic Direction
 Build an AI-first portfolio that demonstrates engineering rigor and product polish. Keep content authoritative and current via automated embedding refresh, pair strong storytelling with interactive chat UX, and highlight CS/AI depth alongside shipped, real-world projects.
+
+## Operational Guidance
+- Do **not** push or commit unless explicitly authorized. If authorization to commit is given, use professional, comprehensive commit messages that summarize the changes and rationale.
+- By default, apply requested changes locally and await explicit commit/push approval.

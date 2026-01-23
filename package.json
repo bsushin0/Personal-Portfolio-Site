@@ -5,6 +5,7 @@
   "scripts": {
     "build": "next build",
     "build:embeddings": "tsx scripts/generate-embeddings.ts",
+    "db:init": "tsx scripts/init-database.ts",
     "dev": "next dev",
     "lint": "next lint",
     "start": "next start"
@@ -12,6 +13,7 @@
   "dependencies": {
     "@ai-sdk/google": "^3.0.10",
     "@hookform/resolvers": "^3.9.1",
+    "@neondatabase/serverless": "^1.0.2",
     "@radix-ui/react-accordion": "1.2.2",
     "@radix-ui/react-alert-dialog": "1.1.4",
     "@radix-ui/react-aspect-ratio": "1.1.1",
@@ -72,6 +74,7 @@
     "@types/pdf-parse": "^1.1.5",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "dotenv": "^17.2.3",
     "eslint": "^9.39.2",
     "eslint-config-next": "16.1.4",
     "postcss": "^8.5",

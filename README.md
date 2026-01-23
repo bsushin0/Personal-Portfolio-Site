@@ -84,7 +84,10 @@ pnpm install
 
 # Set up environment variables
 cp .env.example .env.local
-# Add GOOGLE_GENERATIVE_AI_API_KEY and other required vars
+# Add GOOGLE_GENERATIVE_AI_API_KEY, RESEND_API_KEY, DATABASE_URL
+
+# Initialize database (run SQL in Neon console)
+# See scripts/init-db.sql for the schema
 
 # Generate embeddings (optional, for chatbot context)
 pnpm build:embeddings
@@ -113,6 +116,28 @@ pnpm lint
 ```
 
 ## Features in Detail
+
+### Database Integration
+
+Contact form submissions are automatically saved to a Neon PostgreSQL database with:
+- Full contact details (name, email, subject, message)
+- IP address tracking
+- Geolocation data (country, region, city, coordinates)
+- Timestamp for each submission
+
+**Database Schema:** See `scripts/init-db.sql` for the table structure.
+
+**Querying submissions:**
+```sql
+-- View all submissions
+SELECT * FROM contact_submissions ORDER BY submitted_at DESC;
+
+-- View summary (using the provided view)
+SELECT * FROM contact_submissions_summary;
+
+-- Filter by location
+SELECT * FROM contact_submissions WHERE country = 'United States';
+```
 
 ### RAG Chatbot
 
@@ -145,7 +170,16 @@ Sticky banner visible on first load:
 Create `.env.local` with:
 
 ```
+# Google Gemini API for chatbot
 GOOGLE_GENERATIVE_AI_API_KEY=your_key_here
+
+# Resend API for contact form emails
+RESEND_API_KEY=your_resend_key_here
+
+# Neon PostgreSQL database for contact submissions
+DATABASE_URL=postgresql://neondb_owner:password@host.neon.tech/neondb?sslmode=require
+
+# Optional: IP whitelisting
 IP_WHITELIST_ENABLED=false  # Set to 'true' to enable IP filtering
 IP_WHITELIST=127.0.0.1      # Comma-separated IP list (if enabled)
 ```
