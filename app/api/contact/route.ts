@@ -64,7 +64,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Read resume file from public folder (deployed with the app)
-    const resumePath = path.join(process.cwd(), "public", "sushin-bandha-resume.pdf")
+    const resumePath = path.join(process.cwd(), "public", "Sushin Bandha Resume.pdf")
     const resumeBuffer = fs.readFileSync(resumePath)
 
     // Send auto-reply to the user with resume attachment
