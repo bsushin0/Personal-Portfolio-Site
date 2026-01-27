@@ -63,11 +63,22 @@ export async function POST(request: NextRequest) {
       // Don't fail the request if database save fails
     }
 
-    // Read resume file from private folder (not accessible via web)
+    // Try to read resume file from private folder (optional attachment)
     const resumePath = path.join(process.cwd(), "private", "resume", "sushin-bandha-resume.pdf")
-    const resumeBuffer = fs.readFileSync(resumePath)
+    let resumeBuffer: Buffer | null = null;
+    try {
+      if (fs.existsSync(resumePath)) {
+        resumeBuffer = fs.readFileSync(resumePath);
+        console.log('Resume attachment loaded successfully');
+      } else {
+        console.warn('Resume file not found, sending email without attachment');
+      }
+    } catch (fileError) {
+      console.error('Failed to read resume file:', fileError);
+      // Continue without attachment
+    }
 
-    // Send auto-reply to the user with resume attachment
+    // Send auto-reply to the user with optional resume attachment
     const userEmailResponse = await resend.emails.send({
       from: "noreply@sushinbandha.com",
       to: data.email,
@@ -94,12 +105,14 @@ export async function POST(request: NextRequest) {
           
           <hr style="border: none; border-top: 1px solid #ccc; margin: 20px 0;">
           
-          <p>I'll review your message and get back to you within 24-48 hours. If you need anything else or have urgent matters, feel free to reach out again.</p>
-          
-          <p>Best regards,<br><strong>Sushin Bandha</strong><br>AI & Cybersecurity Specialist</p>
-          <p style="font-size: 12px; color: #999; margin-top: 20px;">
-            <a href="https://sushinbandha.com" style="color: #00c1ff; text-decoration: none;">Portfolio</a> | 
-            <a href="https://linkedin.com" style="color: #00c1ff; text-decoration: none;">LinkedIn</a> | 
+      ...(resumeBuffer && {
+        attachments: [
+          {
+            filename: "Sushin-Bandha-Resume.pdf",
+            content: resumeBuffer,
+          },
+        ],
+      })     <a href="https://linkedin.com" style="color: #00c1ff; text-decoration: none;">LinkedIn</a> | 
             <a href="https://github.com" style="color: #00c1ff; text-decoration: none;">GitHub</a>
           </p>
           <p style="font-size: 12px; color: #999;">Your message: "${data.subject}"</p>
