@@ -42,7 +42,7 @@ const experiences: Experience[] = [
   {
     id: 3,
     title: "BGR Team Leader",
-    company: "Purdue University Orientation Programs — Boiler Gold Rush",
+    company: "Purdue University Orientation Programs",
     period: "September 2023 - May 2024",
     type: "Volunteer",
     description: [
