@@ -12,6 +12,7 @@ interface ContactFormData {
   email: string
   subject: string
   message: string
+  user_agent?: string
 }
 
 export async function POST(request: NextRequest) {
