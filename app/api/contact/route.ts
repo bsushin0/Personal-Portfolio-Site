@@ -18,9 +18,22 @@ export async function POST(request: NextRequest) {
   try {
     // Check if API key is configured
     if (!process.env.RESEND_API_KEY) {
-      console.error("RESEND_API_KEY is not configured")
+      console.error("❌ RESEND_API_KEY is not configured in environment variables")
       return NextResponse.json(
         { error: "Email service is not configured. Please contact the administrator." },
+        { status: 500 }
+      )
+    }
+
+    // Log API key status (first 10 chars only for security)
+    const apiKeyPreview = process.env.RESEND_API_KEY.substring(0, 10) + '...';
+    console.log(`🔑 Using Resend API key: ${apiKeyPreview}`);
+
+    // Validate API key format (should start with 're_')
+    if (!process.env.RESEND_API_KEY.startsWith('re_')) {
+      console.error(`❌ RESEND_API_KEY has invalid format. Should start with 're_'. Current: ${apiKeyPreview}`);
+      return NextResponse.json(
+        { error: "Email service is misconfigured. Please contact the administrator." },
         { status: 500 }
       )
     }
@@ -116,12 +129,22 @@ export async function POST(request: NextRequest) {
     })
 
     if (userEmailResponse.error) {
-      console.error("Failed to send user email:", userEmailResponse.error)
+      console.error("❌ Failed to send user email:", JSON.stringify(userEmailResponse.error, null, 2));
+      
+      // Provide specific error messages based on error type
+      if (userEmailResponse.error.name === 'validation_error') {
+        console.error("🚨 API KEY ISSUE: Resend API key is invalid or expired.");
+        console.error("   → Check RESEND_API_KEY in Vercel environment variables");
+        console.error("   → Verify key at https://resend.com/api-keys");
+      }
+      
       return NextResponse.json(
-        { error: "Failed to send confirmation email" },
+        { error: "Failed to send confirmation email. The administrator has been notified." },
         { status: 500 }
       )
     }
+
+    console.log(`✅ User email sent successfully to ${data.email}`);
 
     // Send notification email to you
     const notificationResponse = await resend.emails.send({
@@ -148,8 +171,10 @@ export async function POST(request: NextRequest) {
     })
 
     if (notificationResponse.error) {
-      console.error("Failed to send notification email:", notificationResponse.error)
+      console.error("⚠️  Failed to send notification email:", JSON.stringify(notificationResponse.error, null, 2));
       // Don't fail the request if notification email fails - user's email was sent
+    } else {
+      console.log(`✅ Notification email sent to admin`);
     }
 
     return NextResponse.json(
@@ -157,7 +182,15 @@ export async function POST(request: NextRequest) {
       { status: 200 }
     )
   } catch (error) {
-    console.error("Contact form error:", error)
+    console.error("❌ Contact form error:", error);
+    
+    // Log detailed error information
+    if (error instanceof Error) {
+      console.error("   Error name:", error.name);
+      console.error("   Error message:", error.message);
+      console.error("   Stack trace:", error.stack);
+    }
+    
     return NextResponse.json(
       { error: "Failed to send message. Please try again." },
       { status: 500 }
