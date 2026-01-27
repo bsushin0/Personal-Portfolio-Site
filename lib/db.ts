@@ -11,35 +11,75 @@ export function getDb() {
 // Contact form submission type
 export interface ContactSubmission {
   id?: number;
+  
+  // Form data
   name: string;
   email: string;
   subject: string;
   message: string;
+  
+  // Geolocation data
   ip_address: string;
   country?: string;
   region?: string;
   city?: string;
   latitude?: number;
   longitude?: number;
+  
+  // User agent and browser information
+  user_agent?: string;
+  browser_name?: string;
+  browser_version?: string;
+  os_name?: string;
+  os_version?: string;
+  device_type?: string;
+  
+  // Request metadata
+  referrer?: string;
+  accept_language?: string;
+  timezone_offset?: number;
+  screen_width?: number;
+  screen_height?: number;
+  viewport_width?: number;
+  viewport_height?: number;
+  is_mobile?: boolean;
+  language?: string;
+  
+  // Timestamps
   submitted_at?: Date;
 }
 
-// Save contact form submission with IP and geolocation
+// Save contact form submission with IP, geolocation, and user agent data
 export async function saveContactSubmission(data: ContactSubmission) {
   const sql = getDb();
   
   const result = await sql`
     INSERT INTO contact_submissions (
-      name, 
-      email, 
-      subject, 
-      message, 
+      name,
+      email,
+      subject,
+      message,
       ip_address,
       country,
       region,
       city,
       latitude,
-      longitude
+      longitude,
+      user_agent,
+      browser_name,
+      browser_version,
+      os_name,
+      os_version,
+      device_type,
+      referrer,
+      accept_language,
+      timezone_offset,
+      screen_width,
+      screen_height,
+      viewport_width,
+      viewport_height,
+      is_mobile,
+      language
     )
     VALUES (
       ${data.name},
@@ -51,7 +91,22 @@ export async function saveContactSubmission(data: ContactSubmission) {
       ${data.region || null},
       ${data.city || null},
       ${data.latitude || null},
-      ${data.longitude || null}
+      ${data.longitude || null},
+      ${data.user_agent || null},
+      ${data.browser_name || null},
+      ${data.browser_version || null},
+      ${data.os_name || null},
+      ${data.os_version || null},
+      ${data.device_type || null},
+      ${data.referrer || null},
+      ${data.accept_language || null},
+      ${data.timezone_offset || null},
+      ${data.screen_width || null},
+      ${data.screen_height || null},
+      ${data.viewport_width || null},
+      ${data.viewport_height || null},
+      ${data.is_mobile || false},
+      ${data.language || null}
     )
     RETURNING id, submitted_at
   `;

@@ -33,12 +33,23 @@ export default function ContactForm() {
     setError("")
 
     try {
+      // Gather additional user information
+      const deviceInfo = {
+        timezone_offset: new Date().getTimezoneOffset(),
+        screen_width: typeof window !== 'undefined' ? window.screen.width : undefined,
+        screen_height: typeof window !== 'undefined' ? window.screen.height : undefined,
+        viewport_width: typeof window !== 'undefined' ? window.innerWidth : undefined,
+        viewport_height: typeof window !== 'undefined' ? window.innerHeight : undefined,
+        user_agent: typeof navigator !== 'undefined' ? navigator.userAgent : undefined,
+        referrer: typeof document !== 'undefined' ? document.referrer : undefined,
+      }
+
       const response = await fetch("/api/contact", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData, ...deviceInfo }),
       })
 
       if (!response.ok) {
