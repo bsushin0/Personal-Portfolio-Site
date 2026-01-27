@@ -63,22 +63,11 @@ export async function POST(request: NextRequest) {
       // Don't fail the request if database save fails
     }
 
-    // Try to read resume file from private folder (optional attachment)
-    const resumePath = path.join(process.cwd(), "private", "resume", "sushin-bandha-resume.pdf")
-    let resumeBuffer: Buffer | null = null;
-    try {
-      if (fs.existsSync(resumePath)) {
-        resumeBuffer = fs.readFileSync(resumePath);
-        console.log('Resume attachment loaded successfully');
-      } else {
-        console.warn('Resume file not found, sending email without attachment');
-      }
-    } catch (fileError) {
-      console.error('Failed to read resume file:', fileError);
-      // Continue without attachment
-    }
+    // Read resume file from public folder (deployed with the app)
+    const resumePath = path.join(process.cwd(), "public", "sushin-bandha-resume.pdf")
+    const resumeBuffer = fs.readFileSync(resumePath)
 
-    // Send auto-reply to the user with optional resume attachment
+    // Send auto-reply to the user with resume attachment
     const userEmailResponse = await resend.emails.send({
       from: "noreply@sushinbandha.com",
       to: data.email,
