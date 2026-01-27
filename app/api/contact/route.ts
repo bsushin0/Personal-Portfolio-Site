@@ -2,6 +2,7 @@ import { Resend } from "resend"
 import { NextRequest, NextResponse } from "next/server"
 import fs from "fs"
 import path from "path"
+import { saveContactSubmission, getIpGeolocation } from "@/lib/db"
 
 // Initialize Resend - Vercel will automatically provide RESEND_API_KEY
 const resend = new Resend(process.env.RESEND_API_KEY || "")
@@ -32,6 +33,34 @@ export async function POST(request: NextRequest) {
         { error: "Missing required fields" },
         { status: 400 }
       )
+    }
+
+    // Get IP address from request headers
+    const ip = (
+      request.headers.get('x-forwarded-for')?.split(',')[0].trim() ||
+      request.headers.get('x-real-ip') ||
+      'unknown'
+    );
+
+    // Get geolocation data for the IP
+    const geoData = await getIpGeolocation(ip);
+
+    // Save to database (non-blocking, continue even if it fails)
+    try {
+      if (process.env.DATABASE_URL) {
+        await saveContactSubmission({
+          name: data.name,
+          email: data.email,
+          subject: data.subject,
+          message: data.message,
+          ip_address: ip,
+          ...geoData,
+        });
+        console.log(`Saved contact submission to database: ${data.email} from ${ip}`);
+      }
+    } catch (dbError) {
+      console.error('Failed to save to database:', dbError);
+      // Don't fail the request if database save fails
     }
 
     // Read resume file from private folder (not accessible via web)
@@ -103,6 +132,8 @@ export async function POST(request: NextRequest) {
           <p><strong>Name:</strong> ${data.name}</p>
           <p><strong>Email:</strong> <a href="mailto:${data.email}">${data.email}</a></p>
           <p><strong>Subject:</strong> ${data.subject}</p>
+          <p><strong>IP Address:</strong> ${ip}</p>
+          ${geoData.city ? `<p><strong>Location:</strong> ${geoData.city}, ${geoData.region}, ${geoData.country}</p>` : ''}
           <hr style="border: none; border-top: 1px solid #ccc; margin: 20px 0;">
           <h3>Message:</h3>
           <p style="background: #f5f5f5; padding: 15px; border-left: 4px solid #00c1ff;">
