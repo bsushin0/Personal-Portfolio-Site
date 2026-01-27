@@ -63,8 +63,8 @@ export async function POST(request: NextRequest) {
       // Don't fail the request if database save fails
     }
 
-    // Read resume file from private folder (not accessible via web)
-    const resumePath = path.join(process.cwd(), "private", "resume", "sushin-bandha-resume.pdf")
+    // Read resume file from public folder (deployed with the app)
+    const resumePath = path.join(process.cwd(), "public", "Sushin Bandha Resume.pdf")
     const resumeBuffer = fs.readFileSync(resumePath)
 
     // Send auto-reply to the user with resume attachment
@@ -94,12 +94,14 @@ export async function POST(request: NextRequest) {
           
           <hr style="border: none; border-top: 1px solid #ccc; margin: 20px 0;">
           
-          <p>I'll review your message and get back to you within 24-48 hours. If you need anything else or have urgent matters, feel free to reach out again.</p>
-          
-          <p>Best regards,<br><strong>Sushin Bandha</strong><br>AI & Cybersecurity Specialist</p>
-          <p style="font-size: 12px; color: #999; margin-top: 20px;">
-            <a href="https://sushinbandha.com" style="color: #00c1ff; text-decoration: none;">Portfolio</a> | 
-            <a href="https://linkedin.com" style="color: #00c1ff; text-decoration: none;">LinkedIn</a> | 
+      ...(resumeBuffer && {
+        attachments: [
+          {
+            filename: "Sushin-Bandha-Resume.pdf",
+            content: resumeBuffer,
+          },
+        ],
+      })     <a href="https://linkedin.com" style="color: #00c1ff; text-decoration: none;">LinkedIn</a> | 
             <a href="https://github.com" style="color: #00c1ff; text-decoration: none;">GitHub</a>
           </p>
           <p style="font-size: 12px; color: #999;">Your message: "${data.subject}"</p>
