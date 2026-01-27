@@ -58,62 +58,42 @@ export async function POST(request: NextRequest) {
     // Get geolocation data for the IP
     const geoData = await getIpGeolocation(ip);
 
-    // Extract user agent and browser information from request body
+    // Extract user agent from request headers
     const userAgent = data.user_agent || request.headers.get('user-agent') || 'unknown';
-    const referrer = request.headers.get('referer') || data.referrer;
-    const acceptLanguage = request.headers.get('accept-language');
     
     // Parse browser info from user agent
     const getBrowserInfo = (ua: string) => {
       let browserName = 'Unknown';
-      let browserVersion = 'Unknown';
       let osName = 'Unknown';
-      let osVersion = 'Unknown';
       let deviceType = 'desktop';
 
       // Browser detection
       if (ua.includes('Chrome')) {
         browserName = 'Chrome';
-        const match = ua.match(/Chrome\/([\d.]+)/);
-        if (match) browserVersion = match[1];
       } else if (ua.includes('Safari')) {
         browserName = 'Safari';
-        const match = ua.match(/Version\/([\d.]+)/);
-        if (match) browserVersion = match[1];
       } else if (ua.includes('Firefox')) {
         browserName = 'Firefox';
-        const match = ua.match(/Firefox\/([\d.]+)/);
-        if (match) browserVersion = match[1];
       } else if (ua.includes('Edge')) {
         browserName = 'Edge';
-        const match = ua.match(/Edg\/([\d.]+)/);
-        if (match) browserVersion = match[1];
       }
 
       // OS detection
       if (ua.includes('Windows')) {
         osName = 'Windows';
-        const match = ua.match(/Windows NT ([\d.]+)/);
-        if (match) osVersion = match[1];
       } else if (ua.includes('Mac OS X')) {
         osName = 'macOS';
-        const match = ua.match(/Mac OS X ([\d_]+)/);
-        if (match) osVersion = match[1].replace(/_/g, '.');
       } else if (ua.includes('Linux')) {
         osName = 'Linux';
       } else if (ua.includes('iPhone') || ua.includes('iPad')) {
         osName = 'iOS';
-        const match = ua.match(/OS ([\d_]+)/);
-        if (match) osVersion = match[1].replace(/_/g, '.');
         deviceType = ua.includes('iPad') ? 'tablet' : 'mobile';
       } else if (ua.includes('Android')) {
         osName = 'Android';
-        const match = ua.match(/Android ([\d.]+)/);
-        if (match) osVersion = match[1];
         deviceType = 'mobile';
       }
 
-      return { browserName, browserVersion, osName, osVersion, deviceType };
+      return { browserName, osName, deviceType };
     };
 
     const browserInfo = getBrowserInfo(userAgent);
@@ -130,19 +110,8 @@ export async function POST(request: NextRequest) {
           ...geoData,
           user_agent: userAgent,
           browser_name: browserInfo.browserName,
-          browser_version: browserInfo.browserVersion,
           os_name: browserInfo.osName,
-          os_version: browserInfo.osVersion,
           device_type: browserInfo.deviceType,
-          referrer: referrer || undefined,
-          accept_language: acceptLanguage || undefined,
-          timezone_offset: data.timezone_offset,
-          screen_width: data.screen_width,
-          screen_height: data.screen_height,
-          viewport_width: data.viewport_width,
-          viewport_height: data.viewport_height,
-          is_mobile: browserInfo.deviceType === 'mobile',
-          language: acceptLanguage?.split(',')[0] || undefined,
         });
         console.log(`✅ Saved contact submission to database: ${data.email} from ${ip} (${browserInfo.osName} ${browserInfo.deviceType})`);
       }

@@ -29,21 +29,8 @@ export interface ContactSubmission {
   // User agent and browser information
   user_agent?: string;
   browser_name?: string;
-  browser_version?: string;
   os_name?: string;
-  os_version?: string;
   device_type?: string;
-  
-  // Request metadata
-  referrer?: string;
-  accept_language?: string;
-  timezone_offset?: number;
-  screen_width?: number;
-  screen_height?: number;
-  viewport_width?: number;
-  viewport_height?: number;
-  is_mobile?: boolean;
-  language?: string;
   
   // Timestamps
   submitted_at?: Date;
@@ -67,19 +54,8 @@ export async function saveContactSubmission(data: ContactSubmission) {
       longitude,
       user_agent,
       browser_name,
-      browser_version,
       os_name,
-      os_version,
-      device_type,
-      referrer,
-      accept_language,
-      timezone_offset,
-      screen_width,
-      screen_height,
-      viewport_width,
-      viewport_height,
-      is_mobile,
-      language
+      device_type
     )
     VALUES (
       ${data.name},
@@ -94,19 +70,8 @@ export async function saveContactSubmission(data: ContactSubmission) {
       ${data.longitude || null},
       ${data.user_agent || null},
       ${data.browser_name || null},
-      ${data.browser_version || null},
       ${data.os_name || null},
-      ${data.os_version || null},
-      ${data.device_type || null},
-      ${data.referrer || null},
-      ${data.accept_language || null},
-      ${data.timezone_offset || null},
-      ${data.screen_width || null},
-      ${data.screen_height || null},
-      ${data.viewport_width || null},
-      ${data.viewport_height || null},
-      ${data.is_mobile || false},
-      ${data.language || null}
+      ${data.device_type || null}
     )
     RETURNING id, submitted_at
   `;

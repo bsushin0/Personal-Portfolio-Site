@@ -33,15 +33,9 @@ export default function ContactForm() {
     setError("")
 
     try {
-      // Gather additional user information
+      // Gather browser information from user agent
       const deviceInfo = {
-        timezone_offset: new Date().getTimezoneOffset(),
-        screen_width: typeof window !== 'undefined' ? window.screen.width : undefined,
-        screen_height: typeof window !== 'undefined' ? window.screen.height : undefined,
-        viewport_width: typeof window !== 'undefined' ? window.innerWidth : undefined,
-        viewport_height: typeof window !== 'undefined' ? window.innerHeight : undefined,
         user_agent: typeof navigator !== 'undefined' ? navigator.userAgent : undefined,
-        referrer: typeof document !== 'undefined' ? document.referrer : undefined,
       }
 
       const response = await fetch("/api/contact", {

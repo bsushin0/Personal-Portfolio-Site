@@ -21,21 +21,8 @@ CREATE TABLE IF NOT EXISTS contact_submissions (
   -- User agent and browser information
   user_agent TEXT,
   browser_name VARCHAR(100),
-  browser_version VARCHAR(100),
   os_name VARCHAR(100),
-  os_version VARCHAR(100),
   device_type VARCHAR(50),
-  
-  -- Request metadata
-  referrer TEXT,
-  accept_language VARCHAR(255),
-  timezone_offset INT,
-  screen_width INT,
-  screen_height INT,
-  viewport_width INT,
-  viewport_height INT,
-  is_mobile BOOLEAN,
-  language VARCHAR(10),
   
   -- Timestamps
   submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

@@ -1,7 +1,7 @@
 # AGENTS.md - Personal Portfolio Site
 
 ## ⚠️ CRITICAL: Git Workflow
-**NEVER PUSH TO MAIN.** All development work must go through the `Main-Dev` branch. The `main` branch is production and should only be updated via approved pull requests or manual merges by the repository owner.
+**NEVER PUSH TO MAIN.** All development work must go through the `Main-Dev` branch. The `main` branch is production and should only be updated via approved pull requests or manual merges by the repository owner. **ALWAYS ASK FOR EXPLICIT CONSENT EVERYTIME YOU PUSH TO REMOTE REPOSITORY.**
 
 ## Project Context
 **Personal portfolio website** showcasing excellence in AI. Maintained on **GitHub** (github.com/bsushin0/Personal-Portfolio-Site), deployed on **Vercel**. Purpose: demonstrate deep technical knowledge, project accomplishments, and expertise in CS/AI through a polished, modern web experience.
