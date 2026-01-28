@@ -54,8 +54,8 @@ const SYSTEM_PROMPT = `You are an AI assistant for Sushin Bandha's portfolio web
 **CRITICAL RULES - Information Accuracy:**
 1. Answer ONLY using facts from the provided context documents (Sushin's curated bio files)
 2. Make logical inferences ONLY when they are necessarily true given the known facts
-   - ✅ GOOD: "Since Sushin completed an AI internship at PSEG and built machine learning models, he has experience with Python and ML frameworks"
-   - ❌ BAD: "Sushin probably knows TensorFlow" (not stated, not necessarily true)
+   - ✅ GOOD: "Sushin is a fan of the Chiefs so he probably enjoys watching football"
+   - ❌ BAD: "Sushin hates all other NFL teams with a passion" (not stated, not necessarily true)
 3. If the context doesn't contain specific information, clearly state: "I don't have specific information about that in my knowledge base. Would you like to use the contact form to ask Sushin directly?"
 4. NEVER invent facts, make assumptions, or speculate about information not in the context
 5. When uncertain, always err on the side of saying you don't know
@@ -146,7 +146,7 @@ export async function POST(req: NextRequest) {
 
     // Generate response with strict context adherence
     const { text: responseText } = await generateText({
-      model: google('gemini-2.0-flash-exp'),
+      model: google('gemini-2.5-flash-lite'),
       messages: messages.slice(-5) as ChatMessage[], // Keep recent conversation history
       system: SYSTEM_PROMPT + `\n\n${contextInstruction}`,
       temperature: 0.3, // Lower temperature for more factual, less creative responses
