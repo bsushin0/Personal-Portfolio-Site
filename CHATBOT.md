@@ -1,15 +1,53 @@
 # RAG AI Chatbot Setup Guide
 
-This portfolio includes a free, in-house RAG (Retrieval-Augmented Generation) AI chatbot powered by Google Gemini API.
+This portfolio includes a free, in-house RAG (Retrieval-Augmented Generation) AI chatbot powered by Google Gemini API. The chatbot uses curated markdown bio files as its primary knowledge base to provide accurate, fact-based responses about Sushin Bandha.
 
 ## Features
 
 - 🤖 **Conversational AI Assistant** - Answers questions about Sushin's background, skills, and experience
-- 📚 **RAG-Powered** - Uses pre-computed embeddings from resume and application documents
+- 📚 **RAG-Powered** - Uses pre-computed embeddings from curated markdown bio files
+- 🎯 **Strict Fact-Based Responses** - Only answers from known context, makes logical inferences carefully
 - 💬 **Contact Form Integration** - Collects information and can submit contact form on user's behalf
 - 🌐 **100% Free** - Uses Google Gemini free tier (no paid services required)
-- ⚡ **Fast & Efficient** - Client-side vector search with pre-computed embeddings (~350KB)
+- ⚡ **Fast & Efficient** - Client-side vector search with pre-computed embeddings
 - 🎨 **Theme-Matched UI** - Glass-morphism design matching the portfolio theme
+
+## Knowledge Base
+
+The chatbot's primary knowledge source is the curated markdown files in `private/documents/bio/`:
+
+- `01-profile.md` - Professional summary and elevator pitch
+- `02-experience.md` - Work history and internships
+- `03-projects.md` - Technical projects and accomplishments
+- `04-skills.md` - Technical skills and competencies
+- `05-certifications.md` - Certifications and credentials
+- `06-education.md` - Academic background
+- `07-hobbies-interests.md` - Personal interests and activities
+- `08-goals.md` - Career goals and aspirations
+- `09-contact.md` - Contact information and preferences
+
+These files are processed into embeddings and used for semantic search during conversations.
+
+## Chatbot Behavior
+
+### Response Philosophy
+
+The chatbot follows strict rules to prevent hallucination and misinformation:
+
+1. **Answer ONLY from context** - Uses only information from the curated markdown files
+2. **Logical inferences only** - Makes inferences only when necessarily true
+   - ✅ GOOD: "Since Sushin completed an AI internship at PSEG and built ML models, he has experience with Python"
+   - ❌ BAD: "Sushin probably knows TensorFlow" (not stated, speculative)
+3. **Confidence threshold** - Requires 60%+ similarity for confident responses
+4. **Graceful degradation** - Offers contact form when lacking specific information
+5. **No speculation** - Never invents facts or makes assumptions
+
+### Retrieval Strategy
+
+- **Embedding Model**: Google `text-embedding-004` (768 dimensions)
+- **Similarity Threshold**: 0.60 (60% minimum confidence)
+- **Top-K Results**: 5 most relevant chunks
+- **Temperature**: 0.3 (low temperature for factual, deterministic responses)
 
 ## Setup Instructions
 
@@ -36,22 +74,37 @@ GOOGLE_GENERATIVE_AI_API_KEY=your_api_key_here
 
 ### 3. Generate Embeddings
 
-Process your documents and generate embeddings:
+Process your markdown bio files and generate embeddings:
 
 ```bash
-# Make sure you have documents in private/documents/ and private/resume/
+# Make sure you have markdown files in private/documents/bio/
 pnpm run build:embeddings
 ```
 
 This will:
-- Extract text from PDF documents in `private/` folders
-- Chunk text into 512-token segments
-- Generate embeddings using Google Gemini API
-- Save pre-computed embeddings to `lib/embeddings.json` (~350KB)
+- Extract text from markdown files in `private/documents/bio/`
+- Optionally include resume PDFs from `private/resume/` as supplementary context
+- Chunk text into 512-token segments with 50-token overlap
+- Generate embeddings using Google Gemini `text-embedding-004` model
+- Save pre-computed embeddings to `lib/embeddings.json`
 
-**Note**: The `private/` folder should contain:
-- `private/resume/sushin-bandha-resume.pdf` (main resume)
-- `private/documents/*.pdf` (cover letters, specialized resumes, etc.)
+**Required Directory Structure**:
+```
+private/
+├── documents/
+│   └── bio/
+│       ├── 01-profile.md
+│       ├── 02-experience.md
+│       ├── 03-projects.md
+│       ├── 04-skills.md
+│       ├── 05-certifications.md
+│       ├── 06-education.md
+│       ├── 07-hobbies-interests.md
+│       ├── 08-goals.md
+│       └── 09-contact.md
+└── resume/
+    └── sushin-bandha-resume.pdf (optional)
+```
 
 ### 4. Build and Run
 
@@ -81,7 +134,7 @@ pnpm start
 ┌─────────────────────────────────────────┐
 │ BUILD TIME                              │
 ├─────────────────────────────────────────┤
-│ 1. Parse PDF documents                  │
+│ 1. Parse markdown bio files             │
 │ 2. Chunk into 512-token segments        │
 │ 3. Generate embeddings (Gemini API)     │
 │ 4. Save to lib/embeddings.json          │
@@ -92,20 +145,22 @@ pnpm start
 ├─────────────────────────────────────────┤
 │ 1. User sends message                   │
 │ 2. Generate query embedding             │
-│ 3. Search similar chunks (in-memory)    │
-│ 4. Construct context for LLM            │
-│ 5. Generate response (Gemini Flash)     │
-│ 6. Stream to client                     │
+│ 3. Vector similarity search (cosine)    │
+│ 4. Filter by 60%+ similarity threshold  │
+│ 5. Construct context for LLM            │
+│ 6. Generate response (Gemini, T=0.3)    │
+│ 7. Return factual response              │
 └─────────────────────────────────────────┘
 ```
 
 ### Key Components
 
-- **[lib/document-processor.ts](lib/document-processor.ts)** - PDF parsing and text chunking
-- **[lib/vector-search.ts](lib/vector-search.ts)** - Cosine similarity search
+- **[lib/document-processor.ts](lib/document-processor.ts)** - Markdown/PDF parsing and text chunking
+- **[lib/vector-search.ts](lib/vector-search.ts)** - Cosine similarity search with thresholding
 - **[scripts/generate-embeddings.ts](scripts/generate-embeddings.ts)** - Embedding generation script
-- **[app/api/chat/route.ts](app/api/chat/route.ts)** - Chat API with RAG
+- **[app/api/chat/route.ts](app/api/chat/route.ts)** - Chat API with strict RAG implementation
 - **[components/chatbot.tsx](components/chatbot.tsx)** - Floating chat UI widget
+- **[private/documents/bio/*.md](private/documents/bio/)** - Primary knowledge base (markdown files)
 
 ### Rate Limiting
 
@@ -118,19 +173,29 @@ The chatbot includes built-in rate limiting:
 
 ### Modify System Prompt
 
-Edit the `SYSTEM_PROMPT` in [app/api/chat/route.ts](app/api/chat/route.ts) to change the chatbot's personality, goals, and behavior.
+Edit the `SYSTEM_PROMPT` in [app/api/chat/route.ts](app/api/chat/route.ts) to change the chatbot's personality, goals, and response rules. Current rules enforce strict fact-based responses with no speculation.
 
 ### Adjust Retrieval Parameters
 
 In [app/api/chat/route.ts](app/api/chat/route.ts), modify:
-- `topK: 3` - Number of relevant chunks to retrieve (default: 3)
-- `minSimilarity: 0.5` - Minimum similarity threshold (0.0-1.0)
+- `MIN_SIMILARITY: 0.60` - Minimum similarity threshold (60% confidence)
+- `TOP_K: 5` - Number of relevant chunks to retrieve
+- `temperature: 0.3` - Lower = more factual, higher = more creative
+
+### Update Knowledge Base
+
+To update the chatbot's knowledge:
+
+1. Edit markdown files in `private/documents/bio/`
+2. Run `pnpm run build:embeddings` to regenerate embeddings
+3. Redeploy or restart your development server
 
 ### Change Model
 
-Replace `gemini-2.0-flash-exp` with other free Gemini models:
-- `gemini-2.5-flash` - Balanced speed/quality
-- `gemini-2.5-pro` - Higher quality (slower)
+Replace `gemini-2.0-flash-exp` with other Gemini models:
+- `gemini-2.0-flash-exp` - Experimental, latest features (current)
+- `gemini-2.5-flash` - Stable, balanced speed/quality
+- `gemini-2.5-pro` - Higher quality (slower, may exceed free tier)
 
 ### Style Customization
 

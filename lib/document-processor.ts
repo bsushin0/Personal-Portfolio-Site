@@ -40,6 +40,19 @@ export async function extractTextFromPDF(filePath: string): Promise<string> {
 }
 
 /**
+ * Extract text from a Markdown file
+ */
+export async function extractTextFromMarkdown(filePath: string): Promise<string> {
+  try {
+    const data = fs.readFileSync(filePath, 'utf8');
+    return data;
+  } catch (error) {
+    console.error(`Error reading markdown from ${filePath}:`, error);
+    return '';
+  }
+}
+
+/**
  * Chunk text into segments of approximately maxTokens size
  * Simple implementation: splits by sentences and groups them
  */
@@ -140,42 +153,83 @@ export async function processDirectory(
 }
 
 /**
+ * Process all Markdown files in a directory
+ */
+export async function processMarkdownDirectory(
+  dirPath: string,
+  maxTokens: number = 512
+): Promise<DocumentChunk[]> {
+  const allChunks: DocumentChunk[] = [];
+
+  if (!fs.existsSync(dirPath)) {
+    console.warn(`Markdown directory not found: ${dirPath}`);
+    return allChunks;
+  }
+
+  const files = fs.readdirSync(dirPath);
+  const mdFiles = files.filter(file => file.toLowerCase().endsWith('.md'));
+
+  console.log(`Found ${mdFiles.length} Markdown files in ${dirPath}`);
+
+  for (const file of mdFiles) {
+    const filePath = path.join(dirPath, file);
+    console.log(`Processing markdown: ${file}`);
+
+    const text = await extractTextFromMarkdown(filePath);
+    if (!text || text.trim().length === 0) {
+      console.warn(`No text found in ${file}`);
+      continue;
+    }
+
+    const chunks = chunkText(text, maxTokens);
+    const fileName = path.basename(filePath);
+
+    chunks.forEach((chunk, index) => {
+      allChunks.push({
+        id: `${fileName}-chunk-${index}`,
+        text: chunk,
+        metadata: {
+          source: fileName,
+          chunkIndex: index,
+          totalChunks: chunks.length,
+        },
+      });
+    });
+
+    console.log(`  → Generated ${chunks.length} chunks from markdown`);
+  }
+
+  return allChunks;
+}
+
+/**
  * Process curated list of important documents
  * Returns chunks from the most relevant documents for the portfolio
+ * PRIORITY: Curated markdown bio files are the primary knowledge base
  */
 export async function processCuratedDocuments(
   privateDir: string
 ): Promise<DocumentChunk[]> {
   const documentsDir = path.join(privateDir, 'documents');
-  const resumeDir = path.join(privateDir, 'resume');
-
-  // Priority documents for RAG knowledge base
-  const curatedFiles = [
-    // Main resume
-    path.join(resumeDir, 'sushin-bandha-resume.pdf'),
-    
-    // Key specialized resumes (if they exist)
-    path.join(documentsDir, 'Sushin Bandha AI_CyberSec Resume.pdf'),
-    path.join(documentsDir, 'Sushin Bandha IT - AI Intern.pdf'),
-    
-    // Recent cover letters showing communication style
-    path.join(documentsDir, 'Sushin Bandha - Oracle Cover Letter.pdf'),
-    path.join(documentsDir, 'Sushin Bandha - SAP Cover Letter.pdf'),
-  ];
+  const bioMarkdownDir = path.join(documentsDir, 'bio');
 
   const allChunks: DocumentChunk[] = [];
 
-  for (const filePath of curatedFiles) {
-    if (fs.existsSync(filePath)) {
-      console.log(`Processing curated document: ${path.basename(filePath)}`);
-      const chunks = await processDocument(filePath);
-      allChunks.push(...chunks);
-      console.log(`  → Generated ${chunks.length} chunks`);
-    } else {
-      console.log(`Skipping (not found): ${path.basename(filePath)}`);
-    }
+  // PRIORITY 1: Include curated markdown bios (primary knowledge base)
+  console.log('\n📝 Processing curated markdown bio files (primary source)...');
+  const bioMdChunks = await processMarkdownDirectory(bioMarkdownDir);
+  if (bioMdChunks.length > 0) {
+    allChunks.push(...bioMdChunks);
+    console.log(`✅ Included ${bioMdChunks.length} chunks from curated markdown bios`);
+  } else {
+    console.log('⚠️  No curated markdown bios found - this is unexpected!');
   }
 
-  console.log(`\nTotal chunks from curated documents: ${allChunks.length}`);
+  // PDFs are NOT included - using only curated markdown files as knowledge base
+  console.log('\n📝 Using ONLY markdown bio files (no PDF processing)');
+
+  console.log(`\n✅ Total chunks from curated documents: ${allChunks.length}`);
+  console.log(`   - Markdown bios only: ${bioMdChunks.length}`);
+  
   return allChunks;
 }

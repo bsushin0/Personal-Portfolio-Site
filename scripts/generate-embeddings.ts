@@ -1,9 +1,9 @@
 #!/usr/bin/env tsx
 /**
- * Generate embeddings for portfolio documents using Google Gemini API
+ * Generate embeddings for portfolio documents using OpenAI API
  * 
  * Usage:
- *   GOOGLE_GENERATIVE_AI_API_KEY=your_key pnpm tsx scripts/generate-embeddings.ts
+ *   OPENAI_API_KEY=your_key pnpm tsx scripts/generate-embeddings.ts
  * 
  * Output:
  *   lib/embeddings.json - Pre-computed embeddings for client-side RAG
@@ -11,8 +11,7 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
-import { google } from '@ai-sdk/google';
-import { embed, embedMany } from 'ai';
+import OpenAI from 'openai';
 import { processCuratedDocuments } from '../lib/document-processor';
 import type { DocumentChunk } from '../lib/document-processor';
 import type { EmbeddingChunk } from '../lib/vector-search';
@@ -24,9 +23,9 @@ async function generateEmbeddings() {
   console.log('🚀 Starting embedding generation...\n');
 
   // Check for API key
-  if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
-    console.error('❌ Error: GOOGLE_GENERATIVE_AI_API_KEY environment variable not set');
-    console.error('   Get your API key from: https://aistudio.google.com/app/apikey');
+  if (!process.env.OPENAI_API_KEY) {
+    console.error('❌ Error: OPENAI_API_KEY environment variable not set');
+    console.error('   Get your API key from: https://platform.openai.com/api-keys');
     process.exit(1);
   }
 
@@ -42,15 +41,18 @@ async function generateEmbeddings() {
   console.log(`✅ Generated ${chunks.length} text chunks\n`);
 
   // Step 2: Generate embeddings using Gemini
-  console.log('🧠 Generating embeddings via Google Gemini API...');
-  console.log(`   Model: text-embedding-004`);
+  console.log('🧠 Generating embeddings via OpenAI API...');
+  console.log(`   Model: text-embedding-3-small`);
   console.log(`   Chunks to embed: ${chunks.length}\n`);
+
+  // Initialize OpenAI client
+  const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
 
   const embeddingChunks: EmbeddingChunk[] = [];
 
   try {
-    // Batch embedding generation (process in batches of 10 to avoid rate limits)
-    const batchSize = 10;
+    // Process in batches of 100 (OpenAI supports batch embedding)
+    const batchSize = 100;
     for (let i = 0; i < chunks.length; i += batchSize) {
       const batch = chunks.slice(i, i + batchSize);
       const batchNum = Math.floor(i / batchSize) + 1;
@@ -59,22 +61,22 @@ async function generateEmbeddings() {
       console.log(`   Processing batch ${batchNum}/${totalBatches} (${batch.length} chunks)...`);
 
       // Generate embeddings for batch
-      const { embeddings } = await embedMany({
-        model: google.textEmbeddingModel('text-embedding-004'),
-        values: batch.map(chunk => chunk.text),
+      const response = await openai.embeddings.create({
+        model: 'text-embedding-3-small',
+        input: batch.map(chunk => chunk.text),
       });
 
       // Combine chunks with their embeddings
       for (let j = 0; j < batch.length; j++) {
         embeddingChunks.push({
           ...batch[j],
-          embedding: embeddings[j],
+          embedding: response.data[j].embedding,
         });
       }
 
-      // Rate limiting: wait 1 second between batches
+      // Rate limiting: wait 500ms between batches
       if (i + batchSize < chunks.length) {
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise(resolve => setTimeout(resolve, 500));
       }
     }
 
