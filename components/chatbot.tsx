@@ -54,8 +54,10 @@ export function Chatbot() {
       setMessages(prev => [...prev, { id: (Date.now() + 1).toString(), role: 'assistant', content: 'Sorry, I encountered an error. Please try again.' }]);
     } finally {
       setIsLoading(false);
-      // Refocus input field after response
-      inputRef.current?.focus();
+      // Refocus input field after response with slight delay to ensure render completion
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 100);
     }
   };
 
