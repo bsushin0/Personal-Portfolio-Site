@@ -1,8 +1,7 @@
 import { google } from '@ai-sdk/google';
 import { generateText } from 'ai';
-import OpenAI from 'openai';
 import { NextRequest, NextResponse } from 'next/server';
-import { searchSimilarChunks, formatContextForLLM } from '@/lib/vector-search';
+import { formatContextForLLM } from '@/lib/vector-search';
 import type { EmbeddingChunk } from '@/lib/vector-search';
 
 type ChatMessage = { role: 'user' | 'assistant' | 'system'; content: string }
@@ -108,39 +107,34 @@ export async function POST(req: NextRequest) {
 
     const userQuery = lastMessage.content as string;
 
-    // RAG: Retrieve relevant context using proper embedding-based search
+    // RAG: Retrieve relevant context using keyword-based matching
     const embeddings = await getEmbeddings();
     
-    // Generate query embedding using OpenAI
-    const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
-    const embeddingResponse = await openai.embeddings.create({
-      model: 'text-embedding-3-small',
-      input: userQuery,
-    });
-    const queryEmbedding = embeddingResponse.data[0].embedding;
-
-    // Use vector similarity search with proper threshold
-    const MIN_SIMILARITY = 0.60; // Confidence threshold
-    const TOP_K = 5; // Retrieve top 5 relevant chunks
+    // Use keyword matching to find relevant chunks
+    const queryLower = userQuery.toLowerCase();
+    const queryWords = queryLower.split(/\s+/).filter(w => w.length > 3);
     
-    const relevantResults = searchSimilarChunks(
-      queryEmbedding,
-      embeddings,
-      TOP_K,
-      MIN_SIMILARITY
-    );
+    const relevantChunks = embeddings
+      .map(chunk => {
+        const textLower = chunk.text.toLowerCase();
+        const matchCount = queryWords.filter(word => textLower.includes(word)).length;
+        const matchScore = queryWords.length > 0 ? matchCount / queryWords.length : 0;
+        return { chunk, similarity: matchScore };
+      })
+      .filter(result => result.similarity >= 0.3) // At least 30% word match
+      .sort((a, b) => b.similarity - a.similarity)
+      .slice(0, 5);
 
     // Format context from relevant chunks
-    const context = formatContextForLLM(relevantResults);
+    const context = formatContextForLLM(relevantChunks);
     
     // Check if we have sufficient context
-    const hasRelevantContext = relevantResults.length > 0 && 
-      relevantResults[0].similarity >= MIN_SIMILARITY;
+    const hasRelevantContext = relevantChunks.length > 0 && relevantChunks[0].similarity >= 0.3;
 
     // Construct system message with strict context guidance
     const contextInstruction = hasRelevantContext
       ? `**Relevant Context from Sushin's Bio Documents:**\n\n${context}\n\n**IMPORTANT:** Answer ONLY using the information above. Make logical inferences only when they are necessarily true. If the context doesn't contain specific information needed to answer the question, say so clearly and offer the contact form.`
-      : `**No relevant context found** (similarity below ${MIN_SIMILARITY} threshold).\n\nRespond that you don't have specific information about this topic and invite the user to use the contact form to reach Sushin directly with their question.`;
+      : `**No relevant context found** (insufficient keyword match).\n\nRespond that you don't have specific information about this topic and invite the user to use the contact form to reach Sushin directly with their question.`;
 
     // Check for API key with graceful failure
     if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {

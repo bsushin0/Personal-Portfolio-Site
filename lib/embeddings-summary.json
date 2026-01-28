@@ -1,12 +1,20 @@
 {
-  "generatedAt": "2026-01-21T22:02:19.678Z",
-  "totalChunks": 6,
-  "embeddingDimensions": 768,
-  "fileSizeKB": 97.59,
+  "generatedAt": "2026-01-28T20:09:12.978Z",
+  "totalChunks": 14,
+  "matchingStrategy": "keyword-based",
+  "embeddingDimensions": 0,
+  "fileSizeKB": 21.2,
   "sources": [
-    "sushin-bandha-resume.pdf",
-    "Sushin Bandha AI_CyberSec Resume.pdf",
-    "Sushin Bandha IT - AI Intern.pdf"
+    "01-profile.md",
+    "02-experience.md",
+    "03-projects.md",
+    "04-skills.md",
+    "05-certifications.md",
+    "06-education.md",
+    "07-hobbies-interests.md",
+    "08-goals.md",
+    "09-contact.md",
+    "README.md"
   ],
-  "averageChunkLength": 1541
+  "averageChunkLength": 1340
 }
