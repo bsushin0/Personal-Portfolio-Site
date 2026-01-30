@@ -1,7 +1,7 @@
 {
   "whitelist": {
     "description": "IP Whitelist Configuration for Portfolio Access Control",
-    "lastUpdated": "2026-01-16",
+    "lastUpdated": "2026-01-30",
     "allowedIPs": [
       {
         "ip": "127.0.0.1",
@@ -19,10 +19,37 @@
         "active": true
       }
     ],
+    "excludedIPsForLogging": {
+      "description": "IPs excluded from visit logging (analytics tracking)",
+      "ips": [
+        {
+          "ip": "127.0.0.1",
+          "description": "Localhost - IPv4 development",
+          "active": true
+        },
+        {
+          "ip": "::1",
+          "description": "Localhost - IPv6 development",
+          "active": true
+        },
+        {
+          "ip": "::ffff:127.0.0.1",
+          "description": "IPv4-mapped IPv6 localhost",
+          "active": true
+        },
+        {
+          "ip": "72.12.197.21",
+          "description": "Personal development IP",
+          "active": true
+        }
+      ],
+      "updateInstructions": "Update EXCLUDED_IPS environment variable in .env.local or Vercel dashboard as comma-separated list"
+    },
     "documentation": {
-      "format": "This file documents the IP whitelist for the portfolio site",
-      "updateInstructions": "Update the environment variable IP_WHITELIST in .env.local or Vercel dashboard",
-      "gitHubNotice": "This is a reference document. The actual whitelist is controlled via IP_WHITELIST environment variable"
+      "format": "This file documents IP whitelists and exclusions for the portfolio site",
+      "whitelist": "Controls access to protected endpoints (if implemented)",
+      "excludedIPs": "Prevents your own visits from being logged in analytics",
+      "gitHubNotice": "This is a reference document. Actual whitelists are controlled via environment variables"
     }
   }
 }

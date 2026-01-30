@@ -157,7 +157,7 @@ export async function POST(req: NextRequest) {
     // Generate response with strict context adherence
     const { text: responseText } = await generateText({
       model: google('gemini-2.5-flash-lite'),
-      messages: messages.slice(-5) as ChatMessage[], // Keep recent conversation history
+      messages: messages.slice(-5) as ChatMessage[], // Keep roecent conversation history
       system: SYSTEM_PROMPT + `\n\n${contextInstruction}`,
       temperature: 0.3, // Lower temperature for more factual, less creative responses
       maxOutputTokens: 600,
