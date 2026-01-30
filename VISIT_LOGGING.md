@@ -226,12 +226,174 @@ console.log('Visit logged:', { ip, country: geoData.country, browser: uaData.bro
 - **Total**: ~210ms, minimal impact on page load
 - **Best Practice**: Fire-and-forget; don't wait for response
 
+## Retention Policy
+
+The visit logging system automatically deletes logs older than **30 days** to comply with data minimization principles and reduce storage costs.
+
+### Database-Level Cleanup
+
+A stored procedure `cleanup_old_visit_logs()` is created in the database migration:
+
+```sql
+-- Run manually in Neon console
+SELECT cleanup_old_visit_logs(30);  -- Cleanup logs older than 30 days
+
+-- Or use default (30 days)
+SELECT cleanup_old_visit_logs();
+```
+
+### API Cleanup Endpoint
+
+**Trigger cleanup via API:**
+
+```bash
+curl -X POST \
+  -H "Authorization: Bearer YOUR_CLEANUP_SECRET" \
+  "https://your-site.com/api/admin/cleanup-logs?days=30"
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "message": "Cleanup scheduled for logs older than 30 days",
+  "retentionDays": 30,
+  "timestamp": "2026-01-30T12:00:00.000Z"
+}
+```
+
+### Setup Automated Cleanup
+
+**Option 1: GitHub Actions (Recommended)**
+
+Create `.github/workflows/cleanup-logs.yml`:
+
+```yaml
+name: Cleanup Old Visit Logs
+on:
+  schedule:
+    # Run daily at 2 AM UTC
+    - cron: '0 2 * * *'
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cleanup visit logs
+        run: |
+          curl -X POST \
+            -H "Authorization: Bearer ${{ secrets.CLEANUP_SECRET }}" \
+            "https://your-site.com/api/admin/cleanup-logs?days=30"
+```
+
+**Option 2: External Cron Service (EasyCron)**
+
+1. Go to [https://www.easycron.com/](https://www.easycron.com/)
+2. Create new cron job
+3. Set URL:
+   ```
+   https://your-site.com/api/admin/cleanup-logs?days=30
+   ```
+4. Add custom header:
+   ```
+   Authorization: Bearer YOUR_CLEANUP_SECRET
+   ```
+5. Set frequency: Daily (or your preference)
+
+**Option 3: PostgreSQL Native Schedule (Neon Pro)**
+
+If using Neon Pro with Extensions:
+
+```sql
+-- Install pg_cron extension (requires Neon Pro)
+CREATE EXTENSION IF NOT EXISTS pg_cron;
+
+-- Schedule cleanup daily at 2 AM
+SELECT cron.schedule('cleanup-visit-logs', '0 2 * * *', 
+  'SELECT cleanup_old_visit_logs(30)');
+```
+
+### Configure Cleanup Secret
+
+Set the `CLEANUP_SECRET` environment variable:
+
+**Local development (.env.local):**
+```env
+CLEANUP_SECRET=your-secure-random-secret-here
+```
+
+**Vercel Dashboard:**
+1. Project Settings → Environment Variables
+2. Add variable: `CLEANUP_SECRET`
+3. Set value to a secure random string (e.g., use `openssl rand -hex 32`)
+
+### Adjust Retention Period
+
+To keep logs longer (or shorter), modify:
+
+**In .env:**
+```env
+# Change retention to 60 days
+RETENTION_DAYS=60
+```
+
+**In API call:**
+```bash
+# Keep logs for 90 days
+curl -X POST \
+  -H "Authorization: Bearer YOUR_CLEANUP_SECRET" \
+  "https://your-site.com/api/admin/cleanup-logs?days=90"
+```
+
+### Verify Cleanup is Working
+
+Check remaining logs:
+
+```sql
+-- Total logs in database
+SELECT COUNT(*) as total_logs FROM visit_logs;
+
+-- Logs by date
+SELECT DATE(visited_at) as date, COUNT(*) as count
+FROM visit_logs
+GROUP BY DATE(visited_at)
+ORDER BY date DESC;
+
+-- Oldest log timestamp
+SELECT MIN(visited_at) as oldest_log FROM visit_logs;
+```
+
+After cleanup runs, oldest log should be within retention period (e.g., last 30 days).
+
+## Privacy & Compliance
+
+⚠️ **Important:**
+- **Inform users** about IP logging in your privacy policy
+- **GDPR Compliance**: IP addresses are personal data; ensure proper consent
+- **Data Retention**: Logs are automatically deleted after 30 days (configurable)
+- **User Rights**: Allow users to request their data be deleted
+
+### Add Privacy Notice
+
+Update your Privacy Policy to include:
+```
+We collect anonymized visit data including:
+- IP address and geolocation
+- Browser and device information
+- Pages visited
+
+This data is used for analytics and site improvement purposes only.
+Personal information is not shared with third parties.
+
+Visit logs are retained for 30 days, then automatically deleted.
+```
+
 ## Future Enhancements
 
 - [ ] Implement analytics dashboard at `/admin/analytics`
 - [ ] Add session tracking (group multiple visits by IP + user agent)
 - [ ] Implement event tracking (button clicks, form submissions, etc.)
-- [ ] Add retention policy (auto-delete logs older than X days)
 - [ ] Export analytics to CSV/JSON
 - [ ] Heatmap/scroll tracking
 - [ ] Real-time visitor notifications
+- [ ] Data export before deletion

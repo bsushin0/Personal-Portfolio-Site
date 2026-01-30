@@ -103,3 +103,21 @@ SELECT
 FROM visit_logs
 GROUP BY visit_date, location, browser_name, os_name, device_type
 ORDER BY visit_date DESC;
+
+-- Retention policy: Keep only last 30 days of visit logs
+-- Create stored procedure for cleanup
+CREATE OR REPLACE FUNCTION cleanup_old_visit_logs(retention_days INT DEFAULT 30)
+RETURNS TABLE(deleted_rows INT) AS $$
+DECLARE
+  deleted_count INT;
+BEGIN
+  DELETE FROM visit_logs
+  WHERE visited_at < NOW() - INTERVAL '1 day' * retention_days;
+  
+  GET DIAGNOSTICS deleted_count = ROW_COUNT;
+  RETURN QUERY SELECT deleted_count;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Alternative: Simpler inline cleanup (uncomment to use as migration)
+-- DELETE FROM visit_logs WHERE visited_at < NOW() - INTERVAL '30 days';
