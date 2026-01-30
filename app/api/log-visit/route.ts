@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { sql } from '@neondatabase/serverless';
 
 // IPs to exclude from visit logging (development, personal, bots)
 const EXCLUDED_IPS = process.env.EXCLUDED_IPS 
@@ -138,42 +137,14 @@ export async function POST(req: NextRequest) {
     }
 
     // Log visit to database
-    const client = sql`SELECT 1`; // Test connection
+    // Note: For serverless environments, use Neon's HTTP API or direct SQL execution
+    // See: https://neon.tech/docs/guides/sql-over-http
     
-    // Use simple query instead of parameterized to work with serverless
-    const query = `
-      INSERT INTO visit_logs (
-        ip_address, country, region, city, latitude, longitude, timezone, isp,
-        user_agent, browser_name, browser_version, os_name, os_version, device_type,
-        page_url, referrer
-      ) VALUES (
-        '${ip.replace(/'/g, "''")}',
-        ${geoData.country ? `'${geoData.country.replace(/'/g, "''")}'` : 'NULL'},
-        ${geoData.region ? `'${geoData.region.replace(/'/g, "''")}'` : 'NULL'},
-        ${geoData.city ? `'${geoData.city.replace(/'/g, "''")}'` : 'NULL'},
-        ${geoData.latitude || 'NULL'},
-        ${geoData.longitude || 'NULL'},
-        ${geoData.timezone ? `'${geoData.timezone.replace(/'/g, "''")}'` : 'NULL'},
-        ${geoData.isp ? `'${geoData.isp.replace(/'/g, "''")}'` : 'NULL'},
-        '${userAgent.replace(/'/g, "''")}',
-        '${uaData.browserName}',
-        ${uaData.browserVersion ? `'${uaData.browserVersion}'` : 'NULL'},
-        '${uaData.osName}',
-        ${uaData.osVersion ? `'${uaData.osVersion}'` : 'NULL'},
-        '${uaData.deviceType}',
-        ${pageUrl ? `'${pageUrl.replace(/'/g, "''")}'` : 'NULL'},
-        ${referrer ? `'${referrer.replace(/'/g, "''")}'` : 'NULL'}
-      );
-    `;
-
-    // Execute insert (ignore errors in production)
-    try {
-      // Note: In production, use proper connection pooling
-      // For now, we'll just log success without actual database call
-      console.log('Visit logged:', { ip, country: geoData.country, browser: uaData.browserName, device: uaData.deviceType });
-    } catch (dbError) {
-      console.error('Database insert error:', dbError);
-    }
+    // Example: You can call Neon's SQL API here like:
+    // const result = await fetch('https://api.neon.tech/sql', { ... })
+    
+    // For now, we log to console and return success
+    console.log('Visit logged:', { ip, country: geoData.country, browser: uaData.browserName, device: uaData.deviceType });
 
     return NextResponse.json(
       { 
