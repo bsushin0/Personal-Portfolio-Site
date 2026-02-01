@@ -36,6 +36,36 @@ export interface ContactSubmission {
   submitted_at?: Date;
 }
 
+// Visit log type
+export interface VisitLog {
+  id?: number;
+  
+  // IP and Geolocation data
+  ip_address: string;
+  country?: string;
+  region?: string;
+  city?: string;
+  latitude?: number;
+  longitude?: number;
+  timezone?: string;
+  isp?: string;
+  
+  // User agent and browser information
+  user_agent?: string;
+  browser_name?: string;
+  browser_version?: string;
+  os_name?: string;
+  os_version?: string;
+  device_type?: string;
+  
+  // Page and referrer information
+  page_url?: string;
+  referrer?: string;
+  
+  // Timestamps
+  visited_at?: Date;
+}
+
 // Save contact form submission with IP, geolocation, and user agent data
 export async function saveContactSubmission(data: ContactSubmission) {
   const sql = getDb();
@@ -136,4 +166,51 @@ export async function getIpGeolocation(ip: string): Promise<Partial<ContactSubmi
     console.error('Failed to fetch IP geolocation:', error);
     return {};
   }
+}
+
+// Save visit log entry with IP, geolocation, and user agent data
+export async function saveVisitLog(data: VisitLog) {
+  const sql = getDb();
+  
+  const result = await sql`
+    INSERT INTO visit_logs (
+      ip_address,
+      country,
+      region,
+      city,
+      latitude,
+      longitude,
+      timezone,
+      isp,
+      user_agent,
+      browser_name,
+      browser_version,
+      os_name,
+      os_version,
+      device_type,
+      page_url,
+      referrer
+    )
+    VALUES (
+      ${data.ip_address},
+      ${data.country || null},
+      ${data.region || null},
+      ${data.city || null},
+      ${data.latitude || null},
+      ${data.longitude || null},
+      ${data.timezone || null},
+      ${data.isp || null},
+      ${data.user_agent || null},
+      ${data.browser_name || null},
+      ${data.browser_version || null},
+      ${data.os_name || null},
+      ${data.os_version || null},
+      ${data.device_type || null},
+      ${data.page_url || null},
+      ${data.referrer || null}
+    )
+    RETURNING id, visited_at
+  `;
+  
+  return result[0];
 }

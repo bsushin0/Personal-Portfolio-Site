@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { saveVisitLog, getIpGeolocation } from '@/lib/db';
+import type { VisitLog } from '@/lib/db';
 
 // IPs to exclude from visit logging (development, personal, bots)
 const EXCLUDED_IPS = process.env.EXCLUDED_IPS 
@@ -7,6 +9,8 @@ const EXCLUDED_IPS = process.env.EXCLUDED_IPS
       '127.0.0.1',      // Localhost IPv4
       '::1',            // Localhost IPv6
       '::ffff:127.0.0.1', // IPv4-mapped IPv6 localhost
+      '72.12.197.21',  // My home IP 
+      '128.210.106.68', // My campus IP 
     ];
 
 // Common bot user agents to exclude
@@ -36,7 +40,7 @@ interface GeolocationData {
   isp?: string;
 }
 
-async function getGeolocation(ip: string): Promise<GeolocationData> {
+async function getGeolocation(ip: string) {
   try {
     // Using ip-api.com free tier (45 requests per minute)
     const response = await fetch(`http://ip-api.com/json/${ip}?fields=status,country,regionName,city,lat,lon,timezone,isp`, {
@@ -136,15 +140,31 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Log visit to database
-    // Note: For serverless environments, use Neon's HTTP API or direct SQL execution
-    // See: https://neon.tech/docs/guides/sql-over-http
-    
-    // Example: You can call Neon's SQL API here like:
-    // const result = await fetch('https://api.neon.tech/sql', { ... })
-    
-    // For now, we log to console and return success
-    console.log('Visit logged:', { ip, country: geoData.country, browser: uaData.browserName, device: uaData.deviceType });
+    // Save visit log to database
+    try {
+      await saveVisitLog({
+        ip_address: ip,
+        country: geoData.country,
+        region: geoData.region,
+        city: geoData.city,
+        latitude: geoData.latitude,
+        longitude: geoData.longitude,
+        timezone: geoData.timezone,
+        isp: geoData.isp,
+        user_agent: userAgent,
+        browser_name: uaData.browserName,
+        browser_version: uaData.browserVersion || undefined,
+        os_name: uaData.osName,
+        os_version: uaData.osVersion || undefined,
+        device_type: uaData.deviceType,
+        page_url: pageUrl,
+        referrer: referrer,
+      });
+      console.log('✅ Visit logged to database:', { ip, country: geoData.country, browser: uaData.browserName, device: uaData.deviceType });
+    } catch (dbError) {
+      console.error('❌ Failed to save visit to database:', dbError);
+      // Don't fail the request if database save fails
+    }
 
     return NextResponse.json(
       { 
