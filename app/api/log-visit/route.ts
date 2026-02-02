@@ -142,7 +142,7 @@ export async function POST(req: NextRequest) {
 
     // Save visit log to database
     try {
-      await saveVisitLog({
+      const visitData = {
         ip_address: ip,
         country: geoData.country,
         region: geoData.region,
@@ -159,10 +159,26 @@ export async function POST(req: NextRequest) {
         device_type: uaData.deviceType,
         page_url: pageUrl,
         referrer: referrer,
+      };
+      
+      console.log('📝 Attempting to save visit:', JSON.stringify(visitData, null, 2));
+      
+      const result = await saveVisitLog(visitData);
+      
+      console.log('✅ Visit logged to database successfully!', { 
+        id: result.id, 
+        visited_at: result.visited_at,
+        ip, 
+        country: geoData.country, 
+        browser: uaData.browserName, 
+        device: uaData.deviceType 
       });
-      console.log('✅ Visit logged to database:', { ip, country: geoData.country, browser: uaData.browserName, device: uaData.deviceType });
     } catch (dbError) {
-      console.error('❌ Failed to save visit to database:', dbError);
+      console.error('❌ Failed to save visit to database:');
+      console.error('Error name:', (dbError as any)?.name);
+      console.error('Error message:', (dbError as any)?.message);
+      console.error('Error stack:', (dbError as any)?.stack);
+      console.error('Full error:', JSON.stringify(dbError, Object.getOwnPropertyNames(dbError as any)));
       // Don't fail the request if database save fails
     }
 
