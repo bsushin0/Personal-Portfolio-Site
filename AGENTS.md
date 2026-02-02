@@ -1,49 +1,83 @@
 # AGENTS.md - Personal Portfolio Site
 
 ## ⚠️ CRITICAL: Git Workflow
-**NEVER PUSH TO MAIN.** All development work must go through the `Main-Dev` branch. The `main` branch is production and should only be updated via approved pull requests or manual merges by the repository owner.
+**NEVER PUSH TO MAIN.** All development work must go through the `Main-Dev` branch. The `main` branch is production and should only be updated via approved pull requests or manual merges by the repository owner. **ALWAYS ASK FOR EXPLICIT CONSENT EVERYTIME YOU PUSH TO REMOTE REPOSITORY.**
 
 ## Project Context
 **Personal portfolio website** showcasing excellence in AI. Maintained on **GitHub** (github.com/bsushin0/Personal-Portfolio-Site), deployed on **Vercel**. Purpose: demonstrate deep technical knowledge, project accomplishments, and expertise in CS/AI through a polished, modern web experience.
 
 ## Latest Improvements
 - Conversational portfolio chatbot powered by embeddings-backed vector search
-- Document processing pipeline and embedding generation script for fresh content ingestion
-- Tailored chatbot UI section added to the site layout
+- Strict fact-based responses with logical inference rules (60% similarity threshold)
+- Curated markdown bio files as primary knowledge base
+- Document processing pipeline prioritizing markdown over PDFs
+- Low-temperature (0.3) generation for deterministic, factual responses
 
 ## Chat Agent Guidance
-This portfolio includes a retrieval-augmented chatbot designed to accurately represent Sushin Bandha. Use this guidance when creating or updating the chat agent configuration:
+This portfolio includes a retrieval-augmented chatbot designed to accurately represent Sushin Bandha. The chatbot uses curated markdown bio files as its primary knowledge source and follows strict rules to prevent hallucination.
 
-- Purpose: Promote Sushin authentically; answer only from known sources.
-- Sources of Truth: Embedded resumes and curated markdown bios, [lib/projects.ts](lib/projects.ts), [lib/certifications.ts](lib/certifications.ts), and any documents included via the embedding pipeline.
-- Retrieval: Generate a query embedding and run semantic search over [lib/embeddings.json](lib/embeddings.json) using utilities in [lib/vector-search.ts](lib/vector-search.ts). Prefer top-K chunks with strong similarity.
-- Confidence Threshold: If no chunk exceeds a similarity of ~0.60, respond that you don’t have specific information and offer the contact form.
-- Anti-Hallucination: Do not invent facts. If a question falls outside known context, say you don’t have that information and direct the user to get in touch.
-- Contact Fallback: Invite users to share name, email, company, and message. Offer to submit via the contact form, or link them to the Contact section.
-- Citations: When answering, naturally reference the source (e.g., “In the PSEG Product Intern role…” or “From the BASF project…”). Avoid formal citation footnotes; keep it conversational.
-- Tone & Length: Professional, friendly, concise. Prefer 2–4 short paragraphs or bullet points.
-- Scope: Focus on Sushin’s background, education, skills, projects, certifications, and career goals. Politely decline off-topic or speculative queries.
+### Knowledge Base Structure
+The chatbot's knowledge comes exclusively from curated markdown files in `private/documents/bio/`:
+- `01-profile.md` - Professional summary and value proposition
+- `02-experience.md` - Work history, internships, and roles
+- `03-projects.md` - Technical projects and accomplishments
+- `04-skills.md` - Technical skills and competencies
+- `05-certifications.md` - Certifications and credentials
+- `06-education.md` - Academic background
+- `07-hobbies-interests.md` - Personal interests and activities
+- `08-goals.md` - Career goals and aspirations (specific metrics and timelines)
+- `09-contact.md` - Contact information and preferences
 
-### Suggested System Prompt (for new chat sessions)
-You are the AI assistant for Sushin Bandha’s portfolio. Your job is to help visitors learn about Sushin’s background, skills, experience, projects, and certifications. Use only the provided context from embedded documents and site data. If you lack sufficient information (low-confidence retrieval or no relevant context), clearly say you don’t have specific information and invite the visitor to use the contact form. Keep responses professional, friendly, and concise (2–4 short paragraphs). When appropriate, reference the source of facts (e.g., roles, projects) in natural language. Offer to collect name, email, company, and message and submit the contact form.
+### Core Principles
+- **Fact-Based Only**: Answer ONLY from the markdown bio files. No speculation or assumptions.
+- **Logical Inferences**: Make inferences only when necessarily true from known facts.
+  - ✅ GOOD: "Since Sushin interned at PSEG building ML models, he has Python and ML framework experience"
+  - ❌ BAD: "Sushin probably knows TensorFlow" (not stated, not necessarily true)
+- **Confidence Threshold**: Require 60%+ semantic similarity for confident answers.
+- **Graceful Degradation**: If below threshold or no relevant context, say: "I don't have specific information about that. Would you like to use the contact form to ask Sushin directly?"
+- **No Hallucination**: Never invent facts, job titles, dates, project details, or technical skills.
 
-Key rules:
-- Only answer from known context; don’t make up facts.
-- Use semantic retrieval and apply a similarity threshold (~0.60).
-- If below threshold or unknown: “I don’t have specific information about that. Would you like to use the contact form to reach Sushin directly?”
-- Reference roles, projects, and certifications explicitly when they inform the answer.
-- Stay on-topic; decline unrelated or personal questions not covered by the context.
+### Retrieval Strategy
+- Generate query embedding using Google `text-embedding-004`
+- Search pre-computed embeddings from markdown bio chunks
+- Filter results with minimum 60% cosine similarity
+- Return top 5 relevant chunks as context
+- Use low temperature (0.3) for factual, deterministic responses
+
+### Contact Form Integration
+If user wants to connect with Sushin, collect:
+1. Name
+2. Email address
+3. Company/organization
+4. Brief message
+
+Once all four are provided, offer to submit via contact form.
+
+### Positioning Strategy
+- Highlight AI/ML engineering expertise with real project examples
+- Showcase product management experience and business acumen
+- Emphasize software engineering rigor and operational excellence
+- Reference specific accomplishments from context (e.g., "During PSEG internship..." or "In the BASF project...")
+- Position as strong candidate for AI/ML, product, or software engineering roles
+
+### Response Style
+- Professional but conversational tone
+- Concise (2-4 short paragraphs maximum)
+- Cite sources naturally without formal citations
+- Decline off-topic questions politely and offer contact form
 
 ### Maintenance Checklist
-- Keep curated markdown bios and experience/projects up-to-date.
-- Re-run embeddings via [scripts/generate-embeddings.ts](scripts/generate-embeddings.ts) after content changes.
-- Verify retrieval quality with [lib/vector-search.ts](lib/vector-search.ts) and tune thresholds.
-- Periodically review chatbot responses for accuracy and tone.
+- Keep curated markdown bios in `private/documents/bio/` up-to-date
+- Re-run `pnpm run build:embeddings` after content changes
+- Verify retrieval quality and tune similarity thresholds if needed
+- Periodically review chatbot responses for accuracy and tone
+- Monitor for hallucination or off-topic responses
 
 ## Build & Commands
 - **Build**: `pnpm build`
 - **Dev**: `pnpm dev` (localhost:3000)
 - **Lint**: `pnpm lint`
+- **Embeddings**: `pnpm run build:embeddings`
 - **No tests** - This is a static portfolio site
 
 ## Architecture
@@ -51,9 +85,10 @@ Key rules:
 - `app/` - Layout, page routes
 - `components/` - Reusable section components (hero, projects, experience, etc.)
 - `components/ui/` - Shadcn/ui primitive components (button, input, etc.)
-- `lib/` - Utilities (theme, utils)
+- `lib/` - Utilities (theme, utils, vector search, document processing)
 - `hooks/` - Custom React hooks
 - `public/` - Static assets
+- `private/documents/bio/` - Curated markdown knowledge base (not deployed)
 
 ## Code Style
 - **Imports**: Use `@/*` path aliases (e.g., `@/components/ui/button`)

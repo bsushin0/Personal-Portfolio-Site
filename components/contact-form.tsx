@@ -33,12 +33,17 @@ export default function ContactForm() {
     setError("")
 
     try {
+      // Gather browser information from user agent
+      const deviceInfo = {
+        user_agent: typeof navigator !== 'undefined' ? navigator.userAgent : undefined,
+      }
+
       const response = await fetch("/api/contact", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData, ...deviceInfo }),
       })
 
       if (!response.ok) {

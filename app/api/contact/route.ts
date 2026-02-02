@@ -12,6 +12,7 @@ interface ContactFormData {
   email: string
   subject: string
   message: string
+  user_agent?: string
 }
 
 export async function POST(request: NextRequest) {
@@ -58,6 +59,46 @@ export async function POST(request: NextRequest) {
     // Get geolocation data for the IP
     const geoData = await getIpGeolocation(ip);
 
+    // Extract user agent from request headers
+    const userAgent = data.user_agent || request.headers.get('user-agent') || 'unknown';
+    
+    // Parse browser info from user agent
+    const getBrowserInfo = (ua: string) => {
+      let browserName = 'Unknown';
+      let osName = 'Unknown';
+      let deviceType = 'desktop';
+
+      // Browser detection
+      if (ua.includes('Chrome')) {
+        browserName = 'Chrome';
+      } else if (ua.includes('Safari')) {
+        browserName = 'Safari';
+      } else if (ua.includes('Firefox')) {
+        browserName = 'Firefox';
+      } else if (ua.includes('Edge')) {
+        browserName = 'Edge';
+      }
+
+      // OS detection
+      if (ua.includes('Windows')) {
+        osName = 'Windows';
+      } else if (ua.includes('Mac OS X')) {
+        osName = 'macOS';
+      } else if (ua.includes('Linux')) {
+        osName = 'Linux';
+      } else if (ua.includes('iPhone') || ua.includes('iPad')) {
+        osName = 'iOS';
+        deviceType = ua.includes('iPad') ? 'tablet' : 'mobile';
+      } else if (ua.includes('Android')) {
+        osName = 'Android';
+        deviceType = 'mobile';
+      }
+
+      return { browserName, osName, deviceType };
+    };
+
+    const browserInfo = getBrowserInfo(userAgent);
+
     // Save to database (non-blocking, continue even if it fails)
     try {
       if (process.env.DATABASE_URL) {
@@ -68,8 +109,12 @@ export async function POST(request: NextRequest) {
           message: data.message,
           ip_address: ip,
           ...geoData,
+          user_agent: userAgent,
+          browser_name: browserInfo.browserName,
+          os_name: browserInfo.osName,
+          device_type: browserInfo.deviceType,
         });
-        console.log(`Saved contact submission to database: ${data.email} from ${ip}`);
+        console.log(`✅ Saved contact submission to database: ${data.email} from ${ip} (${browserInfo.osName} ${browserInfo.deviceType})`);
       }
     } catch (dbError) {
       console.error('Failed to save to database:', dbError);

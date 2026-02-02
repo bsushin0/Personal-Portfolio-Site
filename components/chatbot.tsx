@@ -19,6 +19,7 @@ export function Chatbot() {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
@@ -53,6 +54,10 @@ export function Chatbot() {
       setMessages(prev => [...prev, { id: (Date.now() + 1).toString(), role: 'assistant', content: 'Sorry, I encountered an error. Please try again.' }]);
     } finally {
       setIsLoading(false);
+      // Refocus input field after response with slight delay to ensure render completion
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 100);
     }
   };
 
@@ -171,6 +176,7 @@ export function Chatbot() {
           <div className="p-4 border-t border-cyan-500/20 dark:border-cyan-400/20 bg-gradient-to-r from-cyan-500/5 to-purple-500/5">
             <form onSubmit={onSubmit} className="flex gap-2">
               <Input
+                ref={inputRef}
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Ask about Sushin&apos;s experience..."
