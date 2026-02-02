@@ -37,7 +37,7 @@ async function initDatabase() {
 
     console.log('📝 Executing database schema...');
     
-    // Execute the main table creation
+    // Create contact_submissions table
     await sql`
       CREATE TABLE IF NOT EXISTS contact_submissions (
         id SERIAL PRIMARY KEY,
@@ -51,23 +51,61 @@ async function initDatabase() {
         city VARCHAR(100),
         latitude DECIMAL(10, 8),
         longitude DECIMAL(11, 8),
+        user_agent TEXT,
+        browser_name VARCHAR(100),
+        os_name VARCHAR(100),
+        device_type VARCHAR(50),
         submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `;
 
-    // Create indexes
-    await sql`CREATE INDEX IF NOT EXISTS idx_submitted_at ON contact_submissions (submitted_at DESC)`;
-    await sql`CREATE INDEX IF NOT EXISTS idx_email ON contact_submissions (email)`;
-    await sql`CREATE INDEX IF NOT EXISTS idx_ip_address ON contact_submissions (ip_address)`;
+    // Create visit_logs table
+    await sql`
+      CREATE TABLE IF NOT EXISTS visit_logs (
+        id SERIAL PRIMARY KEY,
+        ip_address VARCHAR(45) NOT NULL,
+        country VARCHAR(100),
+        region VARCHAR(100),
+        city VARCHAR(100),
+        latitude DECIMAL(10, 8),
+        longitude DECIMAL(11, 8),
+        timezone VARCHAR(50),
+        isp VARCHAR(255),
+        user_agent TEXT,
+        browser_name VARCHAR(100),
+        browser_version VARCHAR(50),
+        os_name VARCHAR(100),
+        os_version VARCHAR(50),
+        device_type VARCHAR(50),
+        page_url VARCHAR(500),
+        referrer VARCHAR(500),
+        visited_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `;
+
+    // Create indexes for contact_submissions
+    await sql`CREATE INDEX IF NOT EXISTS idx_contact_submitted_at ON contact_submissions (submitted_at DESC)`;
+    await sql`CREATE INDEX IF NOT EXISTS idx_contact_email ON contact_submissions (email)`;
+    await sql`CREATE INDEX IF NOT EXISTS idx_contact_ip ON contact_submissions (ip_address)`;
+
+    // Create indexes for visit_logs
+    await sql`CREATE INDEX IF NOT EXISTS idx_visit_visited_at ON visit_logs (visited_at DESC)`;
+    await sql`CREATE INDEX IF NOT EXISTS idx_visit_ip ON visit_logs (ip_address)`;
+    await sql`CREATE INDEX IF NOT EXISTS idx_visit_country ON visit_logs (country)`;
+    await sql`CREATE INDEX IF NOT EXISTS idx_visit_device ON visit_logs (device_type)`;
+    await sql`CREATE INDEX IF NOT EXISTS idx_visit_browser ON visit_logs (browser_name)`;
 
     console.log('✅ Database initialized successfully!');
-    console.log('\nTable created: contact_submissions');
-    console.log('Indexes created: idx_submitted_at, idx_email, idx_ip_address\n');
+    console.log('\nTables created: contact_submissions, visit_logs');
+    console.log('Indexes created for both tables\n');
 
-    // Test query
+    // Test queries
     console.log('🧪 Testing database connection...');
-    const result = await sql`SELECT COUNT(*) as count FROM contact_submissions`;
-    console.log(`✅ Connection successful! Current submissions: ${result[0].count}\n`);
+    const contactResult = await sql`SELECT COUNT(*) as count FROM contact_submissions`;
+    const visitResult = await sql`SELECT COUNT(*) as count FROM visit_logs`;
+    console.log(`✅ Connection successful!`);
+    console.log(`   Contact submissions: ${contactResult[0].count}`);
+    console.log(`   Visit logs: ${visitResult[0].count}\n`);
 
   } catch (error) {
     console.error('❌ Database initialization failed:', error);
