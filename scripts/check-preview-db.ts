@@ -1,11 +1,14 @@
-import { neon } from '@neondatabase/serverless';
+import { config } from 'dotenv';
+import { join } from 'path';
+import { getDb } from '@/lib/db';
 
-const PREVIEW_DB_URL = 'postgresql://neondb_owner:npg_BEitwXop5uM3@ep-fancy-feather-ah3nnnm2-pooler.c-3.us-east-1.aws.neon.tech/neondb?sslmode=require';
+// Load environment variables from .env.local
+config({ path: join(process.cwd(), '.env.local') });
 
 async function checkDatabase() {
-  const sql = neon(PREVIEW_DB_URL);
+  const sql = getDb();
   
-  console.log('🔍 Checking preview database...\n');
+  console.log('🔍 Checking database connection...\n');
   
   // Check visit logs
   const visitCount = await sql`SELECT COUNT(*) as count FROM visit_logs`;

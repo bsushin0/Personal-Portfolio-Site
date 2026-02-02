@@ -1,11 +1,17 @@
 import { neon } from '@neondatabase/serverless';
 
 // Initialize Neon client with the DATABASE_URL
+// For serverless/edge functions, use the pooled connection
+// For production/long-lived connections, use the unpooled connection
 export function getDb() {
   if (!process.env.DATABASE_URL) {
     throw new Error('DATABASE_URL environment variable is not set');
   }
-  return neon(process.env.DATABASE_URL);
+  
+  // Use unpooled connection for better compatibility with Vercel serverless
+  // This is necessary when DATABASE_URL is pooled but Vercel blocks it
+  const dbUrl = process.env.DATABASE_URL_UNPOOLED || process.env.DATABASE_URL;
+  return neon(dbUrl);
 }
 
 // Contact form submission type
