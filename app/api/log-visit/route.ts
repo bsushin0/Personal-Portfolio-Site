@@ -3,15 +3,14 @@ import { saveVisitLog, getIpGeolocation } from '@/lib/db';
 import type { VisitLog } from '@/lib/db';
 
 // IPs to exclude from visit logging (development, personal, bots)
-// TEMPORARILY DISABLED FOR TESTING - All IPs will be logged
 const EXCLUDED_IPS = process.env.EXCLUDED_IPS 
   ? process.env.EXCLUDED_IPS.split(',').map(ip => ip.trim())
   : [
-      // '127.0.0.1',      // Localhost IPv4
-      // '::1',            // Localhost IPv6
-      // '::ffff:127.0.0.1', // IPv4-mapped IPv6 localhost
-      // '72.12.197.21',  // My home IP 
-      // '128.210.106.68', // My campus IP 
+      '127.0.0.1',      // Localhost IPv4
+      '::1',            // Localhost IPv6
+      '::ffff:127.0.0.1', // IPv4-mapped IPv6 localhost
+      '72.12.197.21',  // My home IP 
+      // '128.210.106.68', // My campus IP - EXCLUDED FOR TESTING
     ];
 
 // Common bot user agents to exclude
