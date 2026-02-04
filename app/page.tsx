@@ -11,9 +11,9 @@ import Skills from "@/components/skills"
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gradient-futuristic-light dark:bg-gradient-futuristic text-gray-900 dark:text-cyan-100">
+    <div className="min-h-screen bg-background text-foreground">
       <Navbar />
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-4 py-12 md:py-16">
         <Hero />
         <About />
         <Interests />

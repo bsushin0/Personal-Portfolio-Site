@@ -21,10 +21,10 @@ const interests = [
 
 export default function Interests() {
   return (
-    <section id="interests" className="py-20 bg-gradient-futuristic border-t border-cyan-500/20">
+    <section id="interests" className="py-20 bg-gradient-lab dark:bg-gradient-neural border-t border-slate-200/80 dark:border-slate-800/80">
       <div className="text-center mb-16">
-        <h2 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-cyan-300 to-purple-400 bg-clip-text text-transparent mb-4">Interests & Involvement</h2>
-        <p className="text-cyan-200/70 dark:text-cyan-200/60 max-w-2xl mx-auto">
+        <h2 className="text-3xl md:text-4xl font-bold text-foreground tracking-tight mb-4">Interests & Involvement</h2>
+        <p className="text-foreground/60 max-w-2xl mx-auto">
           Areas of focus that guide my work in product, AI, and cybersecurity.
         </p>
       </div>
@@ -33,16 +33,16 @@ export default function Interests() {
         {interests.map((item) => (
           <Card
             key={item.title}
-            className="glass-effect-sm border-glow-cyan card-interactive"
+            className="glass-effect-sm border-glow card-interactive"
           >
             <CardHeader className="flex flex-row items-center gap-4">
-              <div className="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 border border-purple-500/30">
+              <div className="flex items-center justify-center w-12 h-12 rounded-full bg-indigo-500/10 text-indigo-500 border border-indigo-500/20">
                 {item.icon}
               </div>
-              <CardTitle className="text-lg text-cyan-300 dark:text-cyan-400">{item.title}</CardTitle>
+              <CardTitle className="text-lg text-foreground">{item.title}</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-cyan-100/80 dark:text-cyan-100/70">{item.description}</p>
+              <p className="text-foreground/60">{item.description}</p>
             </CardContent>
           </Card>
         ))}

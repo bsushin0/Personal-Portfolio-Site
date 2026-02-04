@@ -13,8 +13,8 @@ export default function Projects() {
   return (
     <section id="projects" className="py-20">
       <div className="text-center mb-16">
-        <h2 className="text-3xl md:text-4xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 to-purple-400">Featured Projects</h2>
-        <p className="text-cyan-200/80 dark:text-cyan-200/70 max-w-2xl mx-auto">
+        <h2 className="text-3xl md:text-4xl font-bold mb-4 text-foreground tracking-tight">Featured Projects</h2>
+        <p className="text-foreground/60 max-w-2xl mx-auto">
           Innovative projects combining AI, data analysis, and practical applications to solve real-world problems.
         </p>
       </div>
@@ -41,8 +41,8 @@ export default function Projects() {
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
             </div>
             <CardHeader>
-              <CardTitle className="text-cyan-300 dark:text-cyan-400">{project.title}</CardTitle>
-              <CardDescription className="text-cyan-200/70 dark:text-cyan-200/60">{project.description}</CardDescription>
+              <CardTitle className="text-foreground">{project.title}</CardTitle>
+              <CardDescription className="text-foreground/60">{project.description}</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="flex flex-wrap gap-2">
@@ -50,7 +50,7 @@ export default function Projects() {
                   <Badge
                     key={tag}
                     variant="secondary"
-                    className="bg-purple-500/20 dark:bg-purple-500/30 text-purple-200 dark:text-purple-300 border border-purple-500/30"
+                    className="bg-slate-100 text-slate-700 dark:bg-slate-900 dark:text-slate-200 border border-slate-200/80 dark:border-slate-800/80"
                   >
                     {tag}
                   </Badge>
@@ -63,7 +63,7 @@ export default function Projects() {
                   asChild
                   variant="ghost"
                   size="sm"
-                  className="text-cyan-300 hover:text-cyan-100 hover:bg-cyan-500/10"
+                  className="text-primary hover:text-primary/90 hover:bg-slate-100/70 dark:hover:bg-slate-900/40"
                 >
                   <a href={project.liveUrl} target="_blank" rel="noopener noreferrer">
                     <ExternalLink className="mr-2 h-4 w-4" />

@@ -98,10 +98,10 @@ export default function Experience() {
   return (
     <section id="experience" className="py-20">
       <div className="text-center mb-16">
-        <h2 className="text-3xl md:text-4xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 to-purple-400">Experience</h2>
-        <p className="text-cyan-200/80 dark:text-cyan-200/70 max-w-2xl mx-auto">
+        <h2 className="text-3xl md:text-4xl font-bold mb-4 text-foreground tracking-tight">Experience</h2>
+        <p className="text-foreground/60 max-w-2xl mx-auto">
           Product and leadership roles are highlighted here. For technical AI work (including the BASF forecasting project), see the
-          <a href="#projects" className="ml-1 text-cyan-200 underline underline-offset-4 hover:text-cyan-100">Projects</a> section.
+          <a href="#projects" className="ml-1 text-primary underline underline-offset-4 hover:text-primary/80">Projects</a> section.
         </p>
       </div>
 
@@ -109,27 +109,27 @@ export default function Experience() {
         {experiences.map((exp) => (
           <Card
             key={exp.id}
-            className="glass-effect-sm border-glow-indigo card-interactive"
+            className="glass-effect-sm border-glow card-interactive"
           >
             <CardHeader>
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div>
-                  <CardTitle className="text-xl text-cyan-300 dark:text-cyan-400 flex items-center gap-2">
-                    <Building className="h-5 w-5 text-purple-400" />
+                  <CardTitle className="text-xl text-foreground flex items-center gap-2">
+                    <Building className="h-5 w-5 text-foreground/50" />
                     {exp.title}
                   </CardTitle>
-                  <CardDescription className="text-lg font-medium text-cyan-200 dark:text-cyan-300 mt-1">
+                  <CardDescription className="text-lg font-medium text-foreground/70 mt-1">
                     {exp.company}
                   </CardDescription>
                 </div>
                 <div className="flex flex-col md:items-end gap-2">
-                  <Badge variant="outline" className="w-fit border-cyan-500/50 text-cyan-300">
+                  <Badge variant="outline" className="w-fit border-slate-200/80 dark:border-slate-800/80 text-foreground/70">
                     <Calendar className="h-3 w-3 mr-1" />
                     {exp.period}
                   </Badge>
                   <Badge
                     variant="secondary"
-                    className="w-fit bg-purple-500/20 dark:bg-purple-500/30 text-purple-200 dark:text-purple-300 border border-purple-500/30"
+                    className="w-fit bg-indigo-500/10 text-indigo-600 dark:text-indigo-300 border border-indigo-500/20"
                   >
                     {exp.type}
                   </Badge>
@@ -139,8 +139,8 @@ export default function Experience() {
             <CardContent>
               <ul className="space-y-2 mb-6">
                 {exp.description.map((item, index) => (
-                  <li key={index} className="flex items-start gap-2 text-cyan-100/80 dark:text-cyan-100/70">
-                    <span className="text-cyan-400 mt-1.5 text-xs">●</span>
+                  <li key={index} className="flex items-start gap-2 text-foreground/70">
+                    <span className="text-foreground/40 mt-1.5 text-xs">●</span>
                     <span>{item}</span>
                   </li>
                 ))}
@@ -150,7 +150,7 @@ export default function Experience() {
                   <Badge
                     key={skill}
                     variant="secondary"
-                    className="bg-blue-500/20 dark:bg-blue-500/30 text-blue-200 dark:text-blue-300 border border-blue-500/30"
+                    className="bg-slate-100 text-slate-700 dark:bg-slate-900 dark:text-slate-200 border border-slate-200/80 dark:border-slate-800/80"
                   >
                     {skill}
                   </Badge>

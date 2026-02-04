@@ -15,14 +15,14 @@ body {
 
 /* Neural Deep Dark Mode */
 body.dark {
-  background: linear-gradient(135deg, #020617 0%, #0f172a 50%, #1a1a3e 100%);
-  color: #e2e8f0;
+  background: #020617;
+  color: #F1F5F9;
 }
 
 /* Clean Lab Light Mode */
 body:not(.dark) {
-  background: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 50%, #E2E8F0 100%);
-  color: #1e293b;
+  background: #F8FAFC;
+  color: #0F172A;
 }
 
 @layer utilities {
@@ -41,52 +41,52 @@ body:not(.dark) {
   
   /* Neural Glow Effects */
   .glow-neural {
-    @apply shadow-lg shadow-cyan-400/20;
+    @apply shadow-lg shadow-indigo-500/10;
   }
   
   .glow-neural-lg {
-    @apply shadow-lg shadow-cyan-400/30;
+    @apply shadow-lg shadow-indigo-500/15;
   }
 
   .glow-cyan {
-    @apply shadow-lg shadow-cyan-400/20;
+    @apply shadow-lg shadow-indigo-500/10;
   }
   
   .glow-cyan-lg {
-    @apply shadow-lg shadow-cyan-400/30;
+    @apply shadow-lg shadow-indigo-500/15;
   }
   
   .glow-indigo {
-    @apply shadow-lg shadow-indigo-500/20;
+    @apply shadow-lg shadow-indigo-500/15;
   }
   
   .glow-indigo-lg {
-    @apply shadow-lg shadow-indigo-500/30;
+    @apply shadow-lg shadow-indigo-500/20;
   }
   
   .glow-purple {
-    @apply shadow-lg shadow-purple-500/20;
+    @apply shadow-lg shadow-indigo-500/10;
   }
   
   .glow-purple-lg {
-    @apply shadow-lg shadow-purple-500/30;
+    @apply shadow-lg shadow-indigo-500/15;
   }
   
   /* Glassmorphism Effects */
   .glass-neural {
-    @apply backdrop-blur-xl bg-slate-950/40 border border-white/10 saturate-150;
+    @apply backdrop-blur-xl bg-[#020617]/70 border border-slate-800/70 saturate-150;
   }
 
   .glass-neural-sm {
-    @apply backdrop-blur-lg bg-slate-950/30 border border-white/5;
+    @apply backdrop-blur-lg bg-[#020617]/60 border border-slate-800/60;
   }
 
   .glass-lab {
-    @apply backdrop-blur-xl bg-white/70 border border-slate-200/50 saturate-150;
+    @apply backdrop-blur-xl bg-white/70 border border-slate-200/70 saturate-150;
   }
 
   .glass-lab-sm {
-    @apply backdrop-blur-lg bg-white/50 border border-slate-100/30;
+    @apply backdrop-blur-lg bg-white/70 shadow-[0_20px_50px_rgba(0,0,0,0.05)];
   }
   
   .glass-effect {
@@ -107,27 +107,27 @@ body:not(.dark) {
   
   /* Border Glow Effects */
   .border-glow {
-    @apply border border-cyan-400/30 hover:border-cyan-400/60 hover:shadow-glow-cyan transition-all duration-300;
+    @apply border border-slate-200 dark:border-slate-800 transition-all duration-300;
   }
   
   .border-glow-lg {
-    @apply border border-cyan-400/20 hover:border-cyan-400/50 hover:shadow-glow-cyan-lg transition-all duration-300;
+    @apply border border-slate-200/80 dark:border-slate-800/80 transition-all duration-300;
   }
 
   .border-glow-indigo {
-    @apply border border-indigo-500/30 hover:border-indigo-500/60 hover:shadow-glow-indigo transition-all duration-300;
+    @apply border border-indigo-500/30 hover:border-indigo-500/40 transition-all duration-300;
   }
 
   .border-glow-indigo-lg {
-    @apply border border-indigo-500/20 hover:border-indigo-500/50 hover:shadow-glow-indigo-lg transition-all duration-300;
+    @apply border border-indigo-500/25 hover:border-indigo-500/40 transition-all duration-300;
   }
   
   .border-glow-purple {
-    @apply border border-purple-500/30 hover:border-purple-400/60 hover:shadow-glow-purple transition-all duration-300;
+    @apply border border-slate-200 dark:border-slate-800 transition-all duration-300;
   }
 
   .border-glow-purple-lg {
-    @apply border border-purple-500/20 hover:border-purple-400/50 hover:shadow-glow-purple-lg transition-all duration-300;
+    @apply border border-slate-200/80 dark:border-slate-800/80 transition-all duration-300;
   }
 
   /* Interactive Cards */
@@ -141,11 +141,11 @@ body:not(.dark) {
 
   /* Text Gradients */
   .text-gradient-cyan {
-    @apply bg-gradient-to-r from-cyan-300 to-cyan-400 bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-slate-600 to-indigo-500 bg-clip-text text-transparent;
   }
 
   .text-gradient-ai {
-    @apply bg-gradient-to-r from-cyan-400 via-indigo-500 to-purple-500 bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-slate-600 via-indigo-500 to-indigo-400 bg-clip-text text-transparent;
   }
 }
 
@@ -153,48 +153,48 @@ body:not(.dark) {
   :root {
     /* Light Theme - Clean Lab */
     --background: 210 40% 98%;
-    --foreground: 218 43% 16%;
+    --foreground: 222 47% 11%;
     --card: 0 0% 100%;
-    --card-foreground: 218 43% 16%;
+    --card-foreground: 222 47% 11%;
     --popover: 0 0% 100%;
-    --popover-foreground: 218 43% 16%;
-    --primary: 217 91% 60%;
+    --popover-foreground: 222 47% 11%;
+    --primary: 239 84% 67%;
     --primary-foreground: 210 40% 98%;
-    --secondary: 226 71% 55%;
-    --secondary-foreground: 210 40% 98%;
-    --accent: 185 92% 53%;
+    --secondary: 214 32% 91%;
+    --secondary-foreground: 222 47% 11%;
+    --accent: 239 84% 67%;
     --accent-foreground: 210 40% 98%;
     --muted: 214 32% 91%;
-    --muted-foreground: 218 14% 45%;
+    --muted-foreground: 215 16% 47%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 210 40% 98%;
     --border: 214 32% 91%;
     --input: 214 32% 91%;
-    --ring: 217 91% 60%;
+    --ring: 239 84% 67%;
     --radius: 0.75rem;
   }
   
   .dark {
     /* Dark Theme - Neural Deep */
-    --background: 228 16% 4%;
-    --foreground: 214 14% 93%;
-    --card: 228 16% 6%;
-    --card-foreground: 214 14% 93%;
-    --popover: 228 16% 5%;
-    --popover-foreground: 214 14% 93%;
-    --primary: 185 92% 53%;
-    --primary-foreground: 228 16% 4%;
-    --secondary: 226 71% 55%;
-    --secondary-foreground: 228 16% 4%;
-    --accent: 262 80% 50%;
-    --accent-foreground: 210 40% 98%;
-    --muted: 217 33% 17%;
+    --background: 222 47% 5%;
+    --foreground: 210 40% 96%;
+    --card: 222 47% 11%;
+    --card-foreground: 210 40% 96%;
+    --popover: 222 47% 8%;
+    --popover-foreground: 210 40% 96%;
+    --primary: 239 84% 67%;
+    --primary-foreground: 222 47% 11%;
+    --secondary: 215 28% 17%;
+    --secondary-foreground: 210 40% 96%;
+    --accent: 239 84% 67%;
+    --accent-foreground: 222 47% 11%;
+    --muted: 215 28% 17%;
     --muted-foreground: 215 20% 65%;
     --destructive: 0 72% 51%;
     --destructive-foreground: 210 40% 98%;
-    --border: 217 33% 17%;
-    --input: 217 33% 17%;
-    --ring: 185 92% 53%;
+    --border: 215 28% 17%;
+    --input: 215 28% 17%;
+    --ring: 239 84% 67%;
   }
 }
 
@@ -210,10 +210,10 @@ body:not(.dark) {
 /* Neural Pulse Animation */
 @keyframes pulse-neural {
   0%, 100% {
-    box-shadow: 0 0 20px rgba(34, 211, 238, 0.2), 0 0 40px rgba(34, 211, 238, 0.1);
+    box-shadow: 0 0 16px rgba(99, 102, 241, 0.18), 0 0 32px rgba(99, 102, 241, 0.08);
   }
   50% {
-    box-shadow: 0 0 30px rgba(34, 211, 238, 0.4), 0 0 60px rgba(34, 211, 238, 0.2);
+    box-shadow: 0 0 24px rgba(99, 102, 241, 0.26), 0 0 48px rgba(99, 102, 241, 0.12);
   }
 }
 
@@ -233,18 +233,18 @@ html {
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f5f9;
+  background: #F8FAFC;
 }
 
 .dark ::-webkit-scrollbar-track {
-  background: #0f172a;
+  background: #0F172A;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #22d3ee;
+  background: #6366F1;
   border-radius: 999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #06b6d4;
+  background: #4F46E5;
 }

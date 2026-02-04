@@ -26,10 +26,10 @@ export default function About() {
   ]
 
   return (
-    <section id="about" className="py-20 bg-gradient-futuristic border-t border-cyan-500/20">
+    <section id="about" className="py-20 bg-gradient-lab dark:bg-gradient-neural border-t border-slate-200/80 dark:border-slate-800/80">
       <div className="text-center mb-16">
-        <h2 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-cyan-300 to-purple-400 bg-clip-text text-transparent mb-4">About Me</h2>
-        <p className="text-cyan-200/70 dark:text-cyan-200/60 max-w-3xl mx-auto text-lg leading-relaxed">
+        <h2 className="text-3xl md:text-4xl font-bold text-foreground tracking-tight mb-4">About Me</h2>
+        <p className="text-foreground/60 max-w-3xl mx-auto text-lg leading-relaxed">
           I&apos;m a results-driven AI student combining technical expertise with strong communication and leadership. I specialize in
           user-centric products at the intersection of machine learning and business strategy. With hands-on experience as a
           Product Intern at PSEG, leading cross-functional teams, and building ML solutions for BASF, I bring both technical
@@ -42,16 +42,16 @@ export default function About() {
         {highlights.map((item, index) => (
           <Card
             key={index}
-            className="glass-effect-sm border-glow-cyan card-interactive"
+            className="glass-effect-sm border-glow card-interactive"
           >
             <CardHeader className="text-center">
-              <div className="mx-auto w-12 h-12 bg-purple-500/20 dark:bg-purple-500/20 rounded-full flex items-center justify-center text-purple-400 dark:text-purple-400 mb-4 border border-purple-500/30">
+              <div className="mx-auto w-12 h-12 bg-indigo-500/10 rounded-full flex items-center justify-center text-indigo-500 mb-4 border border-indigo-500/20">
                 {item.icon}
               </div>
-              <CardTitle className="text-lg text-cyan-300 dark:text-cyan-400">{item.title}</CardTitle>
+              <CardTitle className="text-lg text-foreground">{item.title}</CardTitle>
             </CardHeader>
             <CardContent>
-              <CardDescription className="text-center text-cyan-200/70 dark:text-cyan-200/60">
+              <CardDescription className="text-center text-foreground/60">
                 {item.description}
               </CardDescription>
             </CardContent>
