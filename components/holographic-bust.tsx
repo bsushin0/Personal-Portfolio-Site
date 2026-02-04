@@ -26,98 +26,124 @@ export default function HolographicBust({
         className
       )}
     >
-      {/* 1. Projector Beam (Base) */}
-      <div className="absolute bottom-0 w-40 h-1 bg-cyan-500/50 blur-[20px] rounded-[100%] animate-pulse" />
-      <div className="absolute inset-0 bg-gradient-to-t from-cyan-500/10 via-transparent to-transparent blur-3xl -z-10" />
+      {/* 1. Android Ambient Glow (Subtle Backlight) */}
+      <div className="absolute inset-0 bg-cyan-500/10 blur-[80px] -z-10" />
 
-      {/* 2. The Personalized SVG Mesh */}
+      {/* 2. The Android SVG */}
       <svg
         viewBox="0 0 200 240"
         className={cn(
           "w-full h-full",
-          "drop-shadow-[0_0_8px_rgba(34,211,238,0.6)]",
-          "animate-hologram-float"
+          "drop-shadow-[0_10px_20px_rgba(0,0,0,0.3)]", // Solid shadow, not glow
+          "animate-hologram-float" // Gentle float remains for "Advanced Tech" feel
         )}
         xmlns="http://www.w3.org/2000/svg"
       >
         <defs>
-          {/* Cyber Gradient for Skin/Suit */}
-          <linearGradient id="holoGradient" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stopColor="#22D3EE" stopOpacity="0.15" />
-            <stop offset="50%" stopColor="#6366F1" stopOpacity="0.1" />
-            <stop offset="100%" stopColor="#22D3EE" stopOpacity="0.05" />
+          {/* SKIN: Metallic Android Gradient */}
+          <linearGradient id="androidSkin" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stopColor="#E2E8F0" stopOpacity="1" />   {/* Light Silver */}
+            <stop offset="50%" stopColor="#94A3B8" stopOpacity="1" />   {/* Mid Metal */}
+            <stop offset="100%" stopColor="#475569" stopOpacity="1" />  {/* Shadow Metal */}
           </linearGradient>
 
-          {/* PURPLE TIE CORE GRADIENT (Your Signature Feature) */}
+          {/* HAIR: Matte Carbon Fiber */}
+          <linearGradient id="hairGradient" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#1E293B" stopOpacity="1" />
+            <stop offset="100%" stopColor="#0F172A" stopOpacity="1" />
+          </linearGradient>
+
+          {/* SUIT: Deep Navy Armor */}
+          <linearGradient id="suitGradient" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stopColor="#1E293B" stopOpacity="1" />
+            <stop offset="100%" stopColor="#020617" stopOpacity="1" />
+          </linearGradient>
+
+          {/* TIE: The "Power Core" Crystal */}
           <linearGradient id="coreGradient" x1="0.5" y1="0" x2="0.5" y2="1">
-            <stop offset="0%" stopColor="#6366F1" stopOpacity="0.8" />
-            <stop offset="100%" stopColor="#22D3EE" stopOpacity="0.2" />
+            <stop offset="0%" stopColor="#818CF8" stopOpacity="1" />   {/* Indigo Light */}
+            <stop offset="50%" stopColor="#6366F1" stopOpacity="1" />   {/* Indigo Main */}
+            <stop offset="100%" stopColor="#4338CA" stopOpacity="1" />  {/* Deep Indigo */}
           </linearGradient>
 
-          {/* Scanline Pattern */}
-          <pattern id="scanlines" x="0" y="0" width="100%" height="4" patternUnits="userSpaceOnUse">
-            <rect width="100%" height="1" fill="#22D3EE" fillOpacity="0.15" />
+          {/* STATIC TEXTURE: Micro-Circuitry (Fixed, no animation) */}
+          <pattern id="circuitry" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
+             <path d="M0 5H10" stroke="#000" strokeOpacity="0.05" strokeWidth="0.5" />
+             <path d="M5 0V10" stroke="#000" strokeOpacity="0.05" strokeWidth="0.5" />
           </pattern>
         </defs>
 
-        {/* GROUP 1: The Head Structure (Modeled on your photo) */}
-        <g stroke="#22D3EE" strokeWidth="0.8" fill="url(#holoGradient)">
+        {/* === LAYER 1: THE SUIT (Armor Plates) === */}
+        <g stroke="#334155" strokeWidth="1" fill="url(#suitGradient)">
+          {/* Left Shoulder Plate */}
+          <path d="M60,120 L20,135 L10,240 L100,240 L90,160 Z" />
+          {/* Right Shoulder Plate */}
+          <path d="M140,120 L180,135 L190,240 L100,240 L110,160 Z" />
           
-          {/* HAIR BLOCK - capturing your volume and right-sweep */}
-          {/* Points: Left Temple -> Top Left Volume -> Top Right Peak -> Right Temple */}
-          <polygon points="55,60 65,30 110,25 140,35 150,65" strokeOpacity="0.8" />
-          
-          {/* FACE MASK - capturing your jawline */}
-          {/* Points: L Temple -> L Jaw -> Chin -> R Jaw -> R Temple */}
-          <polygon points="55,60 60,110 100,145 140,110 150,65" />
-
-          {/* FOREHEAD PLANE (The "T-Zone") */}
-          <polygon points="55,60 150,65 100,90" fillOpacity="0.2" />
-
-          {/* CHEEKS/DEPTH */}
-          <path d="M60,110 L100,90 L140,110 L100,145 Z" fillOpacity="0.1" />
+          {/* Collar/Shirt Area (Lighter Metal) */}
+          <path d="M60,120 L90,160 L110,160 L140,120 L100,180 Z" fill="#94A3B8" />
         </g>
 
-        {/* GROUP 2: The "Suit" Structure */}
-        <g stroke="#22D3EE" strokeWidth="0.5" fill="url(#holoGradient)" className="animate-pulse-slow">
-          
-          {/* Left Shoulder (Suit Jacket) */}
-          <polygon points="60,110 20,130 10,240 80,240 90,160" />
-          
-          {/* Right Shoulder */}
-          <polygon points="140,110 180,130 190,240 120,240 110,160" />
-          
-          {/* THE POWER CORE (Your Abstracted Tie) */}
-          {/* This is the purple triangle in the center */}
-          <polygon 
-            points="100,145 115,240 85,240" 
-            fill="url(#coreGradient)" 
-            stroke="#6366F1" 
-            strokeWidth="1" 
-          />
+        {/* === LAYER 2: THE POWER TIE (Refined) === */}
+        <g filter="drop-shadow(0 0 5px rgba(99, 102, 241, 0.5))">
+          {/* The Knot */}
+          <path d="M90,160 L110,160 L105,175 L95,175 Z" fill="#4338CA" />
+          {/* The Blade (Crystal Core) */}
+          <path d="M95,175 L105,175 L115,240 L85,240 Z" fill="url(#coreGradient)" />
+          {/* Internal Glow Line */}
+          <path d="M100,175 L100,240" stroke="#A5B4FC" strokeWidth="1" opacity="0.5" />
         </g>
 
-        {/* GROUP 3: Data Nodes (The AI "Brain") */}
-        <g fill="#22D3EE">
-          {/* Eye Nodes (Abstracted position) */}
-          <circle cx="80" cy="85" r="1.5" opacity="0.8" className="animate-ping" style={{animationDuration: '3s'}}/>
-          <circle cx="120" cy="85" r="1.5" opacity="0.8" className="animate-ping" style={{animationDuration: '3s', animationDelay: '1.5s'}}/>
+        {/* === LAYER 3: THE HEAD (Android Geometry) === */}
+        <g stroke="#475569" strokeWidth="0.5" fill="url(#androidSkin)">
           
-          {/* Chin Node */}
-          <circle cx="100" cy="145" r="2" fill="#6366F1" />
-          
-          {/* Temple/Jaw Nodes */}
-          <circle cx="55" cy="60" r="1" opacity="0.5" />
-          <circle cx="150" cy="65" r="1" opacity="0.5" />
-          <circle cx="60" cy="110" r="1" opacity="0.5" />
-          <circle cx="140" cy="110" r="1" opacity="0.5" />
+          {/* Ears (Back Layer) */}
+          <path d="M45,90 L55,80 L55,110 L50,115 Z" fill="#64748B" /> {/* Left Ear */}
+          <path d="M155,90 L145,80 L145,110 L150,115 Z" fill="#64748B" /> {/* Right Ear */}
+
+          {/* Main Face Shape (Jaw & Temples) */}
+          <path d="M55,60 L60,115 L100,150 L140,115 L145,60 L100,50 Z" />
+
+          {/* Neck Connection */}
+          <path d="M75,140 L125,140 L125,160 L75,160 Z" fill="#64748B" />
         </g>
 
-        {/* GROUP 4: Scanline Overlay */}
-        <rect x="0" y="0" width="200" height="240" fill="url(#scanlines)" className="pointer-events-none opacity-40 mix-blend-overlay" />
+        {/* === LAYER 4: FACIAL FEATURES (The "Human" Element) === */}
+        <g fill="#334155" stroke="none">
+          
+          {/* NOSE: Geometric Bridge */}
+          <path d="M98,90 L102,90 L104,115 L96,115 Z" fill="#94A3B8" />
+          <path d="M96,115 L100,120 L104,115" fill="#64748B" /> {/* Shadow Tip */}
+
+          {/* MOUTH: Synthetic Plate */}
+          <path d="M85,130 Q100,135 115,130 L115,132 Q100,137 85,132 Z" fill="#475569" />
+
+          {/* EYES: The Android Lenses */}
+          {/* Left Eye */}
+          <g transform="translate(75, 90)">
+             <ellipse cx="0" cy="0" rx="8" ry="4" fill="#1E293B" /> {/* Socket */}
+             <circle cx="0" cy="0" r="2" fill="#22D3EE" className="animate-pulse" /> {/* Optic Lens */}
+          </g>
+          {/* Right Eye */}
+          <g transform="translate(125, 90)">
+             <ellipse cx="0" cy="0" rx="8" ry="4" fill="#1E293B" />
+             <circle cx="0" cy="0" r="2" fill="#22D3EE" className="animate-pulse" />
+          </g>
+        </g>
+
+        {/* === LAYER 5: HAIR (Voluminous Solid Block) === */}
+        <path 
+          d="M55,60 L65,30 L110,25 L145,35 L145,60 L100,50 Z" 
+          fill="url(#hairGradient)" 
+          stroke="#0F172A"
+        />
+
+        {/* === LAYER 6: TEXTURE OVERLAYS (Static) === */}
+        {/* Static Horizontal Lines (Circuitry) */}
+        <rect x="55" y="30" width="90" height="120" fill="url(#circuitry)" opacity="0.4" style={{ mixBlendMode: 'multiply' }} />
         
-        {/* Moving Glitch Line */}
-        <rect x="0" y="0" width="200" height="2" fill="#22D3EE" opacity="0.5" className="animate-scan-fast" />
+        {/* Subtle Shine/Reflection on Forehead */}
+        <path d="M70,60 Q100,55 130,60 Q130,75 100,75 Q70,75 70,60" fill="white" opacity="0.1" />
 
       </svg>
     </div>
