@@ -474,7 +474,7 @@ export default function AiAvatar() {
                   strokeWidth="3"
                   fill="none"
                   strokeLinecap="round"
-                  className="text-cyan-100 dark:text-cyan-50 drop-shadow-lg"
+                  className="text-primary/80 dark:text-primary/70 drop-shadow-lg"
                 />
               </svg>
 
@@ -505,7 +505,7 @@ export default function AiAvatar() {
                   strokeWidth="3"
                   fill="none"
                   strokeLinecap="round"
-                  className="text-cyan-100 dark:text-cyan-50 drop-shadow-lg"
+                  className="text-primary/80 dark:text-primary/70 drop-shadow-lg"
                 />
               </svg>
             </div>
@@ -594,7 +594,7 @@ export default function AiAvatar() {
                   strokeWidth="3"
                   fill="none"
                   strokeLinecap="round"
-                  className="text-cyan-400 dark:text-cyan-300 drop-shadow-lg transition-colors"
+                  className="text-primary dark:text-primary/80 drop-shadow-lg transition-colors"
                   style={{
                     filter: expression.emotion === "focused" ? "brightness(1.2)" : "brightness(1)",
                   }}
@@ -604,7 +604,7 @@ export default function AiAvatar() {
                 <path
                   d={`M 20 45 Q 60 ${45 + smileCurve * 0.5 + mouthY} 100 45 Q 60 ${50 + mouthY} 20 45`}
                   fill="currentColor"
-                  className="text-cyan-300/40 dark:text-cyan-300/50 transition-colors duration-200"
+                  className="text-primary/40 dark:text-primary/50 transition-colors duration-200"
                 />
 
                 {/* Tongue peek when thinking */}
