@@ -105,29 +105,54 @@ const config = {
             boxShadow: "0 0 24px rgba(99, 102, 241, 0.26), 0 0 48px rgba(99, 102, 241, 0.12)",
           },
         },
-        // Holographic Hero animations
+        // Holographic Bust animations
         "hologram-float": {
           "0%, 100%": { transform: "translateY(0)" },
-          "50%": { transform: "translateY(-12px)" },
+          "50%": { transform: "translateY(-10px)" },
         },
         "hologram-glow-pulse": {
           "0%, 100%": { opacity: "0.5", transform: "scale(1)" },
           "50%": { opacity: "0.8", transform: "scale(1.05)" },
         },
-        "scanline": {
-          "0%": { backgroundPosition: "0% 0%" },
-          "100%": { backgroundPosition: "0% 100%" },
+        "hologram-flicker": {
+          "0%, 100%": { opacity: "1", transform: "skewX(0deg)" },
+          "5%": { opacity: "0.85", transform: "skewX(0.5deg)" },
+          "10%": { opacity: "1", transform: "skewX(-0.3deg)" },
+          "15%": { opacity: "0.9", transform: "skewX(0deg)" },
+          "40%": { opacity: "1", transform: "skewX(0deg)" },
+          "42%": { opacity: "0.8", transform: "skewX(1deg) translateX(2px)" },
+          "44%": { opacity: "1", transform: "skewX(0deg)" },
+          "70%": { opacity: "1", transform: "skewX(0deg)" },
+          "72%": { opacity: "0.88", transform: "skewX(-0.5deg)" },
+          "74%": { opacity: "1", transform: "skewX(0deg)" },
+        },
+        "hologram-scan": {
+          "0%": { top: "0%", opacity: "0" },
+          "10%": { opacity: "1" },
+          "90%": { opacity: "1" },
+          "100%": { top: "100%", opacity: "0" },
+        },
+        "hologram-glitch-slice": {
+          "0%, 100%": { opacity: "0", transform: "translateX(0)" },
+          "20%": { opacity: "0" },
+          "21%": { opacity: "1", transform: "translateX(3px)" },
+          "23%": { opacity: "0", transform: "translateX(-2px)" },
+          "60%": { opacity: "0" },
+          "61%": { opacity: "1", transform: "translateX(-4px)" },
+          "63%": { opacity: "0", transform: "translateX(1px)" },
         },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "pulse-neural": "pulse-neural 2s ease-in-out infinite",
-        // Holographic Hero animations
-        "hologram-float": "hologram-float 6s ease-in-out infinite",
+        // Holographic Bust animations
+        "hologram-float": "hologram-float 4s ease-in-out infinite",
         "hologram-pulse": "hologram-glow-pulse 4s ease-in-out infinite",
-        "hologram-pulse-delayed": "hologram-glow-pulse 4s ease-in-out infinite 2s",
-        "scanline": "scanline 8s linear infinite",
+        "hologram-pulse-slow": "hologram-glow-pulse 6s ease-in-out infinite",
+        "hologram-flicker": "hologram-flicker 8s ease-in-out infinite",
+        "hologram-scan": "hologram-scan 3s linear infinite",
+        "hologram-glitch-slice": "hologram-glitch-slice 6s ease-in-out infinite",
       },
       backdropBlur: {
         xs: "2px",

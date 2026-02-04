@@ -1,7 +1,7 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import HolographicHero from "./holographic-hero"
+import HolographicBust from "./holographic-bust"
 import { ArrowDown, Github, Linkedin, Download } from "lucide-react"
 
 export default function Hero() {
@@ -55,11 +55,7 @@ export default function Hero() {
         </div>
 
         <div className="order-1 md:order-2 hidden md:flex justify-center">
-          <HolographicHero 
-            imageSrc="/glassmorphism-bust.png"
-            alt="Sushin Bandha - AI Avatar"
-            size="lg"
-          />
+          <HolographicBust size="lg" />
         </div>
       </div>
 
