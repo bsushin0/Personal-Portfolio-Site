@@ -105,11 +105,29 @@ const config = {
             boxShadow: "0 0 24px rgba(99, 102, 241, 0.26), 0 0 48px rgba(99, 102, 241, 0.12)",
           },
         },
+        // Holographic Hero animations
+        "hologram-float": {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-12px)" },
+        },
+        "hologram-glow-pulse": {
+          "0%, 100%": { opacity: "0.5", transform: "scale(1)" },
+          "50%": { opacity: "0.8", transform: "scale(1.05)" },
+        },
+        "scanline": {
+          "0%": { backgroundPosition: "0% 0%" },
+          "100%": { backgroundPosition: "0% 100%" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "pulse-neural": "pulse-neural 2s ease-in-out infinite",
+        // Holographic Hero animations
+        "hologram-float": "hologram-float 6s ease-in-out infinite",
+        "hologram-pulse": "hologram-glow-pulse 4s ease-in-out infinite",
+        "hologram-pulse-delayed": "hologram-glow-pulse 4s ease-in-out infinite 2s",
+        "scanline": "scanline 8s linear infinite",
       },
       backdropBlur: {
         xs: "2px",
