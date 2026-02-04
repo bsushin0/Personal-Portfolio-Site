@@ -6,6 +6,7 @@ import ContactForm from "@/components/contact-form"
 import Footer from "@/components/footer"
 import About from "@/components/about"
 import Experience from "@/components/experience"
+import Interests from "@/components/interests"
 import Skills from "@/components/skills"
 
 export default function Home() {
@@ -15,6 +16,7 @@ export default function Home() {
       <main className="container mx-auto px-4 py-8">
         <Hero />
         <About />
+        <Interests />
         <Experience />
         <Skills />
         <Projects />

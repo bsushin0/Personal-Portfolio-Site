@@ -15,35 +15,61 @@ type Experience = {
 const experiences: Experience[] = [
   {
     id: 1,
+    title: "Student Patroller",
+    company: "Purdue University Police Department",
+    period: "September 2025 - Present",
+    type: "Part-time",
+    description: [
+      "Assess and mitigate environmental risks by identifying unauthorized access points and safety hazards, using systematic checklists and Excel logs to document findings, which improves campus safety compliance",
+      "Provide emergency response and crowd control during university events, coordinating with full-time officers and using real-time communication tools to reduce incident response time and maintain safe environments",
+      "Conduct security operations and facility inspections across campus, performing interior sweeps and recording observations in Git-tracked reports to ensure the physical integrity of academic and administrative assets",
+    ],
+    skills: ["Risk Assessment", "Safety Compliance", "Emergency Response", "Crowd Control", "Security Operations", "Facility Inspections", "Git", "Documentation"],
+  },
+  {
+    id: 2,
+    title: "Clerical Attendant",
+    company: "Purdue Athletics",
+    period: "August 2025 - Present",
+    type: "Part-time",
+    description: [
+      "Optimized high-volume traffic flow for 10,000+ patrons during Big Ten athletic events, utilizing real-time problem-solving to reduce entry/exit congestion by 60%",
+      "Manage complex logistical operations by coordinating with security, law enforcement, and facility managers, ensuring campus-wide safety and efficiency while maintaining zero safety incidents",
+      "Execute precision resource allocation by strategically directing vehicle placement based on lot capacity and permit-tiering, maximizing space utility for peak-attendance events",
+    ],
+    skills: ["Event Logistics", "Traffic Flow Management", "Coordination", "Resource Allocation", "Security Management", "Problem-Solving"],
+  },
+  {
+    id: 4,
     title: "Product Intern",
     company: "PSEG",
     period: "June 2025 - August 2025",
     type: "Internship",
     description: [
       "Acted as a product owner for Identity & Access Management (IAM), partnering with stakeholders to prioritize a backlog of 50+ bug fixes and enhancements that improved system usability",
-      "Guaranteed a 99% defect-free launch by executing 300+ User Acceptance Testing (UAT) and SIT cases to validate product quality and end-to-end user workflows",
+      "Guaranteed a 99% defect-free launch by executing 300+ User Acceptance Testing (UAT) and SIT cases to validate product quality and end-to-end user workflows, minimizing post-launch defects",
       "Championed a strategic technical initiative by developing a compelling business case that analyzed market and user needs to align the proposed solution with long-term scalability goals",
     ],
     skills: ["Product Management", "IAM", "UAT", "SIT", "Stakeholder Management", "Business Case Development"],
   },
   {
-    id: 2,
+    id: 5,
     title: "Product Intern",
     company: "PSEG",
     period: "June 2024 - August 2024",
     type: "Internship",
     description: [
       "Pioneered product initiative by building and presenting five Proof of Concept tools, securing executive approval for full-scale development",
-      "Led cross-functional team of 25 interns to define and launch company-wide onboarding site, accelerating new hire productivity",
+      "Led cross-functional team of 25 interns to define and launch a company-wide onboarding site, incorporating stakeholder and end-user discovery to refine requirements and success metrics",
       "Owned end-to-end development of critical automation tool, transforming multi-day manual process into near-instant execution",
     ],
     skills: ["Product Strategy", "Cross-functional Leadership", "Automation", "POC Development", "Salesforce"],
   },
   {
-    id: 3,
+    id: 6,
     title: "BGR Team Leader",
     company: "Purdue University Orientation Programs",
-    period: "September 2023 - May 2024",
+    period: "September 2023 - August 2024",
     type: "Volunteer",
     description: [
       "Served as a Team Leader (TL) during Boiler Gold Rush, responsible for welcoming, mentoring, and supporting a cohort of 20–25 first-year students through orientation programs",
@@ -54,7 +80,7 @@ const experiences: Experience[] = [
     skills: ["Leadership", "Group Facilitation", "Mentoring", "Event Coordination", "Campus Navigation", "Volunteer Training", "Community Building", "Team Collaboration"],
   },
   {
-    id: 4,
+    id: 8,
     title: "Tutor",
     company: "Kumon",
     period: "June 2022 - August 2023",
@@ -74,7 +100,8 @@ export default function Experience() {
       <div className="text-center mb-16">
         <h2 className="text-3xl md:text-4xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 to-purple-400">Experience</h2>
         <p className="text-cyan-200/80 dark:text-cyan-200/70 max-w-2xl mx-auto">
-          Professional experience combining technical expertise with leadership and collaboration.
+          Product and leadership roles are highlighted here. For technical AI work (including the BASF forecasting project), see the
+          <a href="#projects" className="ml-1 text-cyan-200 underline underline-offset-4 hover:text-cyan-100">Projects</a> section.
         </p>
       </div>
 
@@ -82,7 +109,7 @@ export default function Experience() {
         {experiences.map((exp) => (
           <Card
             key={exp.id}
-            className="border-glow-purple bg-card hover:border-purple-400/60 transition-all duration-300"
+            className="glass-effect-sm border-glow-indigo card-interactive"
           >
             <CardHeader>
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">

@@ -33,7 +33,8 @@ export default function About() {
           I&apos;m a results-driven AI student combining technical expertise with strong communication and leadership. I specialize in
           user-centric products at the intersection of machine learning and business strategy. With hands-on experience as a
           Product Intern at PSEG, leading cross-functional teams, and building ML solutions for BASF, I bring both technical
-          depth and strategic thinking to every project.
+          depth and strategic thinking to every project. I&apos;m especially interested in Aerospace and National Security, where
+          product rigor and secure AI systems create outsized impact.
         </p>
       </div>
 
@@ -41,7 +42,7 @@ export default function About() {
         {highlights.map((item, index) => (
           <Card
             key={index}
-            className="bg-card dark:bg-gray-900 border-glow-purple hover:scale-[1.05] transition-all duration-300 hover:border-purple-400/60"
+            className="glass-effect-sm border-glow-cyan card-interactive"
           >
             <CardHeader className="text-center">
               <div className="mx-auto w-12 h-12 bg-purple-500/20 dark:bg-purple-500/20 rounded-full flex items-center justify-center text-purple-400 dark:text-purple-400 mb-4 border border-purple-500/30">

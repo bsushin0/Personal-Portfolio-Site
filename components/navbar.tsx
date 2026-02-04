@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Menu, X } from "lucide-react"
+import { Menu, X, Download } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ModeToggle } from "@/components/mode-toggle"
 import { cn } from "@/lib/utils"
@@ -14,6 +14,7 @@ export default function Navbar() {
 
   const navItems = [
     { name: "Home", href: "#" },
+    { name: "Interests", href: "#interests" },
     { name: "Experience", href: "#experience" },
     { name: "Projects", href: "#projects" },
     { name: "Certifications", href: "#certifications" },
@@ -21,7 +22,7 @@ export default function Navbar() {
   ]
 
   return (
-    <nav className="sticky top-0 z-50 glass-effect border-b border-cyan-500/20 dark:border-cyan-500/20 border-blue-200 dark:border-blue-500/20">
+    <nav className="sticky top-0 z-50 glass-effect border-b border-glow">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-14 md:h-16">
           <div className="flex-shrink-0 font-bold text-lg md:text-xl bg-gradient-to-r from-blue-600 via-cyan-500 to-purple-600 dark:from-cyan-400 dark:to-purple-400 bg-clip-text text-transparent">
@@ -41,6 +42,14 @@ export default function Navbar() {
                 </a>
               ))}
             </div>
+            <a
+              href="/Sushin Bandha Resume.pdf"
+              download
+              className="ml-2 px-3 py-2 rounded-md text-sm font-medium text-white bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 transition-all duration-300 flex items-center gap-1"
+            >
+              <Download className="h-4 w-4" />
+              Resume
+            </a>
             <ModeToggle />
           </div>
 
@@ -72,6 +81,15 @@ export default function Navbar() {
               {item.name}
             </a>
           ))}
+          <a
+            href="/Sushin Bandha Resume.pdf"
+            download
+            className="block px-3 py-2 rounded-md text-base font-medium text-white bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 transition-all duration-300 flex items-center gap-2"
+            onClick={() => setIsOpen(false)}
+          >
+            <Download className="h-4 w-4" />
+            Download Resume
+          </a>
         </div>
       </div>
     </nav>

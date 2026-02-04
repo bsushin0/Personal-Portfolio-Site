@@ -20,8 +20,8 @@ const config = {
     },
     extend: {
       fontFamily: {
-        sans: ['Inter', 'Space Grotesk', 'sans-serif'],
-        display: ['Space Grotesk', 'sans-serif'],
+        sans: ['Inter', 'Geist', 'Space Grotesk', 'sans-serif'],
+        display: ['Geist', 'Space Grotesk', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -57,45 +57,19 @@ const config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        /* Futuristic color additions */
-        cyan: {
-          "50": "#e0f7ff",
-          "100": "#b3edff",
-          "200": "#80e1ff",
-          "300": "#4dd5ff",
-          "400": "#26cbff",
-          "500": "#00c1ff",
-          "600": "#00a8d8",
-          "700": "#0088b0",
-          "800": "#006688",
-          "900": "#004460",
-          "950": "#002838",
+        /* Neural Deep Colors */
+        neural: {
+          "950": "#020617",
+          "900": "#0f172a",
+          "800": "#1e293b",
+          "700": "#334155",
+          "600": "#475569",
         },
-        "neon-purple": {
-          "50": "#f3e8ff",
-          "100": "#e9d5ff",
-          "200": "#d8b4ff",
-          "300": "#c084ff",
-          "400": "#a855ff",
-          "500": "#9d4edd",
-          "600": "#7c3aed",
-          "700": "#6d28d9",
-          "800": "#5b21b6",
-          "900": "#4c1d95",
-          "950": "#2d1b4e",
-        },
-        "dark-blue": {
-          "50": "#f0f4ff",
-          "100": "#e0e8ff",
-          "200": "#c7d5ff",
-          "300": "#a8b8ff",
-          "400": "#8096ff",
-          "500": "#6b7dff",
-          "600": "#5a5bff",
-          "700": "#4f46e5",
-          "800": "#3730a3",
-          "900": "#1f2937",
-          "950": "#0a0e27",
+        /* Accent Colors - Cyan Primary */
+        accent: {
+          "cyan": "#22D3EE",
+          "indigo": "#6366F1",
+          "pink": "#EC4899",
         },
       },
       borderRadius: {
@@ -104,20 +78,57 @@ const config = {
         sm: "calc(var(--radius) - 4px)",
       },
       boxShadow: {
-        glow: "0 0 20px rgba(0, 193, 255, 0.3)",
-        "glow-lg": "0 0 40px rgba(0, 193, 255, 0.5)",
+        "glow-cyan": "0 0 20px rgba(34, 211, 238, 0.2)",
+        "glow-cyan-lg": "0 0 40px rgba(34, 211, 238, 0.3)",
+        "glow-indigo": "0 0 20px rgba(99, 102, 241, 0.2)",
+        "glow-indigo-lg": "0 0 40px rgba(99, 102, 241, 0.3)",
         "glow-purple": "0 0 20px rgba(157, 78, 221, 0.3)",
         "glow-purple-lg": "0 0 40px rgba(157, 78, 221, 0.5)",
+        "glass": "0 8px 30px rgba(0, 0, 0, 0.04)",
       },
       backgroundImage: {
-        "gradient-futuristic": "linear-gradient(135deg, #0a0e27 0%, #1a1a3e 50%, #0f0f2e 100%)",
-        "gradient-futuristic-light": "linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #dbeafe 100%)",
-        "gradient-cyan-glow": "linear-gradient(135deg, rgba(0, 193, 255, 0.1) 0%, rgba(0, 193, 255, 0) 100%)",
-        "gradient-purple-glow": "linear-gradient(135deg, rgba(157, 78, 221, 0.1) 0%, rgba(157, 78, 221, 0) 100%)",
+        "gradient-neural": "linear-gradient(135deg, #020617 0%, #0f172a 50%, #1a1a3e 100%)",
+        "gradient-lab": "linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 50%, #E2E8F0 100%)",
+        "gradient-cyan-glow": "linear-gradient(135deg, rgba(34, 211, 238, 0.1) 0%, rgba(34, 211, 238, 0) 100%)",
+        "gradient-indigo-glow": "linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(99, 102, 241, 0) 100%)",
+        "gradient-ai-border": "conic-gradient(from 0deg, #22D3EE, #6366F1, #22D3EE)",
       },
       keyframes: {
         "accordion-down": {
           from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
+        },
+        "accordion-up": {
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
+        },
+        "pulse-neural": {
+          "0%, 100%": {
+            boxShadow: "0 0 20px rgba(34, 211, 238, 0.2), 0 0 40px rgba(34, 211, 238, 0.1)",
+          },
+          "50%": {
+            boxShadow: "0 0 30px rgba(34, 211, 238, 0.4), 0 0 60px rgba(34, 211, 238, 0.2)",
+          },
+        },
+      },
+      animation: {
+        "accordion-down": "accordion-down 0.2s ease-out",
+        "accordion-up": "accordion-up 0.2s ease-out",
+        "pulse-neural": "pulse-neural 2s ease-in-out infinite",
+      },
+      backdropBlur: {
+        xs: "2px",
+      },
+      filter: {
+        "saturate-150": "saturate(1.5)",
+      },
+    },
+  },
+  plugins: [],
+} satisfies Config
+
+export default config
+
           to: { height: "var(--radix-accordion-content-height)" },
         },
         "accordion-up": {

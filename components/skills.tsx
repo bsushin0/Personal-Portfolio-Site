@@ -44,10 +44,10 @@ const skillCategories: SkillCategory[] = [
 
 export default function Skills() {
   return (
-    <section id="skills" className="py-20 bg-gradient-futuristic border-t border-cyan-500/20">
+    <section id="skills" className="py-20 bg-gradient-lab dark:bg-gradient-neural border-t border-glow-cyan/30">
       <div className="text-center mb-16">
-        <h2 className="text-3xl md:text-4xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 to-purple-400">Technical Skills</h2>
-        <p className="text-cyan-200/80 dark:text-cyan-200/70 max-w-2xl mx-auto">
+        <h2 className="text-3xl md:text-4xl font-bold mb-4 text-slate-900 dark:text-transparent dark:bg-clip-text dark:bg-gradient-to-r dark:from-cyan-300 dark:to-indigo-400">Technical Skills</h2>
+        <p className="text-slate-600 dark:text-cyan-200/70 max-w-2xl mx-auto">
           A comprehensive toolkit spanning programming, platforms, AI/ML, and cybersecurity.
         </p>
       </div>
@@ -56,11 +56,11 @@ export default function Skills() {
         {skillCategories.map((category) => (
           <Card
             key={category.id}
-            className="border-glow-purple bg-card hover:border-purple-400/60 transition-all duration-300 hover:transform hover:scale-[1.02]"
+            className="glass-effect-sm border-glow-indigo card-interactive"
           >
             <CardHeader>
-              <CardTitle className="flex items-center gap-3 text-lg text-cyan-300">
-                <div className="p-2 rounded-lg bg-purple-500/20 dark:bg-purple-500/30 text-purple-400 dark:text-purple-300 border border-purple-500/30">
+              <CardTitle className="flex items-center gap-3 text-lg text-blue-600 dark:text-cyan-300">
+                <div className="p-2 rounded-lg bg-indigo-500/20 dark:bg-indigo-500/30 text-indigo-600 dark:text-indigo-400 border border-indigo-500/30">
                   {category.icon}
                 </div>
                 {category.title}

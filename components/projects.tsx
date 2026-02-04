@@ -23,8 +23,8 @@ export default function Projects() {
         {projects.map((project) => (
           <Card
             key={project.id}
-            className={`border-glow-purple bg-card overflow-hidden transition-all duration-300 ${
-              hoveredId === project.id ? "transform scale-[1.02] shadow-2xl shadow-purple-500/30" : ""
+            className={`glass-effect-sm border-glow-indigo-lg overflow-hidden card-interactive-sm ${
+              hoveredId === project.id ? "shadow-glow-indigo-lg" : ""
             }`}
             onMouseEnter={() => setHoveredId(project.id)}
             onMouseLeave={() => setHoveredId(null)}
