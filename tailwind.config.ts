@@ -144,11 +144,16 @@ const config = {
         // Digital Human animations
         breathe: {
           "0%, 100%": { transform: "scale(1) translateY(0)" },
-          "50%": { transform: "scale(1.03) translateY(-3px)" },
+          "50%": { transform: "scale(1.02) translateY(-5px)" },
         },
         blink: {
           "0%, 48%, 52%, 100%": { opacity: "0" },
           "50%": { opacity: "0.5" },
+        },
+        scan: {
+          "0%": { top: "0%", opacity: "0" },
+          "50%": { opacity: "1" },
+          "100%": { top: "100%", opacity: "0" },
         },
       },
       animation: {
@@ -165,6 +170,7 @@ const config = {
         // Digital Human animations
         breathe: "breathe 6s ease-in-out infinite",
         blink: "blink 4s infinite",
+        "scan-fast": "scan 3s linear infinite",
       },
       backdropBlur: {
         xs: "2px",
