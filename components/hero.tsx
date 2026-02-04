@@ -1,7 +1,7 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import AiAvatar from "./ai-avatar"
+import HolographicHero from "./holographic-hero"
 import { ArrowDown, Github, Linkedin, Download } from "lucide-react"
 
 export default function Hero() {
@@ -55,11 +55,11 @@ export default function Hero() {
         </div>
 
         <div className="order-1 md:order-2 hidden md:flex justify-center">
-          <div className="relative flex items-center justify-center rounded-full p-[2px] aspect-square w-56 sm:w-64 md:w-72 lg:w-80 bg-[conic-gradient(from_0deg,rgba(148,163,184,0.35),rgba(148,163,184,0.05),rgba(148,163,184,0.35))] dark:bg-[conic-gradient(from_0deg,rgba(34,211,238,0.25),rgba(34,211,238,0),rgba(34,211,238,0.25))]">
-            <div className="flex items-center justify-center rounded-full aspect-square w-full h-full overflow-hidden border border-transparent dark:border-white/10 transition-all duration-500 filter brightness-100 saturate-100 drop-shadow-[0_10px_20px_rgba(0,0,0,0.08)] dark:brightness-110 dark:contrast-105 dark:drop-shadow-[0_0_15px_rgba(99,102,241,0.4)]">
-              <AiAvatar />
-            </div>
-          </div>
+          <HolographicHero 
+            imageSrc="/glassmorphism-bust.png"
+            alt="Sushin Bandha - AI Avatar"
+            size="lg"
+          />
         </div>
       </div>
 
