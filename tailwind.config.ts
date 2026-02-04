@@ -141,6 +141,15 @@ const config = {
           "61%": { opacity: "1", transform: "translateX(-4px)" },
           "63%": { opacity: "0", transform: "translateX(1px)" },
         },
+        // Digital Human animations
+        breathe: {
+          "0%, 100%": { transform: "scale(1) translateY(0)" },
+          "50%": { transform: "scale(1.03) translateY(-3px)" },
+        },
+        blink: {
+          "0%, 48%, 52%, 100%": { opacity: "0" },
+          "50%": { opacity: "0.5" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -153,6 +162,9 @@ const config = {
         "hologram-flicker": "hologram-flicker 8s ease-in-out infinite",
         "hologram-scan": "hologram-scan 3s linear infinite",
         "hologram-glitch-slice": "hologram-glitch-slice 6s ease-in-out infinite",
+        // Digital Human animations
+        breathe: "breathe 6s ease-in-out infinite",
+        blink: "blink 4s infinite",
       },
       backdropBlur: {
         xs: "2px",

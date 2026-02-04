@@ -1,7 +1,7 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import HolographicBust from "./holographic-bust"
+import DigitalHuman from "./digital-human"
 import { ArrowDown, Github, Linkedin, Download } from "lucide-react"
 
 export default function Hero() {
@@ -55,7 +55,7 @@ export default function Hero() {
         </div>
 
         <div className="order-1 md:order-2 hidden md:flex justify-center">
-          <HolographicBust />
+          <DigitalHuman />
         </div>
       </div>
 
