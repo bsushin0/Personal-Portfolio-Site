@@ -79,7 +79,7 @@ export default function DigitalHuman() {
         >
           {/* IMAGE: Avatar portrait */}
           <img 
-            src="/avatar-portrait.jpg" 
+            src="/avatar-portrait.png" 
             alt="Sushin Bandha AI" 
             className="w-full h-full object-cover object-top drop-shadow-2xl"
             style={{ maskImage: 'linear-gradient(to bottom, black 80%, transparent 100%)' }}
