@@ -1,85 +1,148 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useEffect, useRef, useCallback } from 'react'
+import { motion, useSpring, useTransform } from 'framer-motion'
 import { cn } from '@/lib/utils'
-import { Mic, MicOff } from 'lucide-react'
 
 export default function DigitalHuman() {
-  const [isListening, setIsListening] = useState(false)
-  const [isSpeaking, setIsSpeaking] = useState(false)
+  const containerRef = useRef<HTMLDivElement>(null)
 
-  // Simulate 'Alive' behavior (random speaking states)
+  // Spring-based values for smooth, heavy robotic movement
+  const mouseX = useSpring(0, { stiffness: 50, damping: 20 })
+  const mouseY = useSpring(0, { stiffness: 50, damping: 20 })
+
+  // Transform mouse position to rotation (max ~10 degrees)
+  const rotateY = useTransform(mouseX, [-1, 1], [-10, 10])
+  const rotateX = useTransform(mouseY, [-1, 1], [5, -5])
+
+  // Eye glints move opposite to head for depth simulation
+  const glintX = useTransform(mouseX, [-1, 1], [3, -3])
+  const glintY = useTransform(mouseY, [-1, 1], [2, -2])
+
+  // Cursor tracking for 3D parallax tilt effect
+  const handleMouseMove = useCallback((e: MouseEvent) => {
+    if (!containerRef.current) return
+
+    const rect = containerRef.current.getBoundingClientRect()
+    const centerX = rect.left + rect.width / 2
+    const centerY = rect.top + rect.height / 2
+
+    // Calculate mouse position relative to center (-1 to 1)
+    const relativeX = Math.max(-1, Math.min(1, (e.clientX - centerX) / (window.innerWidth / 2)))
+    const relativeY = Math.max(-1, Math.min(1, (e.clientY - centerY) / (window.innerHeight / 2)))
+
+    mouseX.set(relativeX)
+    mouseY.set(relativeY)
+  }, [mouseX, mouseY])
+
   useEffect(() => {
-    const interval = setInterval(() => {
-      if (Math.random() > 0.7) {
-        setIsSpeaking(true)
-        setTimeout(() => setIsSpeaking(false), 2000)
-      }
-    }, 4000)
-    return () => clearInterval(interval)
-  }, [])
+    window.addEventListener('mousemove', handleMouseMove)
+    return () => window.removeEventListener('mousemove', handleMouseMove)
+  }, [handleMouseMove])
 
   return (
-    <div className="relative w-full aspect-[3/4] max-w-md mx-auto overflow-hidden rounded-3xl shadow-2xl border border-white/10">
+    <div 
+      ref={containerRef}
+      className="relative w-full aspect-[3/4] max-w-md mx-auto overflow-hidden rounded-3xl shadow-2xl border border-cyan-500/20 bg-slate-950"
+      style={{
+        boxShadow: '0 0 40px rgba(6, 182, 212, 0.15), 0 0 80px rgba(6, 182, 212, 0.05)'
+      }}
+    >
       {/* 1. BACKGROUND: Cyber-Physical Environment */}
       <div className="absolute inset-0 bg-gradient-to-b from-slate-900 to-slate-950">
-        <div className="absolute top-0 inset-x-0 h-64 bg-indigo-500/10 blur-[100px]" />
+        <motion.div 
+          className="absolute top-0 inset-x-0 h-64 bg-cyan-500/5 blur-[100px]"
+          animate={{ opacity: [0.3, 0.6, 0.3] }}
+          transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+        />
+        <div className="absolute bottom-0 inset-x-0 h-32 bg-cyan-500/5 blur-[80px]" />
       </div>
 
-      {/* 2. THE AVATAR: Simulated Live Portrait */}
+      {/* 2. THE AVATAR: 3D Parallax Tracking Portrait */}
       <div className="absolute inset-0 flex items-end justify-center pointer-events-none">
-        <div className={cn(
-          'relative w-[90%] h-[90%] transition-all duration-700 ease-in-out origin-bottom',
-          'animate-breathe',
-          isSpeaking && 'scale-[1.02]'
-        )}>
-          {/* IMAGE: Expects 'avatar-portrait.png' in public folder */}
+        <motion.div 
+          className="relative w-[90%] h-[90%] origin-bottom"
+          style={{
+            perspective: 1000,
+            rotateX,
+            rotateY,
+          }}
+          animate={{
+            scale: [1, 1.015, 1],
+            y: [0, -2, 0]
+          }}
+          transition={{
+            duration: 6,
+            repeat: Infinity,
+            ease: 'easeInOut'
+          }}
+        >
+          {/* IMAGE: Avatar portrait */}
           <img 
-            src="/avatar-portrait.png" 
+            src="/avatar-portrait.jpg" 
             alt="Sushin Bandha AI" 
             className="w-full h-full object-cover object-top drop-shadow-2xl"
             style={{ maskImage: 'linear-gradient(to bottom, black 80%, transparent 100%)' }}
           />
           
-          {/* Cyber Eye Glow */}
-          <div className="absolute top-[35%] left-[32%] w-1 h-1 bg-cyan-400 rounded-full blur-[1px] opacity-40 animate-blink" />
-          <div className="absolute top-[35%] right-[32%] w-1 h-1 bg-cyan-400 rounded-full blur-[1px] opacity-40 animate-blink" />
-        </div>
+          {/* Cyber Eye Glints - Track opposite to head for depth */}
+          <motion.div 
+            className="absolute top-[35%] left-[32%] w-2 h-2 bg-cyan-400 rounded-full blur-[2px] opacity-50"
+            style={{ x: glintX, y: glintY }}
+          />
+          <motion.div 
+            className="absolute top-[35%] right-[32%] w-2 h-2 bg-cyan-400 rounded-full blur-[2px] opacity-50"
+            style={{ x: glintX, y: glintY }}
+          />
+        </motion.div>
       </div>
 
-      {/* 3. INTERFACE OVERLAY */}
+      {/* 3. HUD OVERLAY: Scanner Interface */}
+      <div className="absolute inset-0 pointer-events-none z-10">
+        {/* Corner Brackets */}
+        <div className="absolute top-4 left-4 w-8 h-8 border-l-2 border-t-2 border-cyan-500/40" />
+        <div className="absolute top-4 right-4 w-8 h-8 border-r-2 border-t-2 border-cyan-500/40" />
+        <div className="absolute bottom-4 left-4 w-8 h-8 border-l-2 border-b-2 border-cyan-500/40" />
+        <div className="absolute bottom-4 right-4 w-8 h-8 border-r-2 border-b-2 border-cyan-500/40" />
+        
+        {/* Center Crosshairs */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+          <div className="w-12 h-[1px] bg-gradient-to-r from-transparent via-cyan-500/30 to-transparent" />
+          <div className="w-[1px] h-12 bg-gradient-to-b from-transparent via-cyan-500/30 to-transparent absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+        </div>
+
+        {/* Scan Lines */}
+        <div className="absolute inset-0 bg-[repeating-linear-gradient(0deg,transparent,transparent_2px,rgba(6,182,212,0.03)_2px,rgba(6,182,212,0.03)_4px)]" />
+      </div>
+
+      {/* 4. STATUS OVERLAY */}
       <div className="absolute inset-0 flex flex-col justify-between p-6 z-20">
-        {/* Header Status */}
+        {/* Header Status Badge */}
         <div className="flex justify-between items-start">
-          <div className="flex items-center space-x-2 bg-black/40 backdrop-blur-md border border-white/5 rounded-full px-4 py-2">
-            <div className={cn('w-2 h-2 rounded-full animate-pulse', isSpeaking ? 'bg-cyan-400' : 'bg-green-500')} />
-            <span className="text-xs font-medium text-white/90">
-              {isSpeaking ? 'AI Speaking...' : 'System Online'}
+          <div className="flex items-center space-x-2 bg-black/60 backdrop-blur-md border border-cyan-500/20 rounded-full px-4 py-2">
+            <div className={cn(
+              'w-2 h-2 rounded-full',
+              'bg-cyan-400 animate-pulse'
+            )} />
+            <span className="text-xs font-mono font-medium text-cyan-400/90 tracking-wider">
+              SYSTEM ACTIVE
+            </span>
+          </div>
+          
+          {/* Secondary Status */}
+          <div className="flex items-center space-x-1 bg-black/40 backdrop-blur-md border border-white/5 rounded-full px-3 py-1">
+            <span className="text-[10px] font-mono text-white/50 tracking-wide">
+              OBSERVER v2.0
             </span>
           </div>
         </div>
 
-        {/* Footer Controls */}
-        <div className="space-y-4">
-          {isSpeaking && (
-            <div className="mx-auto bg-black/60 backdrop-blur-xl border border-white/10 rounded-2xl p-4 animate-in fade-in slide-in-from-bottom-4">
-              <p className="text-sm text-center text-white/90 font-light">
-                &apos;I am Sushin&apos;s digital twin. Analyzing product requirements...&apos;
-              </p>
-            </div>
-          )}
-          <div className="flex items-center justify-center space-x-6">
-            <button 
-              onClick={() => setIsListening(!isListening)}
-              className={cn(
-                'flex items-center justify-center w-14 h-14 rounded-full transition-all duration-300',
-                isListening 
-                  ? 'bg-red-500 hover:bg-red-600 shadow-[0_0_30px_rgba(239,68,68,0.4)]' 
-                  : 'bg-indigo-600 hover:bg-indigo-700 shadow-[0_0_30px_rgba(99,102,241,0.4)]'
-              )}
-            >
-              {isListening ? <MicOff className="w-6 h-6 text-white" /> : <Mic className="w-6 h-6 text-white" />}
-            </button>
+        {/* Footer Info */}
+        <div className="flex justify-center">
+          <div className="flex items-center space-x-4 text-[10px] font-mono text-cyan-500/50 tracking-wider">
+            <span>TRACKING: ACTIVE</span>
+            <span className="w-1 h-1 rounded-full bg-cyan-500/50" />
+            <span>LATENCY: 12ms</span>
           </div>
         </div>
       </div>
