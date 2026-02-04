@@ -55,7 +55,7 @@ export default function Hero() {
         </div>
 
         <div className="order-1 md:order-2 hidden md:flex justify-center">
-          <HolographicBust size="lg" />
+          <HolographicBust />
         </div>
       </div>
 
