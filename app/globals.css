@@ -39,13 +39,13 @@ body:not(.dark) {
     text-wrap: balance;
   }
   
-  /* Neural Glow Effects - Cyan Primary */
+  /* Neural Glow Effects */
   .glow-neural {
-    @apply shadow-glow-cyan;
+    @apply shadow-lg shadow-cyan-400/20;
   }
   
   .glow-neural-lg {
-    @apply shadow-glow-cyan-lg;
+    @apply shadow-lg shadow-cyan-400/30;
   }
 
   .glow-cyan {
@@ -72,7 +72,7 @@ body:not(.dark) {
     @apply shadow-lg shadow-purple-500/30;
   }
   
-  /* Glassmorphism - Neural Deep (Dark Mode) */
+  /* Glassmorphism Effects */
   .glass-neural {
     @apply backdrop-blur-xl bg-slate-950/40 border border-white/10 saturate-150;
   }
@@ -81,25 +81,31 @@ body:not(.dark) {
     @apply backdrop-blur-lg bg-slate-950/30 border border-white/5;
   }
 
-  /* Glassmorphism - Clean Lab (Light Mode) */
   .glass-lab {
-    @apply backdrop-blur-xl bg-white/70 border border-slate-200/50 shadow-glass saturate-150;
+    @apply backdrop-blur-xl bg-white/70 border border-slate-200/50 saturate-150;
   }
 
   .glass-lab-sm {
     @apply backdrop-blur-lg bg-white/50 border border-slate-100/30;
   }
   
-  /* Dynamic Glass Effect (Auto Dark/Light) */
   .glass-effect {
-    @apply dark:glass-neural light:glass-lab;
+    @apply glass-lab;
   }
 
   .glass-effect-sm {
-    @apply dark:glass-neural-sm light:glass-lab-sm;
+    @apply glass-lab-sm;
   }
   
-  /* Border Glow - Cyan Primary */
+  .dark .glass-effect {
+    @apply glass-neural;
+  }
+  
+  .dark .glass-effect-sm {
+    @apply glass-neural-sm;
+  }
+  
+  /* Border Glow Effects */
   .border-glow {
     @apply border border-cyan-400/30 hover:border-cyan-400/60 hover:shadow-glow-cyan transition-all duration-300;
   }
@@ -108,7 +114,6 @@ body:not(.dark) {
     @apply border border-cyan-400/20 hover:border-cyan-400/50 hover:shadow-glow-cyan-lg transition-all duration-300;
   }
 
-  /* Border Glow - Indigo Secondary */
   .border-glow-indigo {
     @apply border border-indigo-500/30 hover:border-indigo-500/60 hover:shadow-glow-indigo transition-all duration-300;
   }
@@ -117,7 +122,6 @@ body:not(.dark) {
     @apply border border-indigo-500/20 hover:border-indigo-500/50 hover:shadow-glow-indigo-lg transition-all duration-300;
   }
   
-  /* Border Glow - Purple (Accent) */
   .border-glow-purple {
     @apply border border-purple-500/30 hover:border-purple-400/60 hover:shadow-glow-purple transition-all duration-300;
   }
@@ -126,13 +130,7 @@ body:not(.dark) {
     @apply border border-purple-500/20 hover:border-purple-400/50 hover:shadow-glow-purple-lg transition-all duration-300;
   }
 
-  /* Gradient Border - AI Process */
-  .gradient-border-ai {
-    @apply relative border-2;
-    border-image: linear-gradient(to right, #22D3EE, #6366F1, #22D3EE) 1;
-  }
-
-  /* Interactive Enhancement - Cards */
+  /* Interactive Cards */
   .card-interactive {
     @apply hover:scale-[1.02] transition-all duration-300 cursor-pointer;
   }
@@ -141,40 +139,13 @@ body:not(.dark) {
     @apply hover:scale-[1.01] transition-all duration-300;
   }
 
-  /* Micro-interaction - Buttons */
-  .btn-neural {
-    @apply px-4 py-2 rounded-lg font-medium transition-all duration-300 hover:scale-[1.02] active:scale-[0.98];
-  }
-
-  .btn-neural-primary {
-    @apply btn-neural bg-cyan-400 text-slate-950 hover:shadow-glow-cyan;
-  }
-
-  .btn-neural-secondary {
-    @apply btn-neural bg-indigo-500 text-white hover:shadow-glow-indigo;
-  }
-
-  /* Text Gradient - Premium Look */
+  /* Text Gradients */
   .text-gradient-cyan {
     @apply bg-gradient-to-r from-cyan-300 to-cyan-400 bg-clip-text text-transparent;
   }
 
   .text-gradient-ai {
     @apply bg-gradient-to-r from-cyan-400 via-indigo-500 to-purple-500 bg-clip-text text-transparent;
-  }
-
-  /* Accessibility - Reduced Eye Fatigue */
-  .dark {
-    @apply bg-slate-950;
-  }
-
-  /* Avoid Pure Black/White Contrast */
-  .text-dark {
-    @apply text-slate-900 dark:text-slate-50;
-  }
-
-  .bg-surface {
-    @apply bg-white dark:bg-slate-900;
   }
 }
 
@@ -187,19 +158,12 @@ body:not(.dark) {
     --card-foreground: 218 43% 16%;
     --popover: 0 0% 100%;
     --popover-foreground: 218 43% 16%;
-    
-    /* Primary - Blue-600 */
     --primary: 217 91% 60%;
     --primary-foreground: 210 40% 98%;
-    
-    /* Secondary - Indigo-500 */
     --secondary: 226 71% 55%;
     --secondary-foreground: 210 40% 98%;
-    
-    /* Accent - Cyan-400 */
     --accent: 185 92% 53%;
     --accent-foreground: 210 40% 98%;
-    
     --muted: 214 32% 91%;
     --muted-foreground: 218 14% 45%;
     --destructive: 0 84% 60%;
@@ -207,7 +171,6 @@ body:not(.dark) {
     --border: 214 32% 91%;
     --input: 214 32% 91%;
     --ring: 217 91% 60%;
-    
     --radius: 0.75rem;
   }
   
@@ -219,19 +182,12 @@ body:not(.dark) {
     --card-foreground: 214 14% 93%;
     --popover: 228 16% 5%;
     --popover-foreground: 214 14% 93%;
-    
-    /* Primary - Cyan-400 */
     --primary: 185 92% 53%;
     --primary-foreground: 228 16% 4%;
-    
-    /* Secondary - Indigo-500 */
     --secondary: 226 71% 55%;
     --secondary-foreground: 228 16% 4%;
-    
-    /* Accent - Purple-500 */
     --accent: 262 80% 50%;
     --accent-foreground: 210 40% 98%;
-    
     --muted: 217 33% 17%;
     --muted-foreground: 215 20% 65%;
     --destructive: 0 72% 51%;
@@ -270,17 +226,25 @@ html {
   scroll-behavior: smooth;
 }
 
-/* Remove default scrollbar styling for cleaner look */
+/* Scrollbar Styling */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-slate-100 dark:bg-slate-900;
+  background: #f1f5f9;
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: #0f172a;
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-cyan-400 dark:bg-cyan-400 rounded-full;
-  @apply hover:bg-cyan-500 dark:hover:bg-cyan-500;
+  background: #22d3ee;
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #06b6d4;
 }

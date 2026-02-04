@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss"
+import tailwindAnimate from "tailwindcss-animate"
 
 const config = {
   darkMode: ["class"],
@@ -57,19 +58,12 @@ const config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        /* Neural Deep Colors */
         neural: {
           "950": "#020617",
           "900": "#0f172a",
           "800": "#1e293b",
           "700": "#334155",
           "600": "#475569",
-        },
-        /* Accent Colors - Cyan Primary */
-        accent: {
-          "cyan": "#22D3EE",
-          "indigo": "#6366F1",
-          "pink": "#EC4899",
         },
       },
       borderRadius: {
@@ -119,40 +113,9 @@ const config = {
       backdropBlur: {
         xs: "2px",
       },
-      filter: {
-        "saturate-150": "saturate(1.5)",
-      },
     },
   },
-  plugins: [],
-} satisfies Config
-
-export default config
-
-          to: { height: "var(--radix-accordion-content-height)" },
-        },
-        "accordion-up": {
-          from: { height: "var(--radix-accordion-content-height)" },
-          to: { height: "0" },
-        },
-        "glow-pulse": {
-          "0%, 100%": { opacity: "1" },
-          "50%": { opacity: "0.7" },
-        },
-        "float": {
-          "0%, 100%": { transform: "translateY(0px)" },
-          "50%": { transform: "translateY(-20px)" },
-        },
-      },
-      animation: {
-        "accordion-down": "accordion-down 0.2s ease-out",
-        "accordion-up": "accordion-up 0.2s ease-out",
-        "glow-pulse": "glow-pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite",
-        "float": "float 6s ease-in-out infinite",
-      },
-    },
-  },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [tailwindAnimate],
 } satisfies Config
 
 export default config
