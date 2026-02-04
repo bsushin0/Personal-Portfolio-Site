@@ -561,24 +561,6 @@ export default function AiAvatar() {
               </div>
             </div>
 
-            {/* Blush - appears with emotion */}
-            {(expression.energy > 0.6 || expression.emotion === "happy") && (
-              <>
-                <div
-                  className="absolute top-32 left-12 w-10 h-7 bg-gradient-to-r from-purple-400 to-pink-300 rounded-full blur-2xl transition-all duration-300"
-                  style={{
-                    opacity: (expression.energy - 0.6) * 0.5 + (expression.emotion === "happy" ? 0.3 : 0),
-                  }}
-                />
-                <div
-                  className="absolute top-32 right-12 w-10 h-7 bg-gradient-to-r from-purple-400 to-pink-300 rounded-full blur-2xl transition-all duration-300"
-                  style={{
-                    opacity: (expression.energy - 0.6) * 0.5 + (expression.emotion === "happy" ? 0.3 : 0),
-                  }}
-                />
-              </>
-            )}
-
             {/* Mouth */}
             <div className="relative mt-8 w-40 h-24 flex items-center justify-center">
               <svg
