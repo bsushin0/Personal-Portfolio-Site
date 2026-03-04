@@ -21,11 +21,12 @@ export const projects: Project[] = [
   },
   {
     id: 2,
-    title: "Custom RAG Model",
+    title: "Project AiRa",
     description:
       "Architected and deployed a production-grade Retrieval-Augmented Generation (RAG) system with in-house embedding generation and vector search capabilities. Implemented semantic similarity scoring with configurable thresholds, optimized document chunking strategies, and integrated with LLM backends for fact-grounded responses while preventing hallucination.",
     tags: ["Python", "RAG", "Vector Search", "Embeddings", "LLM", "AI"],
-    image: "https://placehold.co/1200x800/dbeafe/0f172a?text=Custom+RAG+Model",
+    image: "https://placehold.co/1200x800/dbeafe/0f172a?text=Project+AiRa",
+    githubUrl: "https://github.com/bsushin0/Project-AiRa",
   },
   {
     id: 3,
