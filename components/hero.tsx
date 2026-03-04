@@ -1,10 +1,11 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import DigitalHuman from "./digital-human"
+import HolographicBust from "./holographic-bust"
 import { ArrowDown, Github, Linkedin, Download } from "lucide-react"
 
 export default function Hero() {
+
   return (
     <section className="py-20 md:py-32 flex flex-col items-center bg-gradient-lab dark:bg-gradient-neural">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 items-center">
@@ -55,7 +56,7 @@ export default function Hero() {
         </div>
 
         <div className="order-1 md:order-2 hidden md:flex justify-center">
-          <DigitalHuman />
+          <HolographicBust size="xl" />
         </div>
       </div>
 

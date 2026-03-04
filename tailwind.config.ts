@@ -87,6 +87,7 @@ const config = {
         "gradient-cyan-glow": "linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(99, 102, 241, 0) 100%)",
         "gradient-indigo-glow": "linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(99, 102, 241, 0) 100%)",
         "gradient-ai-border": "conic-gradient(from 0deg, #6366F1, #A5B4FC, #6366F1)",
+        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
       },
       keyframes: {
         "accordion-down": {
