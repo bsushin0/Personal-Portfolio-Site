@@ -147,7 +147,7 @@ export default function Experience() {
       <div className="text-center mb-16">
         <h2 className="text-3xl md:text-4xl font-bold mb-4 text-foreground tracking-tight">Experience</h2>
         <p className="text-foreground/60 max-w-2xl mx-auto">
-          Product and leadership roles are highlighted here. For technical AI work (including the BASF forecasting project), see the
+          Product and leadership roles are highlighted here. For technical AI work, see the
           <a href="#projects" className="ml-1 text-primary underline underline-offset-4 hover:text-primary/80">Projects</a> section.
         </p>
       </div>
@@ -193,14 +193,6 @@ export default function Experience() {
                         <CardDescription className="text-base font-medium text-foreground/70">
                           {exp.company}
                         </CardDescription>
-                        
-                        {/* Overlap indicator badge */}
-                        {isOverlapping && (
-                          <Badge className="w-fit bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/30">
-                            <span className="w-1.5 h-1.5 bg-amber-500 rounded-full mr-1.5" />
-                            Concurrent role
-                          </Badge>
-                        )}
                         
                         <div className="flex flex-col gap-2 md:flex-row md:justify-between pt-1">
                           <Badge
