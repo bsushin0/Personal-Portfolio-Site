@@ -4,8 +4,9 @@ export type Project = {
   description: string;
   tags: string[];
   image: string;
-  githubUrl: string;
+  githubUrl?: string;
   liveUrl?: string;
+  status?: "available" | "coming-soon" | "not-available";
 };
 
 export const projects: Project[] = [
@@ -16,8 +17,7 @@ export const projects: Project[] = [
       "Delivered a machine learning solution providing 92% accurate wine sales forecasts for BASF. Built automated MLOps pipeline that reduced model update time from 2-3 days to 1-2 hours, enabling data-driven inventory and marketing decisions.",
     tags: ["Python", "TensorFlow", "Keras", "MLOps", "Time-Series Forecasting"],
     image: "https://placehold.co/1200x800/cffafe/0f172a?text=Wine+Forecasting",
-    githubUrl: "",
-    liveUrl: "",
+    status: "not-available",
   },
   {
     id: 2,
@@ -26,27 +26,15 @@ export const projects: Project[] = [
       "Architected and deployed a production-grade Retrieval-Augmented Generation (RAG) system with in-house embedding generation and vector search capabilities. Implemented semantic similarity scoring with configurable thresholds, optimized document chunking strategies, and integrated with LLM backends for fact-grounded responses while preventing hallucination.",
     tags: ["Python", "RAG", "Vector Search", "Embeddings", "LLM", "AI"],
     image: "https://placehold.co/1200x800/dbeafe/0f172a?text=Custom+RAG+Model",
-    githubUrl: "",
-    liveUrl: "",
   },
   {
     id: 3,
     title: "Personal Portfolio Site",
     description:
-      "Built AI-powered conversational portfolio with in-house embedding generation and vector search. Features RAG-backed chatbot for visitor engagement, responsive Next.js frontend with Tailwind & Shadcn/UI, and production security hardening including HSTS headers and strict build validation.",
-    tags: ["Next.js", "TypeScript", "Tailwind", "AI/RAG", "Product"],
+      "Full-stack AI-powered portfolio showcasing product & leadership roles. Built with Next.js 15 and TypeScript, featuring an interactive RAG chatbot for visitor engagement, responsive design with Tailwind & Shadcn/UI, production-grade security hardening (HSTS, CSP), and comprehensive analytics tracking. Live demonstration of modern web development and AI integration.",
+    tags: ["Next.js", "TypeScript", "Tailwind", "RAG", "Product", "Full-Stack"],
     image: "https://placehold.co/1200x800/e0e7ff/0f172a?text=Portfolio+Site",
-    githubUrl: "",
-    liveUrl: "",
-  },
-  {
-    id: 4,
-    title: "Process Automation Tool",
-    description:
-      "Owned end-to-end development of critical automation tool at PSEG, transforming multi-day manual processes into near-instant execution, significantly improving operational efficiency.",
-    tags: ["Python", "Automation", "Salesforce", "Business Process"],
-    image: "https://placehold.co/1200x800/cffafe/0f172a?text=Automation+Tool",
-    githubUrl: "",
-    liveUrl: "",
+    githubUrl: "https://github.com/bsushin0/Personal-Portfolio-Site",
+    liveUrl: "https://www.sushinbandha.com",
   },
 ];

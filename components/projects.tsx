@@ -4,7 +4,7 @@ import { useState } from "react"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { ExternalLink } from "lucide-react"
+import { ExternalLink, Github } from "lucide-react"
 import { projects } from "@/lib/projects"
 
 export default function Projects() {
@@ -39,6 +39,18 @@ export default function Projects() {
                 }}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+              
+              {/* Status Banner */}
+              {project.status === "not-available" && (
+                <div className="absolute top-4 right-4 bg-rose-500/90 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm font-medium">
+                  Not Available
+                </div>
+              )}
+              {project.status === "coming-soon" && (
+                <div className="absolute top-4 right-4 bg-amber-500/90 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm font-medium">
+                  Coming Soon
+                </div>
+              )}
             </div>
             <CardHeader>
               <CardTitle className="text-foreground">{project.title}</CardTitle>
@@ -57,20 +69,35 @@ export default function Projects() {
                 ))}
               </div>
             </CardContent>
-            <CardFooter className="flex justify-between">
-              {project.liveUrl && (
-                <Button
-                  asChild
-                  variant="ghost"
-                  size="sm"
-                  className="text-primary hover:text-primary/90 hover:bg-slate-100/70 dark:hover:bg-slate-900/40"
-                >
-                  <a href={project.liveUrl} target="_blank" rel="noopener noreferrer">
-                    <ExternalLink className="mr-2 h-4 w-4" />
-                    Live Demo
-                  </a>
-                </Button>
-              )}
+            <CardFooter className="flex flex-wrap gap-2 justify-between">
+              <div className="flex gap-2">
+                {project.githubUrl && (
+                  <Button
+                    asChild
+                    variant="ghost"
+                    size="sm"
+                    className="text-primary hover:text-primary/90 hover:bg-slate-100/70 dark:hover:bg-slate-900/40"
+                  >
+                    <a href={project.githubUrl} target="_blank" rel="noopener noreferrer">
+                      <Github className="mr-2 h-4 w-4" />
+                      View Code
+                    </a>
+                  </Button>
+                )}
+                {project.liveUrl && (
+                  <Button
+                    asChild
+                    variant="ghost"
+                    size="sm"
+                    className="text-primary hover:text-primary/90 hover:bg-slate-100/70 dark:hover:bg-slate-900/40"
+                  >
+                    <a href={project.liveUrl} target="_blank" rel="noopener noreferrer">
+                      <ExternalLink className="mr-2 h-4 w-4" />
+                      Live Demo
+                    </a>
+                  </Button>
+                )}
+              </div>
             </CardFooter>
           </Card>
         ))}
