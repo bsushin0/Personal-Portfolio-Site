@@ -32,8 +32,8 @@ export const projects: Project[] = [
     title: "Personal Portfolio Site",
     description:
       "Full-stack AI-powered portfolio showcasing product & leadership roles. Built with Next.js 15 and TypeScript, featuring an interactive RAG chatbot for visitor engagement, responsive design with Tailwind & Shadcn/UI, production-grade security hardening (HSTS, CSP), and comprehensive analytics tracking. Live demonstration of modern web development and AI integration.",
-    tags: ["Next.js", "TypeScript", "Tailwind", "RAG", "Product", "Full-Stack"],
-    image: "https://placehold.co/1200x800/e0e7ff/0f172a?text=Portfolio+Site",
+    tags: ["Next.js 15", "TypeScript", "RAG Chatbot", "Tailwind CSS", "PostgreSQL", "Vercel"],
+    image: "/project-banners/nextjs-ai-stack.svg",
     githubUrl: "https://github.com/bsushin0/Personal-Portfolio-Site",
     liveUrl: "https://www.sushinbandha.com",
   },
