@@ -7,12 +7,40 @@ type Experience = {
   title: string
   company: string
   period: string
+  startDate: Date
+  endDate: Date
   type: string
   description: string[]
   skills: string[]
 }
 
-const experiences: Experience[] = [
+// Helper function to parse date strings like "June 2025" or "September 2025 - Present"
+function parseDate(dateStr: string): Date {
+  const months: { [key: string]: number } = {
+    january: 0, february: 1, march: 2, april: 3, may: 4, june: 5,
+    july: 6, august: 7, september: 8, october: 9, november: 10, december: 11
+  }
+  
+  const parts = dateStr.toLowerCase().split(/\s+/)
+  const month = months[parts[0]]
+  const year = parseInt(parts[1])
+  
+  return new Date(year, month, 1)
+}
+
+// Helper function to check if two date ranges overlap
+function hasOverlap(start1: Date, end1: Date, start2: Date, end2: Date): boolean {
+  return start1 < end2 && start2 < end1
+}
+
+// Helper function to find overlaps with other experiences
+function findOverlappingIds(exp: Experience, allExps: Experience[]): number[] {
+  return allExps
+    .filter(other => other.id !== exp.id && hasOverlap(exp.startDate, exp.endDate, other.startDate, other.endDate))
+    .map(other => other.id)
+}
+
+const experiencesData: Omit<Experience, 'startDate' | 'endDate'>[] = [
   {
     id: 1,
     title: "Student Patroller",
@@ -94,6 +122,25 @@ const experiences: Experience[] = [
   },
 ]
 
+// Build experiences with parsed dates
+const experiences: Experience[] = experiencesData.map(exp => {
+  const periodParts = exp.period.split(" - ")
+  const start = parseDate(periodParts[0])
+  const end = periodParts[1].toLowerCase() === "present" ? new Date() : parseDate(periodParts[1])
+  
+  return {
+    ...exp,
+    startDate: start,
+    endDate: end,
+  }
+})
+
+// Calculate overlaps for each experience
+const overlapMap = new Map<number, number[]>()
+experiences.forEach(exp => {
+  overlapMap.set(exp.id, findOverlappingIds(exp, experiences))
+})
+
 export default function Experience() {
   return (
     <section id="experience" className="py-20">
@@ -112,69 +159,92 @@ export default function Experience() {
 
         {/* Timeline Items */}
         <div className="space-y-8 md:space-y-12">
-          {experiences.map((exp, index) => (
-            <div
-              key={exp.id}
-              className={`relative md:flex ${index % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"}`}
-            >
-              {/* Timeline Point - center on desktop */}
-              <div className="hidden md:flex md:w-1/2 md:justify-center md:absolute md:left-1/2 md:transform md:-translate-x-1/2 md:top-6">
-                <div className="relative z-10 flex items-center justify-center">
-                  <div className="w-4 h-4 bg-primary rounded-full border-4 border-background dark:border-slate-900 shadow-lg" />
+          {experiences.map((exp, index) => {
+            const overlappingIds = overlapMap.get(exp.id) || []
+            const isOverlapping = overlappingIds.length > 0
+            
+            return (
+              <div
+                key={exp.id}
+                className={`relative md:flex ${index % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"}`}
+              >
+                {/* Timeline Point */}
+                <div className="hidden md:flex md:w-1/2 md:justify-center md:absolute md:left-1/2 md:transform md:-translate-x-1/2 md:top-6">
+                  <div className="relative z-10 flex items-center justify-center">
+                    {isOverlapping ? (
+                      <>
+                        {/* Outer pulsing ring for overlap indicator */}
+                        <div className="absolute w-6 h-6 bg-primary/20 rounded-full animate-pulse" />
+                        {/* Main point */}
+                        <div className="w-4 h-4 bg-primary rounded-full border-4 border-background dark:border-slate-900 shadow-lg" />
+                      </>
+                    ) : (
+                      <div className="w-4 h-4 bg-primary rounded-full border-4 border-background dark:border-slate-900 shadow-lg" />
+                    )}
+                  </div>
+                </div>
+
+                {/* Content Card */}
+                <div className={`md:w-1/2 ${index % 2 === 0 ? "md:pr-12 md:text-right" : "md:pl-12 md:text-left"}`}>
+                  <Card className={`glass-effect-sm border-glow card-interactive h-full ${isOverlapping ? "border-primary/40 dark:border-primary/30" : ""}`}>
+                    <CardHeader>
+                      <div className="flex flex-col gap-2">
+                        <CardTitle className="text-lg text-foreground">{exp.title}</CardTitle>
+                        <CardDescription className="text-base font-medium text-foreground/70">
+                          {exp.company}
+                        </CardDescription>
+                        
+                        {/* Overlap indicator badge */}
+                        {isOverlapping && (
+                          <Badge className="w-fit bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/30">
+                            <span className="w-1.5 h-1.5 bg-amber-500 rounded-full mr-1.5" />
+                            Concurrent role
+                          </Badge>
+                        )}
+                        
+                        <div className="flex flex-col gap-2 md:flex-row md:justify-between pt-1">
+                          <Badge
+                            variant="outline"
+                            className="w-fit border-slate-200/80 dark:border-slate-800/80 text-foreground/70 md:order-2"
+                          >
+                            <Calendar className="h-3 w-3 mr-1" />
+                            {exp.period}
+                          </Badge>
+                          <Badge
+                            variant="secondary"
+                            className="w-fit bg-indigo-500/10 text-indigo-600 dark:text-indigo-300 border border-indigo-500/20"
+                          >
+                            {exp.type}
+                          </Badge>
+                        </div>
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <ul className="space-y-2 mb-6">
+                        {exp.description.map((item, i) => (
+                          <li key={i} className="flex items-start gap-2 text-foreground/70">
+                            <span className={`text-foreground/40 ${index % 2 === 0 ? "md:text-right" : ""}`}>●</span>
+                            <span>{item}</span>
+                          </li>
+                        ))}
+                      </ul>
+                      <div className={`flex flex-wrap gap-2 ${index % 2 === 0 ? "md:justify-end" : ""}`}>
+                        {exp.skills.map((skill) => (
+                          <Badge
+                            key={skill}
+                            variant="secondary"
+                            className="bg-slate-100 text-slate-700 dark:bg-slate-900 dark:text-slate-200 border border-slate-200/80 dark:border-slate-800/80"
+                          >
+                            {skill}
+                          </Badge>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
                 </div>
               </div>
-
-              {/* Content Card */}
-              <div className={`md:w-1/2 ${index % 2 === 0 ? "md:pr-12 md:text-right" : "md:pl-12 md:text-left"}`}>
-                <Card className="glass-effect-sm border-glow card-interactive h-full">
-                  <CardHeader>
-                    <div className="flex flex-col gap-2">
-                      <CardTitle className="text-lg text-foreground">{exp.title}</CardTitle>
-                      <CardDescription className="text-base font-medium text-foreground/70">
-                        {exp.company}
-                      </CardDescription>
-                      <div className="flex flex-col gap-2 md:flex-row md:justify-between">
-                        <Badge
-                          variant="outline"
-                          className="w-fit border-slate-200/80 dark:border-slate-800/80 text-foreground/70 md:order-2"
-                        >
-                          <Calendar className="h-3 w-3 mr-1" />
-                          {exp.period}
-                        </Badge>
-                        <Badge
-                          variant="secondary"
-                          className="w-fit bg-indigo-500/10 text-indigo-600 dark:text-indigo-300 border border-indigo-500/20"
-                        >
-                          {exp.type}
-                        </Badge>
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <ul className="space-y-2 mb-6">
-                      {exp.description.map((item, i) => (
-                        <li key={i} className="flex items-start gap-2 text-foreground/70">
-                          <span className={`text-foreground/40 ${index % 2 === 0 ? "md:text-right" : ""}`}>●</span>
-                          <span>{item}</span>
-                        </li>
-                      ))}
-                    </ul>
-                    <div className={`flex flex-wrap gap-2 ${index % 2 === 0 ? "md:justify-end" : ""}`}>
-                      {exp.skills.map((skill) => (
-                        <Badge
-                          key={skill}
-                          variant="secondary"
-                          className="bg-slate-100 text-slate-700 dark:bg-slate-900 dark:text-slate-200 border border-slate-200/80 dark:border-slate-800/80"
-                        >
-                          {skill}
-                        </Badge>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       </div>
     </section>
