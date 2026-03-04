@@ -1,6 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Building, Calendar } from "lucide-react"
+import { Calendar } from "lucide-react"
 
 type Experience = {
   id: number
@@ -105,60 +105,77 @@ export default function Experience() {
         </p>
       </div>
 
-      <div className="space-y-8">
-        {experiences.map((exp) => (
-          <Card
-            key={exp.id}
-            className="glass-effect-sm border-glow card-interactive"
-          >
-            <CardHeader>
-              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                <div>
-                  <CardTitle className="text-xl text-foreground flex items-center gap-2">
-                    <Building className="h-5 w-5 text-foreground/50" />
-                    {exp.title}
-                  </CardTitle>
-                  <CardDescription className="text-lg font-medium text-foreground/70 mt-1">
-                    {exp.company}
-                  </CardDescription>
-                </div>
-                <div className="flex flex-col md:items-end gap-2">
-                  <Badge variant="outline" className="w-fit border-slate-200/80 dark:border-slate-800/80 text-foreground/70">
-                    <Calendar className="h-3 w-3 mr-1" />
-                    {exp.period}
-                  </Badge>
-                  <Badge
-                    variant="secondary"
-                    className="w-fit bg-indigo-500/10 text-indigo-600 dark:text-indigo-300 border border-indigo-500/20"
-                  >
-                    {exp.type}
-                  </Badge>
+      {/* Timeline Container */}
+      <div className="relative">
+        {/* Timeline Line - only visible on md and up */}
+        <div className="hidden md:block absolute left-1/2 transform -translate-x-1/2 w-1 h-full bg-gradient-to-b from-slate-200 via-primary/30 to-slate-200 dark:from-slate-800 dark:via-primary/20 dark:to-slate-800" />
+
+        {/* Timeline Items */}
+        <div className="space-y-8 md:space-y-12">
+          {experiences.map((exp, index) => (
+            <div
+              key={exp.id}
+              className={`relative md:flex ${index % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"}`}
+            >
+              {/* Timeline Point - center on desktop */}
+              <div className="hidden md:flex md:w-1/2 md:justify-center md:absolute md:left-1/2 md:transform md:-translate-x-1/2 md:top-6">
+                <div className="relative z-10 flex items-center justify-center">
+                  <div className="w-4 h-4 bg-primary rounded-full border-4 border-background dark:border-slate-900 shadow-lg" />
                 </div>
               </div>
-            </CardHeader>
-            <CardContent>
-              <ul className="space-y-2 mb-6">
-                {exp.description.map((item, index) => (
-                  <li key={index} className="flex items-start gap-2 text-foreground/70">
-                    <span className="text-foreground/40 mt-1.5 text-xs">●</span>
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-              <div className="flex flex-wrap gap-2">
-                {exp.skills.map((skill) => (
-                  <Badge
-                    key={skill}
-                    variant="secondary"
-                    className="bg-slate-100 text-slate-700 dark:bg-slate-900 dark:text-slate-200 border border-slate-200/80 dark:border-slate-800/80"
-                  >
-                    {skill}
-                  </Badge>
-                ))}
+
+              {/* Content Card */}
+              <div className={`md:w-1/2 ${index % 2 === 0 ? "md:pr-12 md:text-right" : "md:pl-12 md:text-left"}`}>
+                <Card className="glass-effect-sm border-glow card-interactive h-full">
+                  <CardHeader>
+                    <div className="flex flex-col gap-2">
+                      <CardTitle className="text-lg text-foreground">{exp.title}</CardTitle>
+                      <CardDescription className="text-base font-medium text-foreground/70">
+                        {exp.company}
+                      </CardDescription>
+                      <div className="flex flex-col gap-2 md:flex-row md:justify-between">
+                        <Badge
+                          variant="outline"
+                          className="w-fit border-slate-200/80 dark:border-slate-800/80 text-foreground/70 md:order-2"
+                        >
+                          <Calendar className="h-3 w-3 mr-1" />
+                          {exp.period}
+                        </Badge>
+                        <Badge
+                          variant="secondary"
+                          className="w-fit bg-indigo-500/10 text-indigo-600 dark:text-indigo-300 border border-indigo-500/20"
+                        >
+                          {exp.type}
+                        </Badge>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <ul className="space-y-2 mb-6">
+                      {exp.description.map((item, i) => (
+                        <li key={i} className="flex items-start gap-2 text-foreground/70">
+                          <span className={`text-foreground/40 ${index % 2 === 0 ? "md:text-right" : ""}`}>●</span>
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                    <div className={`flex flex-wrap gap-2 ${index % 2 === 0 ? "md:justify-end" : ""}`}>
+                      {exp.skills.map((skill) => (
+                        <Badge
+                          key={skill}
+                          variant="secondary"
+                          className="bg-slate-100 text-slate-700 dark:bg-slate-900 dark:text-slate-200 border border-slate-200/80 dark:border-slate-800/80"
+                        >
+                          {skill}
+                        </Badge>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
               </div>
-            </CardContent>
-          </Card>
-        ))}
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   )
