@@ -2,12 +2,23 @@
 
 import type React from "react"
 import { useState } from "react"
+import { motion, type Variants } from "framer-motion"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Send, CheckCircle, AlertCircle } from "lucide-react"
+
+const headingVariants: Variants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
+}
+
+const formVariants: Variants = {
+  hidden: { opacity: 0, y: 28 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.55, ease: "easeOut", delay: 0.1 } },
+}
 
 export default function ContactForm() {
   const [loading, setLoading] = useState(false)
@@ -65,7 +76,13 @@ export default function ContactForm() {
   return (
     <section id="contact" className="py-16 md:py-20 bg-gradient-lab dark:bg-gradient-neural border-t border-slate-200/80 dark:border-slate-800/80">
       <div className="max-w-3xl mx-auto px-4 sm:px-6">
-        <div className="text-center mb-10 md:mb-12">
+        <motion.div
+          className="text-center mb-10 md:mb-12"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.3 }}
+          variants={headingVariants}
+        >
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground tracking-tight mb-4">Get In Touch</h2>
           <p className="text-foreground/70 mb-3 text-sm sm:text-base">
             Interested in collaborating or have questions about my work? Let&apos;s connect!
@@ -73,8 +90,14 @@ export default function ContactForm() {
           <p className="text-foreground/60 text-xs sm:text-sm">
             Fill out the form below and send me a message. I&apos;ll get back to you promptly to discuss opportunities, share my resume, or chat about AI and cybersecurity.
           </p>
-        </div>
+        </motion.div>
 
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.15 }}
+          variants={formVariants}
+        >
         {submitted ? (
           <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-6 text-center">
             <CheckCircle className="mx-auto mb-3 text-green-400" size={32} />
@@ -165,6 +188,7 @@ export default function ContactForm() {
             </Button>
           </form>
         )}
+        </motion.div>
       </div>
     </section>
   )

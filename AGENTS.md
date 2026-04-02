@@ -1,6 +1,6 @@
 # AGENTS.md - Personal Portfolio Site
 
-## Current Version: 2.3.0
+## Current Version: 3.0.0
 **Last Updated**: 2026-04-02
 **Status**: Active Development
 
@@ -46,6 +46,20 @@ If owner ever simply says "push" then push all current changes to Main-Dev.
 - IP-based filtering (optional)
 
 ## Completed Work Log
+
+### v3.0.0 - 2026-04-02 (MAJOR)
+- **Section Reorder**: Restructured `app/page.tsx` section order to match logical narrative flow: Hero → About → Interests → Experience → Projects → Education → Skills → Certifications → Contact (previously Education appeared between Experience and Skills, Projects appeared after Education)
+- **Navbar**: Updated `navItems` array in `components/navbar.tsx` to match new page order — Projects now appears before Education in the nav list
+- **Framer Motion — About**: Added `"use client"` directive, imported `motion` + `Variants`; heading fades up on scroll (`whileInView`), highlight cards stagger in with `containerVariants` + `staggerChildren: 0.12`
+- **Framer Motion — Interests**: Added `"use client"`, scroll-triggered heading fade + 3-card staggered entrance
+- **Framer Motion — Experience**: Added `"use client"`, heading fade, each timeline card animates in individually with `whileInView viewport={{ once: true, amount: 0.2 }}` — prevents overly-eager trigger for tall cards
+- **Framer Motion — Projects**: Extended existing `"use client"` with heading fade + `staggerChildren: 0.14` on the project card grid
+- **Framer Motion — Education**: Added `"use client"`, heading fade, degree header card fades up, Programs & Highlights list items stagger with `x: -16` slide, Coursework badges stagger with scale-in animation
+- **Framer Motion — Skills**: Added `"use client"`, heading fade, category cards stagger in, skill badges inside each card also stagger with scale animation
+- **Framer Motion — Certifications**: Added `"use client"`, heading fade + certification cards stagger in
+- **Framer Motion — Contact**: Extended existing `"use client"` with heading fade and form section fade-up with slight delay
+- **TypeScript**: All `Variants` objects explicitly typed as `Variants` from framer-motion to satisfy strict type checker (`ease: "easeOut"` requires the framer-motion `Easing` type, not `string`)
+- **Build**: Verified `pnpm build` passes cleanly (12 static pages, 0 errors, 0 warnings)
 
 ### v2.3.0 - 2026-04-02
 - **Content**: Enriched About bio from a single generic paragraph to two substantive paragraphs covering: CS/AI major at Purdue, private pilot license pursuit, EMT certification goal, 27 AP transfer credits, Data Mine participation, ACERIAS seminar, two summers at PSEG (IAM ownership, 300+ UAT/SIT cases, 25-person team lead), BASF 92%-accurate ML forecasting system, and aerospace/national security focus
@@ -93,11 +107,11 @@ If owner ever simply says "push" then push all current changes to Main-Dev.
 - Embeddings rebuild requires manual triggering (not automated on deploy)
 - Chatbot knowledge limited to curated bio files (intentional design for accuracy)
 - Certification images missing from public/ (Data Handling cert image not uploaded; EMT has no image)
-- Navbar now has 9 items which may overflow on smaller desktop screens (Education was added in v2.3.0)
+- Navbar has 9 items which may overflow on smaller desktop screens — hamburger/dropdown menu on medium breakpoints is the planned fix
+- Framer Motion animations use `whileInView` + `once: true` — no reduced-motion preference check yet (a11y improvement opportunity)
 
 ### Next Steps (Prioritized)
-1. **[MAJOR v3.0.0]** Section reorder + scroll animations — reorder page sections for better narrative flow (Hero → About → Education → Experience → Projects → Skills → Certifications → Contact), add Framer Motion scroll-triggered entrance animations, improve section-to-section visual transitions
-2. **[COMPONENT]** Collapse navbar into a dropdown/hamburger menu on medium breakpoints to handle the 9-item overflow (now more urgent given navbar growth)
+1. **[COMPONENT]** Collapse navbar into a dropdown/hamburger menu on medium breakpoints to handle the 9-item overflow (now more urgent given navbar growth)
 3. **[PATCH]** Add certification images to public/ or remove image display from certifications UI if not available
 4. **[COMPONENT]** Add `og:image` social preview image to public/ and reference in OpenGraph/Twitter metadata
 5. **[PATCH]** Audit all `#` placeholder `credentialUrl` values in certifications — add real links or remove button
@@ -237,7 +251,7 @@ animation: {
 - Eye position: `top-[36%] left-[34%]` / `right-[34%]` — adjust if face position changes
 - Power core position: `bottom-[20%]` — adjust based on portrait framing
 - Tilt sensitivity: Modify the `* 5` multiplier in rotation calculations
-- `framer-motion` is installed but currently unused (available for future enhancements)
+- `framer-motion` is now actively used across all major sections for scroll-triggered entrance animations
 
 ### Legacy Components (Deleted)
 - `components/holographic-bust.tsx` — Removed in v2.1.4 (was unused SVG-based avatar)

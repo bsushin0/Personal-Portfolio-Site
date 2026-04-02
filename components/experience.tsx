@@ -1,3 +1,6 @@
+"use client"
+
+import { motion, type Variants } from "framer-motion"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Calendar } from "lucide-react"
@@ -20,11 +23,11 @@ function parseDate(dateStr: string): Date {
     january: 0, february: 1, march: 2, april: 3, may: 4, june: 5,
     july: 6, august: 7, september: 8, october: 9, november: 10, december: 11
   }
-  
+
   const parts = dateStr.toLowerCase().split(/\s+/)
   const month = months[parts[0]]
   const year = parseInt(parts[1])
-  
+
   return new Date(year, month, 1)
 }
 
@@ -127,7 +130,7 @@ const experiences: Experience[] = experiencesData.map(exp => {
   const periodParts = exp.period.split(" - ")
   const start = parseDate(periodParts[0])
   const end = periodParts[1].toLowerCase() === "present" ? new Date() : parseDate(periodParts[1])
-  
+
   return {
     ...exp,
     startDate: start,
@@ -141,16 +144,36 @@ experiences.forEach(exp => {
   overlapMap.set(exp.id, findOverlappingIds(exp, experiences))
 })
 
+const headingVariants: Variants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
+}
+
+const cardVariants: Variants = {
+  hidden: { opacity: 0, y: 28 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5, ease: "easeOut" },
+  },
+}
+
 export default function Experience() {
   return (
     <section id="experience" className="py-20">
-      <div className="text-center mb-16">
+      <motion.div
+        className="text-center mb-16"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.3 }}
+        variants={headingVariants}
+      >
         <h2 className="text-3xl md:text-4xl font-bold mb-4 text-foreground tracking-tight">Experience</h2>
         <p className="text-foreground/60 max-w-2xl mx-auto">
           Product and leadership roles are highlighted here. For technical AI work, see the
           <a href="#projects" className="ml-1 text-primary underline underline-offset-4 hover:text-primary/80">Projects</a> section.
         </p>
-      </div>
+      </motion.div>
 
       {/* Timeline Container */}
       <div className="relative">
@@ -162,11 +185,15 @@ export default function Experience() {
           {experiences.map((exp, index) => {
             const overlappingIds = overlapMap.get(exp.id) || []
             const isOverlapping = overlappingIds.length > 0
-            
+
             return (
-              <div
+              <motion.div
                 key={exp.id}
                 className={`relative md:flex ${index % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"}`}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.2 }}
+                variants={cardVariants}
               >
                 {/* Timeline Point */}
                 <div className="hidden md:flex md:w-1/2 md:justify-center md:absolute md:left-1/2 md:transform md:-translate-x-1/2 md:top-6">
@@ -193,7 +220,7 @@ export default function Experience() {
                         <CardDescription className="text-base font-medium text-foreground/70">
                           {exp.company}
                         </CardDescription>
-                        
+
                         <div className="flex flex-col gap-2 md:flex-row md:justify-between pt-1">
                           <Badge
                             variant="outline"
@@ -234,7 +261,7 @@ export default function Experience() {
                     </CardContent>
                   </Card>
                 </div>
-              </div>
+              </motion.div>
             )
           })}
         </div>

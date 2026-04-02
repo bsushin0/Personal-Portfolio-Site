@@ -1,14 +1,14 @@
 import Navbar from "@/components/navbar"
 import Hero from "@/components/hero"
+import About from "@/components/about"
+import Interests from "@/components/interests"
+import Experience from "@/components/experience"
 import Projects from "@/components/projects"
+import Education from "@/components/education"
+import Skills from "@/components/skills"
 import Certifications from "@/components/certifications"
 import ContactForm from "@/components/contact-form"
 import Footer from "@/components/footer"
-import About from "@/components/about"
-import Experience from "@/components/experience"
-import Education from "@/components/education"
-import Interests from "@/components/interests"
-import Skills from "@/components/skills"
 
 export default function Home() {
   return (
@@ -19,9 +19,9 @@ export default function Home() {
         <About />
         <Interests />
         <Experience />
+        <Projects />
         <Education />
         <Skills />
-        <Projects />
         <Certifications />
         <ContactForm />
       </main>

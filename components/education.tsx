@@ -1,3 +1,6 @@
+"use client"
+
+import { motion, type Variants } from "framer-motion"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { GraduationCap, TrendingUp, BookOpen, Star } from "lucide-react"
@@ -38,90 +41,171 @@ const highlights = [
   },
 ]
 
+const headingVariants: Variants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
+}
+
+const fadeUpVariants: Variants = {
+  hidden: { opacity: 0, y: 24 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
+}
+
+const containerVariants: Variants = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+}
+
+const itemVariants: Variants = {
+  hidden: { opacity: 0, x: -16 },
+  visible: { opacity: 1, x: 0, transition: { duration: 0.4, ease: "easeOut" } },
+}
+
+const badgeContainerVariants: Variants = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.05,
+    },
+  },
+}
+
+const badgeVariants: Variants = {
+  hidden: { opacity: 0, scale: 0.9 },
+  visible: { opacity: 1, scale: 1, transition: { duration: 0.3, ease: "easeOut" } },
+}
+
 export default function Education() {
   return (
     <section id="education" className="py-20 border-t border-slate-200/80 dark:border-slate-800/80">
-      <div className="text-center mb-16">
+      <motion.div
+        className="text-center mb-16"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.3 }}
+        variants={headingVariants}
+      >
         <h2 className="text-3xl md:text-4xl font-bold text-foreground tracking-tight mb-4">Education</h2>
         <p className="text-foreground/60 max-w-2xl mx-auto">
           Computer Science degree with an AI specialization, grounded in mathematics, data science, and ethics.
         </p>
-      </div>
+      </motion.div>
 
       {/* Degree Header Card */}
-      <Card className="glass-effect-sm border-glow mb-8">
-        <CardHeader>
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div className="flex items-start gap-4">
-              <div className="flex items-center justify-center w-14 h-14 rounded-full bg-indigo-500/10 text-indigo-500 border border-indigo-500/20 shrink-0">
-                <GraduationCap className="h-7 w-7" />
+      <motion.div
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.3 }}
+        variants={fadeUpVariants}
+        className="mb-8"
+      >
+        <Card className="glass-effect-sm border-glow">
+          <CardHeader>
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+              <div className="flex items-start gap-4">
+                <div className="flex items-center justify-center w-14 h-14 rounded-full bg-indigo-500/10 text-indigo-500 border border-indigo-500/20 shrink-0">
+                  <GraduationCap className="h-7 w-7" />
+                </div>
+                <div>
+                  <CardTitle className="text-xl text-foreground">B.S. Computer Science — AI Major</CardTitle>
+                  <p className="text-foreground/70 font-medium mt-1">Purdue University, West Lafayette, IN</p>
+                  <p className="text-foreground/50 text-sm mt-1">August 2023 – May 2027 (Expected)</p>
+                </div>
               </div>
-              <div>
-                <CardTitle className="text-xl text-foreground">B.S. Computer Science — AI Major</CardTitle>
-                <p className="text-foreground/70 font-medium mt-1">Purdue University, West Lafayette, IN</p>
-                <p className="text-foreground/50 text-sm mt-1">August 2023 – May 2027 (Expected)</p>
+              <div className="flex flex-wrap gap-2 md:flex-col md:items-end">
+                <Badge className="bg-indigo-500/10 text-indigo-600 dark:text-indigo-300 border border-indigo-500/20 w-fit">
+                  GPA: 2.94 / 4.00
+                </Badge>
+                <Badge variant="outline" className="border-slate-200/80 dark:border-slate-800/80 text-foreground/60 w-fit">
+                  Good Academic Standing
+                </Badge>
               </div>
             </div>
-            <div className="flex flex-wrap gap-2 md:flex-col md:items-end">
-              <Badge className="bg-indigo-500/10 text-indigo-600 dark:text-indigo-300 border border-indigo-500/20 w-fit">
-                GPA: 2.94 / 4.00
-              </Badge>
-              <Badge variant="outline" className="border-slate-200/80 dark:border-slate-800/80 text-foreground/60 w-fit">
-                Good Academic Standing
-              </Badge>
-            </div>
-          </div>
-        </CardHeader>
-      </Card>
+          </CardHeader>
+        </Card>
+      </motion.div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Highlights */}
-        <Card className="glass-effect-sm border-glow">
-          <CardHeader>
-            <CardTitle className="text-base text-foreground/80 uppercase tracking-widest text-sm">
-              Programs & Highlights
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {highlights.map((h) => (
-              <div key={h.label} className="flex items-start gap-3">
-                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-indigo-500/10 text-indigo-500 border border-indigo-500/20 shrink-0 mt-0.5">
-                  {h.icon}
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-foreground">{h.label}</p>
-                  <p className="text-sm text-foreground/60 leading-relaxed">{h.detail}</p>
-                </div>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+          variants={fadeUpVariants}
+        >
+          <Card className="glass-effect-sm border-glow h-full">
+            <CardHeader>
+              <CardTitle className="text-base text-foreground/80 uppercase tracking-widest text-sm">
+                Programs & Highlights
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <motion.div
+                className="space-y-4"
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.2 }}
+                variants={containerVariants}
+              >
+                {highlights.map((h) => (
+                  <motion.div key={h.label} className="flex items-start gap-3" variants={itemVariants}>
+                    <div className="flex items-center justify-center w-8 h-8 rounded-full bg-indigo-500/10 text-indigo-500 border border-indigo-500/20 shrink-0 mt-0.5">
+                      {h.icon}
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-foreground">{h.label}</p>
+                      <p className="text-sm text-foreground/60 leading-relaxed">{h.detail}</p>
+                    </div>
+                  </motion.div>
+                ))}
+              </motion.div>
+            </CardContent>
+          </Card>
+        </motion.div>
 
         {/* Core Coursework */}
-        <Card className="glass-effect-sm border-glow">
-          <CardHeader>
-            <CardTitle className="text-base text-foreground/80 uppercase tracking-widest text-sm">
-              Relevant Coursework
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-wrap gap-2">
-              {coreCourses.map((course) => (
-                <Badge
-                  key={course}
-                  variant="secondary"
-                  className="bg-slate-100 text-slate-700 dark:bg-slate-900 dark:text-slate-200 border border-slate-200/80 dark:border-slate-800/80"
-                >
-                  {course}
-                </Badge>
-              ))}
-            </div>
-            <p className="text-xs text-foreground/40 mt-4">
-              Also completed: Multivariate Calculus, Intro to Statistics, Philosophy of Science, Cognitive Psychology,
-              and ongoing Aviation coursework (AT 43300 Supervised Aviation Experience).
-            </p>
-          </CardContent>
-        </Card>
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+          variants={fadeUpVariants}
+        >
+          <Card className="glass-effect-sm border-glow h-full">
+            <CardHeader>
+              <CardTitle className="text-base text-foreground/80 uppercase tracking-widest text-sm">
+                Relevant Coursework
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <motion.div
+                className="flex flex-wrap gap-2"
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.2 }}
+                variants={badgeContainerVariants}
+              >
+                {coreCourses.map((course) => (
+                  <motion.div key={course} variants={badgeVariants}>
+                    <Badge
+                      variant="secondary"
+                      className="bg-slate-100 text-slate-700 dark:bg-slate-900 dark:text-slate-200 border border-slate-200/80 dark:border-slate-800/80"
+                    >
+                      {course}
+                    </Badge>
+                  </motion.div>
+                ))}
+              </motion.div>
+              <p className="text-xs text-foreground/40 mt-4">
+                Also completed: Multivariate Calculus, Intro to Statistics, Philosophy of Science, Cognitive Psychology,
+                and ongoing Aviation coursework (AT 43300 Supervised Aviation Experience).
+              </p>
+            </CardContent>
+          </Card>
+        </motion.div>
       </div>
     </section>
   )

@@ -1,5 +1,31 @@
+"use client"
+
+import { motion, type Variants } from "framer-motion"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { GraduationCap, Code, Shield, Users } from "lucide-react"
+
+const containerVariants: Variants = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.12,
+    },
+  },
+}
+
+const cardVariants: Variants = {
+  hidden: { opacity: 0, y: 24 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5, ease: "easeOut" },
+  },
+}
+
+const headingVariants: Variants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
+}
 
 export default function About() {
   const highlights = [
@@ -27,7 +53,13 @@ export default function About() {
 
   return (
     <section id="about" className="py-20 bg-gradient-lab dark:bg-gradient-neural border-t border-slate-200/80 dark:border-slate-800/80">
-      <div className="text-center mb-16">
+      <motion.div
+        className="text-center mb-16"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.3 }}
+        variants={headingVariants}
+      >
         <h2 className="text-3xl md:text-4xl font-bold text-foreground tracking-tight mb-4">About Me</h2>
         <p className="text-foreground/60 max-w-3xl mx-auto text-lg leading-relaxed">
           I&apos;m a Computer Science student specializing in Artificial Intelligence at Purdue University (class of 2027),
@@ -44,28 +76,33 @@ export default function About() {
           that actually work in production, not just demos. I&apos;m especially drawn to Aerospace and National Security —
           domains where product rigor, secure AI, and reliability are not optional.
         </p>
-      </div>
+      </motion.div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <motion.div
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.15 }}
+        variants={containerVariants}
+      >
         {highlights.map((item, index) => (
-          <Card
-            key={index}
-            className="glass-effect-sm border-glow card-interactive"
-          >
-            <CardHeader className="text-center">
-              <div className="mx-auto w-12 h-12 bg-indigo-500/10 rounded-full flex items-center justify-center text-indigo-500 mb-4 border border-indigo-500/20">
-                {item.icon}
-              </div>
-              <CardTitle className="text-lg text-foreground">{item.title}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <CardDescription className="text-center text-foreground/60">
-                {item.description}
-              </CardDescription>
-            </CardContent>
-          </Card>
+          <motion.div key={index} variants={cardVariants}>
+            <Card className="glass-effect-sm border-glow card-interactive h-full">
+              <CardHeader className="text-center">
+                <div className="mx-auto w-12 h-12 bg-indigo-500/10 rounded-full flex items-center justify-center text-indigo-500 mb-4 border border-indigo-500/20">
+                  {item.icon}
+                </div>
+                <CardTitle className="text-lg text-foreground">{item.title}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CardDescription className="text-center text-foreground/60">
+                  {item.description}
+                </CardDescription>
+              </CardContent>
+            </Card>
+          </motion.div>
         ))}
-      </div>
+      </motion.div>
     </section>
   )
 }
