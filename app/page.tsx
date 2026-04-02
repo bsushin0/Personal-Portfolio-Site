@@ -6,6 +6,7 @@ import ContactForm from "@/components/contact-form"
 import Footer from "@/components/footer"
 import About from "@/components/about"
 import Experience from "@/components/experience"
+import Education from "@/components/education"
 import Interests from "@/components/interests"
 import Skills from "@/components/skills"
 
@@ -18,6 +19,7 @@ export default function Home() {
         <About />
         <Interests />
         <Experience />
+        <Education />
         <Skills />
         <Projects />
         <Certifications />

@@ -1,6 +1,6 @@
 # AGENTS.md - Personal Portfolio Site
 
-## Current Version: 2.2.0
+## Current Version: 2.3.0
 **Last Updated**: 2026-04-02
 **Status**: Active Development
 
@@ -47,6 +47,14 @@ If owner ever simply says "push" then push all current changes to Main-Dev.
 
 ## Completed Work Log
 
+### v2.3.0 - 2026-04-02
+- **Content**: Enriched About bio from a single generic paragraph to two substantive paragraphs covering: CS/AI major at Purdue, private pilot license pursuit, EMT certification goal, 27 AP transfer credits, Data Mine participation, ACERIAS seminar, two summers at PSEG (IAM ownership, 300+ UAT/SIT cases, 25-person team lead), BASF 92%-accurate ML forecasting system, and aerospace/national security focus
+- **Content**: Expanded About highlight cards from thin one-line descriptions to substantive bullets covering real accomplishments per category — Education, Product & ML, Security, Leadership
+- **Component**: Created `components/education.tsx` — dedicated Education section with degree header card (institution, dates, GPA, academic standing), Programs & Highlights panel (Data Mine, ACERIAS, upward GPA trend 2.66→3.28, 27 AP credits), and Relevant Coursework badge grid (10 core courses + footer note for additional courses including ongoing aviation coursework)
+- **Page**: Added `Education` component to `app/page.tsx`, inserted after Experience in the page flow
+- **Navbar**: Added "Education" → `#education` link to desktop and mobile navs, positioned after Experience
+- **Build**: Verified `pnpm build` passes cleanly (12 static pages generated, 0 errors, 0 warnings)
+
 ### v2.2.0 - 2026-04-02
 - **Assets**: Created `public/project-banners/wine-forecasting.svg` — dark-theme SVG banner for the Wine Varietals Yield Forecasting project featuring a wine glass silhouette, bar/line forecast chart with Q1–Q4 data points, accuracy badge (92%), and MLOps pipeline label; color palette uses wine/magenta/violet tones matching portfolio dark aesthetic
 - **Assets**: Created `public/project-banners/project-aira.svg` — dark-theme SVG banner for Project AiRa featuring a full RAG pipeline diagram (Query → Embedding → Vector Search → LLM → Response), a code editor window showing `aira_rag.py`, feature pills for In-House Embed / Vector Search / Anti-Hallucination / Production-Grade; color palette uses cyan/indigo/violet tones
@@ -85,16 +93,17 @@ If owner ever simply says "push" then push all current changes to Main-Dev.
 - Embeddings rebuild requires manual triggering (not automated on deploy)
 - Chatbot knowledge limited to curated bio files (intentional design for accuracy)
 - Certification images missing from public/ (Data Handling cert image not uploaded; EMT has no image)
-- Navbar has 8 items which may overflow on smaller desktop screens
+- Navbar now has 9 items which may overflow on smaller desktop screens (Education was added in v2.3.0)
 
 ### Next Steps (Prioritized)
-1. **[PATCH]** Add certification images to public/ or remove image display from certifications UI if not available
-2. **[COMPONENT]** Collapse navbar items on medium breakpoints or implement a dropdown for overflow prevention
-3. **[COMPONENT]** Add `og:image` social preview image to public/ and reference in OpenGraph/Twitter metadata
-4. **[PATCH]** Audit all `#` placeholder `credentialUrl` values in certifications — add real links or remove button
-5. **[COMPONENT]** Add structured data (JSON-LD) for Person schema to improve SEO rich results
-6. **[PATCH]** Replace Shield icon with a more appropriate icon for "Product & Leadership" skills category
-7. **[COMPONENT]** Investigate and add project detail/modal views for projects — clicking a card could expand to show full case study content
+1. **[MAJOR v3.0.0]** Section reorder + scroll animations — reorder page sections for better narrative flow (Hero → About → Education → Experience → Projects → Skills → Certifications → Contact), add Framer Motion scroll-triggered entrance animations, improve section-to-section visual transitions
+2. **[COMPONENT]** Collapse navbar into a dropdown/hamburger menu on medium breakpoints to handle the 9-item overflow (now more urgent given navbar growth)
+3. **[PATCH]** Add certification images to public/ or remove image display from certifications UI if not available
+4. **[COMPONENT]** Add `og:image` social preview image to public/ and reference in OpenGraph/Twitter metadata
+5. **[PATCH]** Audit all `#` placeholder `credentialUrl` values in certifications — add real links or remove button
+6. **[COMPONENT]** Add structured data (JSON-LD) for Person schema to improve SEO rich results
+7. **[PATCH]** Replace Shield icon with a more appropriate icon for "Product & Leadership" skills category
+8. **[COMPONENT]** Investigate and add project detail/modal views for projects — clicking a card could expand to show full case study content
 
 ## Chat Agent Guidance
 This portfolio includes a retrieval-augmented chatbot designed to accurately represent Sushin Bandha. The chatbot uses curated markdown bio files as its primary knowledge source and follows strict rules to prevent hallucination.
