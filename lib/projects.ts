@@ -16,7 +16,7 @@ export const projects: Project[] = [
     description:
       "Delivered a machine learning solution providing 92% accurate wine sales forecasts for BASF. Built automated MLOps pipeline that reduced model update time from 2-3 days to 1-2 hours, enabling data-driven inventory and marketing decisions.",
     tags: ["Python", "TensorFlow", "Keras", "MLOps", "Time-Series Forecasting"],
-    image: "https://placehold.co/1200x800/cffafe/0f172a?text=Wine+Forecasting",
+    image: "/project-banners/wine-forecasting.svg",
     status: "not-available",
   },
   {
@@ -25,7 +25,7 @@ export const projects: Project[] = [
     description:
       "Architected and deployed a production-grade Retrieval-Augmented Generation (RAG) system with in-house embedding generation and vector search capabilities. Implemented semantic similarity scoring with configurable thresholds, optimized document chunking strategies, and integrated with LLM backends for fact-grounded responses while preventing hallucination.",
     tags: ["Python", "RAG", "Vector Search", "Embeddings", "LLM", "AI"],
-    image: "https://placehold.co/1200x800/dbeafe/0f172a?text=Project+AiRa",
+    image: "/project-banners/project-aira.svg",
     githubUrl: "https://github.com/bsushin0/Project-AiRa",
   },
   {

@@ -1,6 +1,6 @@
 # AGENTS.md - Personal Portfolio Site
 
-## Current Version: 2.1.4
+## Current Version: 2.2.0
 **Last Updated**: 2026-04-02
 **Status**: Active Development
 
@@ -47,6 +47,12 @@ If owner ever simply says "push" then push all current changes to Main-Dev.
 
 ## Completed Work Log
 
+### v2.2.0 - 2026-04-02
+- **Assets**: Created `public/project-banners/wine-forecasting.svg` — dark-theme SVG banner for the Wine Varietals Yield Forecasting project featuring a wine glass silhouette, bar/line forecast chart with Q1–Q4 data points, accuracy badge (92%), and MLOps pipeline label; color palette uses wine/magenta/violet tones matching portfolio dark aesthetic
+- **Assets**: Created `public/project-banners/project-aira.svg` — dark-theme SVG banner for Project AiRa featuring a full RAG pipeline diagram (Query → Embedding → Vector Search → LLM → Response), a code editor window showing `aira_rag.py`, feature pills for In-House Embed / Vector Search / Anti-Hallucination / Production-Grade; color palette uses cyan/indigo/violet tones
+- **Data**: Updated `lib/projects.ts` — replaced `placehold.co` external image URLs for Wine Forecasting and Project AiRa with local `/project-banners/wine-forecasting.svg` and `/project-banners/project-aira.svg` paths; all three projects now use self-hosted SVG banners with no external image dependencies
+- **Build**: Verified `pnpm build` passes cleanly (12 static pages generated, 0 errors, 0 warnings)
+
 ### v2.1.4 - 2026-04-02
 - **CSS**: Added `animate-pulse-glow` keyframe animation to globals.css (was used in chatbot.tsx but undefined)
 - **Analytics**: Added `<Analytics />` from `@vercel/analytics/next` to app/layout.tsx
@@ -88,6 +94,7 @@ If owner ever simply says "push" then push all current changes to Main-Dev.
 4. **[PATCH]** Audit all `#` placeholder `credentialUrl` values in certifications — add real links or remove button
 5. **[COMPONENT]** Add structured data (JSON-LD) for Person schema to improve SEO rich results
 6. **[PATCH]** Replace Shield icon with a more appropriate icon for "Product & Leadership" skills category
+7. **[COMPONENT]** Investigate and add project detail/modal views for projects — clicking a card could expand to show full case study content
 
 ## Chat Agent Guidance
 This portfolio includes a retrieval-augmented chatbot designed to accurately represent Sushin Bandha. The chatbot uses curated markdown bio files as its primary knowledge source and follows strict rules to prevent hallucination.
