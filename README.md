@@ -240,29 +240,6 @@ Edit `lib/certifications.ts` to add/update certifications and achievements.
 - **TypeScript**: All Framer Motion variant objects explicitly typed as `Variants` to satisfy strict type checking
 - **Build**: Verified `pnpm build` passes cleanly (12 static pages, 0 errors, 0 warnings)
 
-### v2.3.0 - 2026-04-02
-- Added dedicated Education section with degree header, programs & highlights, and relevant coursework
-- Enriched About bio with two substantive paragraphs covering academic trajectory and professional accomplishments
-- Expanded highlight cards in About section with detailed accomplishment descriptions
-- Added "Education" navbar link positioned after Experience
-
-### v2.2.0 - 2026-04-02
-- Created self-hosted SVG project banners for Wine Forecasting and Project AiRa
-- Eliminated all external `placehold.co` image dependencies
-
-### v2.1.4 - 2026-04-02
-- Added `animate-pulse-glow` CSS keyframe used by chatbot floating button
-- Added `<Analytics />` from `@vercel/analytics` to root layout
-- Updated SEO metadata: title now "AI Engineer & Product Manager", description reflects actual focus
-- Added OpenGraph and Twitter Card meta tags for social sharing
-- Created `app/sitemap.ts` for search engine indexing
-- Removed unused dead code: `holographic-bust.tsx`, `holographic-hero.tsx`
-- Updated footer title from "AI & Cybersecurity Specialist" to "AI Engineer & Product Manager"
-- Fixed skills section subtitle to say "product leadership" instead of "cybersecurity"
-- Added "About" and "Skills" links to navbar
-- Fixed broken certification image reference (removed missing file path)
-- Fixed EMT certification issuer to "National Registry of Emergency Medical Technicians (NREMT)"
-
 ## Future Enhancements
 
 - [ ] GitHub repository links (coming soon)
