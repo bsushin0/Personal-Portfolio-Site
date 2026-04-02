@@ -1,5 +1,6 @@
 # Sushin Bandha - AI Portfolio Site
 
+[![Version](https://img.shields.io/badge/version-2.1.4-blue?style=for-the-badge)](./AGENTS.md)
 [![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://sushin-bandha.vercel.app)
 ![Next.js](https://img.shields.io/badge/Next.js-15-black?style=for-the-badge&logo=next.js)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=for-the-badge&logo=typescript)
@@ -45,7 +46,6 @@ A modern, AI-powered portfolio website showcasing technical expertise in AI, pro
 │       ├── contact/         # Contact form submission
 │       └── debug-ip/        # IP debugging utility
 ├── components/
-│   ├── development-banner.tsx  # Active dev notice
 │   ├── chatbot.tsx          # Conversational AI component
 │   ├── hero.tsx             # Landing hero section
 │   ├── projects.tsx         # Featured projects showcase
@@ -157,14 +157,6 @@ The portfolio includes an in-house built conversational assistant powered by Goo
 - **Permissions-Policy:** Restricts camera, microphone, geolocation
 - **COOP/CORP:** Cross-origin security
 
-### Development Banner
-
-Sticky banner visible on first load:
-- Encourages user feedback and suggestions
-- Links to contact form
-- Dismissible by close button
-- Stays on top of all elements (z-[60])
-
 ## Environment Variables
 
 Create `.env.local` with:
@@ -232,6 +224,21 @@ Modify professional experience in `components/experience.tsx`. Update the `exper
 ### Certifications
 
 Edit `lib/certifications.ts` to add/update certifications and achievements.
+
+## Changelog
+
+### v2.1.4 - 2026-04-02
+- Added `animate-pulse-glow` CSS keyframe used by chatbot floating button
+- Added `<Analytics />` from `@vercel/analytics` to root layout
+- Updated SEO metadata: title now "AI Engineer & Product Manager", description reflects actual focus
+- Added OpenGraph and Twitter Card meta tags for social sharing
+- Created `app/sitemap.ts` for search engine indexing
+- Removed unused dead code: `holographic-bust.tsx`, `holographic-hero.tsx`
+- Updated footer title from "AI & Cybersecurity Specialist" to "AI Engineer & Product Manager"
+- Fixed skills section subtitle to say "product leadership" instead of "cybersecurity"
+- Added "About" and "Skills" links to navbar
+- Fixed broken certification image reference (removed missing file path)
+- Fixed EMT certification issuer to "National Registry of Emergency Medical Technicians (NREMT)"
 
 ## Future Enhancements
 

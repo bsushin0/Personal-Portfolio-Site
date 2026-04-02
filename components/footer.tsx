@@ -1,7 +1,7 @@
 import { Github, Linkedin, Mail } from "lucide-react"
 
 const name = "Sushin Bandha"
-const title = "AI & Cybersecurity Specialist"
+const title = "AI Engineer & Product Manager"
 const githubUrl = "https://github.com/bsushin0"
 const linkedinUrl = "https://linkedin.com/in/sushin-bandha"
 const emailUrl = "mailto:Bsushin@outlook.com"

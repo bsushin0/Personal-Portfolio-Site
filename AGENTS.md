@@ -1,5 +1,9 @@
 # AGENTS.md - Personal Portfolio Site
 
+## Current Version: 2.1.4
+**Last Updated**: 2026-04-02
+**Status**: Active Development
+
 ## ⚠️ CRITICAL: Git Workflow
 **NEVER PUSH TO MAIN.** All development work must go through the `Main-Dev` branch. The `main` branch is production and should only be updated via approved pull requests or manual merges by the repository owner. **ALWAYS ASK FOR EXPLICIT CONSENT EVERYTIME YOU PUSH TO REMOTE REPOSITORY.**
 If owner ever simply says "push" then push all current changes to Main-Dev.
@@ -41,6 +45,21 @@ If owner ever simply says "push" then push all current changes to Main-Dev.
 - Visit logging to database
 - IP-based filtering (optional)
 
+## Completed Work Log
+
+### v2.1.4 - 2026-04-02
+- **CSS**: Added `animate-pulse-glow` keyframe animation to globals.css (was used in chatbot.tsx but undefined)
+- **Analytics**: Added `<Analytics />` from `@vercel/analytics/next` to app/layout.tsx
+- **SEO**: Updated metadata title to "Sushin Bandha - AI Engineer & Product Manager"; rewrote description to reflect actual AI/PM focus
+- **SEO**: Added OpenGraph and Twitter Card meta tags with `metadataBase` set to production URL
+- **SEO**: Created `app/sitemap.ts` for search engine crawlers (generates `/sitemap.xml`)
+- **Dead code**: Removed `components/holographic-bust.tsx` and `components/holographic-hero.tsx` (confirmed unused via grep)
+- **Footer**: Fixed title from "AI & Cybersecurity Specialist" to "AI Engineer & Product Manager"
+- **Skills**: Fixed section subtitle to say "product leadership" instead of "cybersecurity"
+- **Navbar**: Added "About" (`#about`) and "Skills" (`#skills`) links
+- **Certifications**: Removed broken image path (`/Data Handling Cert.png` — file not in public/) from Data Handling cert
+- **Certifications**: Fixed EMT issuer from generic "EMT Certification" to "National Registry of Emergency Medical Technicians (NREMT)"
+
 ## Current Priorities & Focus Areas
 
 ### Active Development Areas
@@ -59,6 +78,16 @@ If owner ever simply says "push" then push all current changes to Main-Dev.
 - No automated test suite (portfolio site with manual visual validation)
 - Embeddings rebuild requires manual triggering (not automated on deploy)
 - Chatbot knowledge limited to curated bio files (intentional design for accuracy)
+- Certification images missing from public/ (Data Handling cert image not uploaded; EMT has no image)
+- Navbar has 8 items which may overflow on smaller desktop screens
+
+### Next Steps (Prioritized)
+1. **[PATCH]** Add certification images to public/ or remove image display from certifications UI if not available
+2. **[COMPONENT]** Collapse navbar items on medium breakpoints or implement a dropdown for overflow prevention
+3. **[COMPONENT]** Add `og:image` social preview image to public/ and reference in OpenGraph/Twitter metadata
+4. **[PATCH]** Audit all `#` placeholder `credentialUrl` values in certifications — add real links or remove button
+5. **[COMPONENT]** Add structured data (JSON-LD) for Person schema to improve SEO rich results
+6. **[PATCH]** Replace Shield icon with a more appropriate icon for "Product & Leadership" skills category
 
 ## Chat Agent Guidance
 This portfolio includes a retrieval-augmented chatbot designed to accurately represent Sushin Bandha. The chatbot uses curated markdown bio files as its primary knowledge source and follows strict rules to prevent hallucination.
@@ -194,8 +223,9 @@ animation: {
 - Tilt sensitivity: Modify the `* 5` multiplier in rotation calculations
 - `framer-motion` is installed but currently unused (available for future enhancements)
 
-### Legacy Component
-- `components/holographic-bust.tsx` — Previous SVG-based holographic avatar (deprecated, can be deleted)
+### Legacy Components (Deleted)
+- `components/holographic-bust.tsx` — Removed in v2.1.4 (was unused SVG-based avatar)
+- `components/holographic-hero.tsx` — Removed in v2.1.4 (was unused hero variant)
 
 ## Strategic Direction & Project Goals
 
