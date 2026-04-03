@@ -46,7 +46,7 @@ export default function Navbar() {
               ))}
             </div>
             <a
-              href="/Sushin Bandha Resume.pdf"
+              href="/sushin-bandha-resume.pdf"
               download
               className="ml-2 px-3 py-2 rounded-md text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-300 flex items-center gap-1"
             >
@@ -85,7 +85,7 @@ export default function Navbar() {
             </a>
           ))}
           <a
-            href="/Sushin Bandha Resume.pdf"
+            href="/sushin-bandha-resume.pdf"
             download
             className="block px-3 py-2 rounded-md text-base font-medium bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-300 flex items-center gap-2"
             onClick={() => setIsOpen(false)}

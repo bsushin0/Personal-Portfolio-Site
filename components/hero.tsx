@@ -27,7 +27,7 @@ export default function Hero() {
               View Projects
             </Button>
             <Button asChild variant="outline">
-              <a href="/Sushin Bandha Resume.pdf" download>
+              <a href="/sushin-bandha-resume.pdf" download>
                 <Download className="mr-2 h-4 w-4" />
                 Download Resume
               </a>
