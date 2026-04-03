@@ -34,7 +34,7 @@ export const metadata: Metadata = {
     siteName: "Sushin Bandha Portfolio",
   },
   twitter: {
-    card: "summary_large_image",
+    card: "summary",
     title: siteTitle,
     description: siteDescription,
     creator: "@sushinbandha",

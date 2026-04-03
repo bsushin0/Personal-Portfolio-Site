@@ -81,6 +81,11 @@ body:not(.dark) {
     @apply backdrop-blur-lg bg-[#020617]/60 border border-slate-800/60;
   }
 
+  /* Alias for dark-mode glass — maps to glass-neural */
+  .glass-dark {
+    @apply glass-neural;
+  }
+
   .glass-lab {
     @apply backdrop-blur-xl bg-white/70 border border-slate-200/70 saturate-150;
   }

@@ -7,20 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { ExternalLink, Github } from "lucide-react"
 import { projects } from "@/lib/projects"
-
-const headingVariants: Variants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
-}
-
-const containerVariants: Variants = {
-  hidden: {},
-  visible: {
-    transition: {
-      staggerChildren: 0.14,
-    },
-  },
-}
+import { headingVariants, staggerContainerSlow as containerVariants } from "@/lib/motion-variants"
 
 const cardVariants: Variants = {
   hidden: { opacity: 0, y: 28 },
@@ -69,6 +56,8 @@ export default function Projects() {
                 <img
                   src={project.image}
                   alt={project.title}
+                  loading="lazy"
+                  decoding="async"
                   className="w-full h-full object-cover transition-transform duration-500 ease-in-out"
                   style={{
                     transform: hoveredId === project.id ? "scale(1.05)" : "scale(1)",

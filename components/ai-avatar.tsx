@@ -41,6 +41,10 @@ export default function AiAvatar() {
   const particleIdRef = useRef(0)
   const touchRef = useRef<TouchPoint | null>(null)
   const velocityRef = useRef({ x: 0, y: 0 })
+  const mouseRafRef = useRef<number | null>(null)
+  const mousePendingRef = useRef<{ x: number; y: number } | null>(null)
+  const dragRafRef = useRef<number | null>(null)
+  const dragPendingRef = useRef<{ x: number; y: number } | null>(null)
 
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
   const [expression, setExpression] = useState<ExpressionState>({
@@ -109,10 +113,19 @@ export default function AiAvatar() {
     }
   }, [])
 
-  // Mouse tracking
+  // Mouse tracking — throttled via requestAnimationFrame
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
-      setMousePosition({ x: e.clientX, y: e.clientY })
+      mousePendingRef.current = { x: e.clientX, y: e.clientY }
+      if (mouseRafRef.current === null) {
+        mouseRafRef.current = requestAnimationFrame(() => {
+          if (mousePendingRef.current) {
+            setMousePosition(mousePendingRef.current)
+            mousePendingRef.current = null
+          }
+          mouseRafRef.current = null
+        })
+      }
     }
 
     const handleMouseEnter = () => setIsHovering(true)
@@ -315,10 +328,19 @@ export default function AiAvatar() {
     const handleMouseMove = (e: MouseEvent) => {
       const offsetX = (e.clientX - dragStartRef.current.x) * 0.3
       const offsetY = (e.clientY - dragStartRef.current.y) * 0.3
-      setDragOffset({
+      dragPendingRef.current = {
         x: Math.max(-30, Math.min(30, offsetX)),
         y: Math.max(-30, Math.min(30, offsetY)),
-      })
+      }
+      if (dragRafRef.current === null) {
+        dragRafRef.current = requestAnimationFrame(() => {
+          if (dragPendingRef.current) {
+            setDragOffset(dragPendingRef.current)
+            dragPendingRef.current = null
+          }
+          dragRafRef.current = null
+        })
+      }
     }
 
     window.addEventListener("mousemove", handleMouseMove as EventListener)
@@ -327,6 +349,7 @@ export default function AiAvatar() {
     return () => {
       window.removeEventListener("mousemove", handleMouseMove as EventListener)
       window.removeEventListener("mouseup", handleMouseUp)
+      if (dragRafRef.current !== null) cancelAnimationFrame(dragRafRef.current)
     }
   }, [isDragging])
 

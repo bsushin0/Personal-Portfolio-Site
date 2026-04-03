@@ -9,11 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Send, CheckCircle, AlertCircle } from "lucide-react"
-
-const headingVariants: Variants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
-}
+import { headingVariants } from "@/lib/motion-variants"
 
 const formVariants: Variants = {
   hidden: { opacity: 0, y: 28 },

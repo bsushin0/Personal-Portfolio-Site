@@ -1,10 +1,17 @@
 "use client"
 
 import type React from "react"
-import { motion, type Variants } from "framer-motion"
+import { motion } from "framer-motion"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Code, Shield, Cog, Brain } from "lucide-react"
+import {
+  headingVariants,
+  cardVariants,
+  staggerContainer as containerVariants,
+  fastStaggerContainer as badgeContainerVariants,
+  badgeVariants,
+} from "@/lib/motion-variants"
 
 type SkillCategory = {
   id: number
@@ -40,42 +47,6 @@ const skillCategories: SkillCategory[] = [
   },
 ]
 
-const headingVariants: Variants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
-}
-
-const containerVariants: Variants = {
-  hidden: {},
-  visible: {
-    transition: {
-      staggerChildren: 0.12,
-    },
-  },
-}
-
-const cardVariants: Variants = {
-  hidden: { opacity: 0, y: 24 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.5, ease: "easeOut" },
-  },
-}
-
-const badgeContainerVariants: Variants = {
-  hidden: {},
-  visible: {
-    transition: {
-      staggerChildren: 0.06,
-    },
-  },
-}
-
-const badgeVariants: Variants = {
-  hidden: { opacity: 0, scale: 0.88 },
-  visible: { opacity: 1, scale: 1, transition: { duration: 0.3, ease: "easeOut" } },
-}
 
 export default function Skills() {
   return (

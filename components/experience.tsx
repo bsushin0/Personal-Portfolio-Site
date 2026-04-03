@@ -1,6 +1,7 @@
 "use client"
 
 import { motion, type Variants } from "framer-motion"
+import { headingVariants } from "@/lib/motion-variants"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Calendar } from "lucide-react"
@@ -143,11 +144,6 @@ const overlapMap = new Map<number, number[]>()
 experiences.forEach(exp => {
   overlapMap.set(exp.id, findOverlappingIds(exp, experiences))
 })
-
-const headingVariants: Variants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
-}
 
 const cardVariants: Variants = {
   hidden: { opacity: 0, y: 28 },

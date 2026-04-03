@@ -5,12 +5,14 @@ import Image from 'next/image'
 
 export default function DigitalHuman() {
   const containerRef = useRef<HTMLDivElement>(null)
+  const rafIdRef = useRef<number | null>(null)
+  const pendingRef = useRef<{ x: number; y: number; dist: number; scale: number; glow: number } | null>(null)
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 })
   const [distance, setDistance] = useState(0)
   const [scale, setScale] = useState(1)
   const [glowIntensity, setGlowIntensity] = useState(0.3)
 
-  // Track mouse movement and proximity
+  // Track mouse movement and proximity — throttled via requestAnimationFrame
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       if (!containerRef.current) return
@@ -18,28 +20,38 @@ export default function DigitalHuman() {
       const rect = containerRef.current.getBoundingClientRect()
       const centerX = rect.left + rect.width / 2
       const centerY = rect.top + rect.height / 2
-
-      // Normalized mouse position relative to container (-1 to 1)
       const relX = (e.clientX - centerX) / (rect.width / 2)
       const relY = (e.clientY - centerY) / (rect.height / 2)
-
-      // Distance from center (0 to ~1.4 for diagonal)
       const dist = Math.sqrt(relX * relX + relY * relY)
-      
-      setMousePos({ x: relX, y: relY })
-      setDistance(Math.min(dist, 2))
 
-      // Scale up when cursor is close, down when far
-      const newScale = 1 + (1 - Math.min(dist / 2, 1)) * 0.15
-      setScale(newScale)
+      pendingRef.current = {
+        x: relX,
+        y: relY,
+        dist,
+        scale: 1 + (1 - Math.min(dist / 2, 1)) * 0.15,
+        glow: 0.3 + (1 - Math.min(dist / 2, 1)) * 0.7,
+      }
 
-      // Glow intensity based on proximity
-      const glowIntensity = 0.3 + (1 - Math.min(dist / 2, 1)) * 0.7
-      setGlowIntensity(glowIntensity)
+      if (rafIdRef.current === null) {
+        rafIdRef.current = requestAnimationFrame(() => {
+          const p = pendingRef.current
+          if (p) {
+            setMousePos({ x: p.x, y: p.y })
+            setDistance(Math.min(p.dist, 2))
+            setScale(p.scale)
+            setGlowIntensity(p.glow)
+            pendingRef.current = null
+          }
+          rafIdRef.current = null
+        })
+      }
     }
 
     window.addEventListener('mousemove', handleMouseMove)
-    return () => window.removeEventListener('mousemove', handleMouseMove)
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove)
+      if (rafIdRef.current !== null) cancelAnimationFrame(rafIdRef.current)
+    }
   }, [])
 
   // Figure movement within frame (subtle)

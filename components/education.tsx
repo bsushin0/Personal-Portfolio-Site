@@ -4,6 +4,7 @@ import { motion, type Variants } from "framer-motion"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { GraduationCap, TrendingUp, BookOpen, Star } from "lucide-react"
+import { headingVariants, cardVariants as fadeUpVariants, badgeVariants } from "@/lib/motion-variants"
 
 const coreCourses = [
   "Intro to Artificial Intelligence",
@@ -41,15 +42,6 @@ const highlights = [
   },
 ]
 
-const headingVariants: Variants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
-}
-
-const fadeUpVariants: Variants = {
-  hidden: { opacity: 0, y: 24 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
-}
 
 const containerVariants: Variants = {
   hidden: {},
@@ -74,10 +66,6 @@ const badgeContainerVariants: Variants = {
   },
 }
 
-const badgeVariants: Variants = {
-  hidden: { opacity: 0, scale: 0.9 },
-  visible: { opacity: 1, scale: 1, transition: { duration: 0.3, ease: "easeOut" } },
-}
 
 export default function Education() {
   return (
