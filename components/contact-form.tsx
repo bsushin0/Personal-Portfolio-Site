@@ -2,12 +2,19 @@
 
 import type React from "react"
 import { useState } from "react"
+import { motion, type Variants } from "framer-motion"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Send, CheckCircle, AlertCircle } from "lucide-react"
+import { headingVariants } from "@/lib/motion-variants"
+
+const formVariants: Variants = {
+  hidden: { opacity: 0, y: 28 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.55, ease: "easeOut", delay: 0.1 } },
+}
 
 export default function ContactForm() {
   const [loading, setLoading] = useState(false)
@@ -63,18 +70,30 @@ export default function ContactForm() {
   }
 
   return (
-    <section id="contact" className="py-16 md:py-20 bg-gradient-futuristic-light dark:bg-gradient-futuristic border-t border-blue-200 dark:border-cyan-500/20">
+    <section id="contact" className="py-16 md:py-20 bg-gradient-lab dark:bg-gradient-neural border-t border-slate-200/80 dark:border-slate-800/80">
       <div className="max-w-3xl mx-auto px-4 sm:px-6">
-        <div className="text-center mb-10 md:mb-12">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-600 via-cyan-500 to-purple-600 dark:from-cyan-300 dark:to-purple-400 bg-clip-text text-transparent mb-4">Get In Touch</h2>
-          <p className="text-gray-700 dark:text-cyan-200/70 mb-3 text-sm sm:text-base">
+        <motion.div
+          className="text-center mb-10 md:mb-12"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.3 }}
+          variants={headingVariants}
+        >
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground tracking-tight mb-4">Get In Touch</h2>
+          <p className="text-foreground/70 mb-3 text-sm sm:text-base">
             Interested in collaborating or have questions about my work? Let&apos;s connect!
           </p>
-          <p className="text-gray-600 dark:text-cyan-300/70 text-xs sm:text-sm">
+          <p className="text-foreground/60 text-xs sm:text-sm">
             Fill out the form below and send me a message. I&apos;ll get back to you promptly to discuss opportunities, share my resume, or chat about AI and cybersecurity.
           </p>
-        </div>
+        </motion.div>
 
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.15 }}
+          variants={formVariants}
+        >
         {submitted ? (
           <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-6 text-center">
             <CheckCircle className="mx-auto mb-3 text-green-400" size={32} />
@@ -94,7 +113,7 @@ export default function ContactForm() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
               <div className="space-y-2">
-                <Label htmlFor="name" className="text-gray-700 dark:text-cyan-200 text-sm md:text-base">
+                <Label htmlFor="name" className="text-foreground/70 text-sm md:text-base">
                   Name
                 </Label>
                 <Input
@@ -104,11 +123,11 @@ export default function ContactForm() {
                   onChange={handleChange}
                   placeholder="Your name"
                   required
-                  className="h-12 bg-white dark:bg-gray-900/50 border-blue-200 dark:border-cyan-500/30 text-gray-900 dark:text-cyan-100 placeholder:text-gray-400 dark:placeholder:text-cyan-400/50 focus:border-blue-500 dark:focus:border-cyan-400 focus:ring-blue-500/20 dark:focus:ring-cyan-500/20"
+                  className="h-12 bg-white dark:bg-slate-900/60 border-slate-200 dark:border-slate-800 text-foreground placeholder:text-foreground/40 focus:border-primary focus:ring-primary/20"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="email" className="text-gray-700 dark:text-cyan-200 text-sm md:text-base">
+                <Label htmlFor="email" className="text-foreground/70 text-sm md:text-base">
                   Email
                 </Label>
                 <Input
@@ -119,13 +138,13 @@ export default function ContactForm() {
                   onChange={handleChange}
                   placeholder="your.email@example.com"
                   required
-                  className="h-12 bg-white dark:bg-gray-900/50 border-blue-200 dark:border-cyan-500/30 text-gray-900 dark:text-cyan-100 placeholder:text-gray-400 dark:placeholder:text-cyan-400/50 focus:border-blue-500 dark:focus:border-cyan-400 focus:ring-blue-500/20 dark:focus:ring-cyan-500/20"
+                  className="h-12 bg-white dark:bg-slate-900/60 border-slate-200 dark:border-slate-800 text-foreground placeholder:text-foreground/40 focus:border-primary focus:ring-primary/20"
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="subject" className="text-gray-700 dark:text-cyan-200 text-sm md:text-base">
+              <Label htmlFor="subject" className="text-foreground/70 text-sm md:text-base">
                 Subject
               </Label>
               <Input
@@ -135,12 +154,12 @@ export default function ContactForm() {
                 onChange={handleChange}
                 placeholder="What is this regarding?"
                 required
-                className="h-12 bg-white dark:bg-gray-900/50 border-blue-200 dark:border-cyan-500/30 text-gray-900 dark:text-cyan-100 placeholder:text-gray-400 dark:placeholder:text-cyan-400/50 focus:border-blue-500 dark:focus:border-cyan-400 focus:ring-blue-500/20 dark:focus:ring-cyan-500/20"
+                className="h-12 bg-white dark:bg-slate-900/60 border-slate-200 dark:border-slate-800 text-foreground placeholder:text-foreground/40 focus:border-primary focus:ring-primary/20"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="message" className="text-gray-700 dark:text-cyan-200 text-sm md:text-base">
+              <Label htmlFor="message" className="text-foreground/70 text-sm md:text-base">
                 Message
               </Label>
               <Textarea
@@ -151,20 +170,21 @@ export default function ContactForm() {
                 placeholder="Your message..."
                 rows={5}
                 required
-                className="min-h-32 bg-white dark:bg-gray-900/50 border-blue-200 dark:border-cyan-500/30 text-gray-900 dark:text-cyan-100 placeholder:text-gray-400 dark:placeholder:text-cyan-400/50 focus:border-blue-500 dark:focus:border-cyan-400 focus:ring-blue-500/20 dark:focus:ring-cyan-500/20 resize-none"
+                className="min-h-32 bg-white dark:bg-slate-900/60 border-slate-200 dark:border-slate-800 text-foreground placeholder:text-foreground/40 focus:border-primary focus:ring-primary/20 resize-none"
               />
             </div>
 
             <Button
               type="submit"
               disabled={loading}
-              className="w-full h-12 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 dark:from-cyan-600 dark:to-blue-600 dark:hover:from-cyan-700 dark:hover:to-blue-700 text-white shadow-lg shadow-blue-500/50 dark:shadow-cyan-500/50 disabled:opacity-50 disabled:cursor-not-allowed text-base font-semibold"
+              className="w-full h-12 text-base font-semibold"
             >
               <Send className="mr-2 h-4 w-4" />
               {loading ? "Sending..." : "Send Message"}
             </Button>
           </form>
         )}
+        </motion.div>
       </div>
     </section>
   )

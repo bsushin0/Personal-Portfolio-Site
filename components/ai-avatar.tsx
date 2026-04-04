@@ -41,6 +41,10 @@ export default function AiAvatar() {
   const particleIdRef = useRef(0)
   const touchRef = useRef<TouchPoint | null>(null)
   const velocityRef = useRef({ x: 0, y: 0 })
+  const mouseRafRef = useRef<number | null>(null)
+  const mousePendingRef = useRef<{ x: number; y: number } | null>(null)
+  const dragRafRef = useRef<number | null>(null)
+  const dragPendingRef = useRef<{ x: number; y: number } | null>(null)
 
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
   const [expression, setExpression] = useState<ExpressionState>({
@@ -109,10 +113,19 @@ export default function AiAvatar() {
     }
   }, [])
 
-  // Mouse tracking
+  // Mouse tracking — throttled via requestAnimationFrame
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
-      setMousePosition({ x: e.clientX, y: e.clientY })
+      mousePendingRef.current = { x: e.clientX, y: e.clientY }
+      if (mouseRafRef.current === null) {
+        mouseRafRef.current = requestAnimationFrame(() => {
+          if (mousePendingRef.current) {
+            setMousePosition(mousePendingRef.current)
+            mousePendingRef.current = null
+          }
+          mouseRafRef.current = null
+        })
+      }
     }
 
     const handleMouseEnter = () => setIsHovering(true)
@@ -315,10 +328,19 @@ export default function AiAvatar() {
     const handleMouseMove = (e: MouseEvent) => {
       const offsetX = (e.clientX - dragStartRef.current.x) * 0.3
       const offsetY = (e.clientY - dragStartRef.current.y) * 0.3
-      setDragOffset({
+      dragPendingRef.current = {
         x: Math.max(-30, Math.min(30, offsetX)),
         y: Math.max(-30, Math.min(30, offsetY)),
-      })
+      }
+      if (dragRafRef.current === null) {
+        dragRafRef.current = requestAnimationFrame(() => {
+          if (dragPendingRef.current) {
+            setDragOffset(dragPendingRef.current)
+            dragPendingRef.current = null
+          }
+          dragRafRef.current = null
+        })
+      }
     }
 
     window.addEventListener("mousemove", handleMouseMove as EventListener)
@@ -327,6 +349,7 @@ export default function AiAvatar() {
     return () => {
       window.removeEventListener("mousemove", handleMouseMove as EventListener)
       window.removeEventListener("mouseup", handleMouseUp)
+      if (dragRafRef.current !== null) cancelAnimationFrame(dragRafRef.current)
     }
   }, [isDragging])
 
@@ -474,7 +497,7 @@ export default function AiAvatar() {
                   strokeWidth="3"
                   fill="none"
                   strokeLinecap="round"
-                  className="text-cyan-100 dark:text-cyan-50 drop-shadow-lg"
+                  className="text-primary/80 dark:text-primary/70 drop-shadow-lg"
                 />
               </svg>
 
@@ -505,7 +528,7 @@ export default function AiAvatar() {
                   strokeWidth="3"
                   fill="none"
                   strokeLinecap="round"
-                  className="text-cyan-100 dark:text-cyan-50 drop-shadow-lg"
+                  className="text-primary/80 dark:text-primary/70 drop-shadow-lg"
                 />
               </svg>
             </div>
@@ -561,24 +584,6 @@ export default function AiAvatar() {
               </div>
             </div>
 
-            {/* Blush - appears with emotion */}
-            {(expression.energy > 0.6 || expression.emotion === "happy") && (
-              <>
-                <div
-                  className="absolute top-32 left-12 w-10 h-7 bg-gradient-to-r from-purple-400 to-pink-300 rounded-full blur-2xl transition-all duration-300"
-                  style={{
-                    opacity: (expression.energy - 0.6) * 0.5 + (expression.emotion === "happy" ? 0.3 : 0),
-                  }}
-                />
-                <div
-                  className="absolute top-32 right-12 w-10 h-7 bg-gradient-to-r from-purple-400 to-pink-300 rounded-full blur-2xl transition-all duration-300"
-                  style={{
-                    opacity: (expression.energy - 0.6) * 0.5 + (expression.emotion === "happy" ? 0.3 : 0),
-                  }}
-                />
-              </>
-            )}
-
             {/* Mouth */}
             <div className="relative mt-8 w-40 h-24 flex items-center justify-center">
               <svg
@@ -594,7 +599,7 @@ export default function AiAvatar() {
                   strokeWidth="3"
                   fill="none"
                   strokeLinecap="round"
-                  className="text-cyan-400 dark:text-cyan-300 drop-shadow-lg transition-colors"
+                  className="text-primary dark:text-primary/80 drop-shadow-lg transition-colors"
                   style={{
                     filter: expression.emotion === "focused" ? "brightness(1.2)" : "brightness(1)",
                   }}
@@ -604,7 +609,7 @@ export default function AiAvatar() {
                 <path
                   d={`M 20 45 Q 60 ${45 + smileCurve * 0.5 + mouthY} 100 45 Q 60 ${50 + mouthY} 20 45`}
                   fill="currentColor"
-                  className="text-cyan-300/40 dark:text-cyan-300/50 transition-colors duration-200"
+                  className="text-primary/40 dark:text-primary/50 transition-colors duration-200"
                 />
 
                 {/* Tongue peek when thinking */}

@@ -1,5 +1,6 @@
 # Sushin Bandha - AI Portfolio Site
 
+[![Version](https://img.shields.io/badge/version-3.0.0-blue?style=for-the-badge)](./AGENTS.md)
 [![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://sushin-bandha.vercel.app)
 ![Next.js](https://img.shields.io/badge/Next.js-15-black?style=for-the-badge&logo=next.js)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=for-the-badge&logo=typescript)
@@ -30,6 +31,7 @@ A modern, AI-powered portfolio website showcasing technical expertise in AI, pro
 - **Language:** TypeScript
 - **Styling:** Tailwind CSS + Shadcn/ui component library
 - **UI Components:** Radix UI primitives
+- **Animations:** Framer Motion (scroll-triggered entrance animations, staggered children)
 - **AI/ML:** Google Gemini 2.5 Flash-Lite + Vercel AI SDK
 - **Utilities:** Lucide React icons, Date-fns, Zod validation
 - **Deployment:** Vercel with Edge Functions and Analytics
@@ -45,7 +47,6 @@ A modern, AI-powered portfolio website showcasing technical expertise in AI, pro
 │       ├── contact/         # Contact form submission
 │       └── debug-ip/        # IP debugging utility
 ├── components/
-│   ├── development-banner.tsx  # Active dev notice
 │   ├── chatbot.tsx          # Conversational AI component
 │   ├── hero.tsx             # Landing hero section
 │   ├── projects.tsx         # Featured projects showcase
@@ -157,14 +158,6 @@ The portfolio includes an in-house built conversational assistant powered by Goo
 - **Permissions-Policy:** Restricts camera, microphone, geolocation
 - **COOP/CORP:** Cross-origin security
 
-### Development Banner
-
-Sticky banner visible on first load:
-- Encourages user feedback and suggestions
-- Links to contact form
-- Dismissible by close button
-- Stays on top of all elements (z-[60])
-
 ## Environment Variables
 
 Create `.env.local` with:
@@ -232,6 +225,20 @@ Modify professional experience in `components/experience.tsx`. Update the `exper
 ### Certifications
 
 Edit `lib/certifications.ts` to add/update certifications and achievements.
+
+## Changelog
+
+### v3.0.0 - 2026-04-02 (Major Release)
+- **Section Reorder**: Restructured page flow to logical narrative order — Hero → About → Interests → Experience → Projects → Education → Skills → Certifications → Contact
+- **Navbar**: Updated navigation link order to match new section sequence
+- **Framer Motion Animations**: Added scroll-triggered entrance animations to all 7 non-hero sections using `whileInView` + `viewport={{ once: true }}`:
+  - Section headings and subtitles fade+slide up on viewport entry
+  - Cards and grid items stagger in sequence (`staggerChildren` 0.06–0.14s depending on density)
+  - Experience timeline cards animate individually as user scrolls
+  - Education section has multi-level stagger: card → list items → badges
+  - Skills badges stagger with a subtle scale-in effect
+- **TypeScript**: All Framer Motion variant objects explicitly typed as `Variants` to satisfy strict type checking
+- **Build**: Verified `pnpm build` passes cleanly (12 static pages, 0 errors, 0 warnings)
 
 ## Future Enhancements
 

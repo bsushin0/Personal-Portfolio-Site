@@ -14,8 +14,17 @@ export const certifications: Certification[] = [
     title: "Data Handling Certification",
     issuer: "Purdue University",
     date: "2024",
-    image: "/Data Handling Cert.png",
+    image: "",
     credentialUrl: "#",
     description: "Demonstrates proficiency in data handling, analysis, and management best practices.",
+  },
+  {
+    id: 2,
+    title: "Emergency Medical Technician (EMT)",
+    issuer: "National Registry of Emergency Medical Technicians (NREMT)",
+    date: "Current",
+    image: "",
+    credentialUrl: "#",
+    description: "Certified EMT with training in high-pressure decision-making, rapid assessment, and reliable response.",
   },
 ];

@@ -1,14 +1,23 @@
+"use client"
+
 import type React from "react"
+import { motion } from "framer-motion"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Code, Shield, Cog, Brain } from "lucide-react"
+import {
+  headingVariants,
+  cardVariants,
+  staggerContainer as containerVariants,
+  fastStaggerContainer as badgeContainerVariants,
+  badgeVariants,
+} from "@/lib/motion-variants"
 
 type SkillCategory = {
   id: number
   title: string
   icon: React.ReactNode
   skills: string[]
-  color: string
 }
 
 const skillCategories: SkillCategory[] = [
@@ -17,70 +26,85 @@ const skillCategories: SkillCategory[] = [
     title: "Programming Languages",
     icon: <Code className="h-5 w-5" />,
     skills: ["Python", "Java", "C", "JavaScript", "TypeScript", "SQL", "R", "C++", "Power Fx"],
-    color: "bg-blue-500/20 dark:bg-blue-500/30 text-blue-200 dark:text-blue-300 border border-blue-500/30",
   },
   {
     id: 2,
     title: "Platforms & Tools",
     icon: <Cog className="h-5 w-5" />,
     skills: ["Salesforce CRM", "ServiceNow ITSM", "SAP ERP", "Microsoft Power Platform", "Git"],
-    color: "bg-purple-500/20 dark:bg-purple-500/30 text-purple-200 dark:text-purple-300 border border-purple-500/30",
   },
   {
     id: 3,
     title: "AI & Machine Learning",
     icon: <Brain className="h-5 w-5" />,
     skills: ["TensorFlow", "Keras", "MLOps", "Data Analysis", "Time-Series Forecasting"],
-    color: "bg-cyan-500/20 dark:bg-cyan-500/30 text-cyan-200 dark:text-cyan-300 border border-cyan-500/30",
   },
   {
     id: 4,
     title: "Product & Leadership",
     icon: <Shield className="h-5 w-5" />,
     skills: ["Product Management", "Product Strategy", "Team Leadership", "UAT/SIT Testing", "Stakeholder Management"],
-    color: "bg-red-500/20 dark:bg-red-500/30 text-red-200 dark:text-red-300 border border-red-500/30",
   },
 ]
 
+
 export default function Skills() {
   return (
-    <section id="skills" className="py-20 bg-gradient-futuristic border-t border-cyan-500/20">
-      <div className="text-center mb-16">
-        <h2 className="text-3xl md:text-4xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 to-purple-400">Technical Skills</h2>
-        <p className="text-cyan-200/80 dark:text-cyan-200/70 max-w-2xl mx-auto">
-          A comprehensive toolkit spanning programming, platforms, AI/ML, and cybersecurity.
+    <section id="skills" className="py-20 bg-gradient-lab dark:bg-gradient-neural border-t border-slate-200/80 dark:border-slate-800/80">
+      <motion.div
+        className="text-center mb-16"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.3 }}
+        variants={headingVariants}
+      >
+        <h2 className="text-3xl md:text-4xl font-bold mb-4 text-foreground tracking-tight">Technical Skills</h2>
+        <p className="text-foreground/60 max-w-2xl mx-auto">
+          A comprehensive toolkit spanning programming, platforms, AI/ML, and product leadership.
         </p>
-      </div>
+      </motion.div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <motion.div
+        className="grid grid-cols-1 md:grid-cols-2 gap-8"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.1 }}
+        variants={containerVariants}
+      >
         {skillCategories.map((category) => (
-          <Card
-            key={category.id}
-            className="border-glow-purple bg-card hover:border-purple-400/60 transition-all duration-300 hover:transform hover:scale-[1.02]"
-          >
-            <CardHeader>
-              <CardTitle className="flex items-center gap-3 text-lg text-cyan-300">
-                <div className="p-2 rounded-lg bg-purple-500/20 dark:bg-purple-500/30 text-purple-400 dark:text-purple-300 border border-purple-500/30">
-                  {category.icon}
-                </div>
-                {category.title}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-wrap gap-2">
-                {category.skills.map((skill) => (
-                  <Badge
-                    key={skill}
-                    className={`${category.color} hover:scale-105 transition-transform cursor-default`}
-                  >
-                    {skill}
-                  </Badge>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+          <motion.div key={category.id} variants={cardVariants}>
+            <Card className="glass-effect-sm border-glow card-interactive h-full">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-3 text-lg text-foreground">
+                  <div className="p-2 rounded-lg bg-indigo-500/10 text-indigo-500 border border-indigo-500/20">
+                    {category.icon}
+                  </div>
+                  {category.title}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <motion.div
+                  className="flex flex-wrap gap-2"
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true, amount: 0.2 }}
+                  variants={badgeContainerVariants}
+                >
+                  {category.skills.map((skill) => (
+                    <motion.div key={skill} variants={badgeVariants}>
+                      <Badge
+                        className="bg-slate-100 text-slate-700 dark:bg-slate-900 dark:text-slate-200 border border-slate-200/80 dark:border-slate-800/80 hover:scale-105 transition-transform cursor-default"
+                      >
+                        {skill}
+                      </Badge>
+                    </motion.div>
+                  ))}
+                </motion.div>
+              </CardContent>
+            </Card>
+          </motion.div>
         ))}
-      </div>
+      </motion.div>
     </section>
   )
 }

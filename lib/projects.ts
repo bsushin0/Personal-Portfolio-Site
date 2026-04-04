@@ -4,8 +4,9 @@ export type Project = {
   description: string;
   tags: string[];
   image: string;
-  githubUrl: string;
+  githubUrl?: string;
   liveUrl?: string;
+  status?: "available" | "coming-soon" | "not-available";
 };
 
 export const projects: Project[] = [
@@ -15,38 +16,26 @@ export const projects: Project[] = [
     description:
       "Delivered a machine learning solution providing 92% accurate wine sales forecasts for BASF. Built automated MLOps pipeline that reduced model update time from 2-3 days to 1-2 hours, enabling data-driven inventory and marketing decisions.",
     tags: ["Python", "TensorFlow", "Keras", "MLOps", "Time-Series Forecasting"],
-    image: "https://placehold.co/1200x800/cffafe/0f172a?text=Wine+Forecasting",
-    githubUrl: "",
-    liveUrl: "",
+    image: "/project-banners/wine-forecasting.svg",
+    status: "not-available",
   },
   {
     id: 2,
-    title: "PSEG Onboarding Portal",
+    title: "Project AiRa",
     description:
-      "Led cross-functional team of 25 interns to define and launch company-wide onboarding site. Pioneered product initiative by building five Proof of Concept tools that secured executive approval for full-scale development.",
-    tags: ["Product Management", "Salesforce", "Team Leadership", "Automation"],
-    image: "https://placehold.co/1200x800/dbeafe/0f172a?text=PSEG+Onboarding",
-    githubUrl: "",
-    liveUrl: "",
+      "Architected and deployed a production-grade Retrieval-Augmented Generation (RAG) system with in-house embedding generation and vector search capabilities. Implemented semantic similarity scoring with configurable thresholds, optimized document chunking strategies, and integrated with LLM backends for fact-grounded responses while preventing hallucination.",
+    tags: ["Python", "RAG", "Vector Search", "Embeddings", "LLM", "AI"],
+    image: "/project-banners/project-aira.svg",
+    githubUrl: "https://github.com/bsushin0/Project-AiRa",
   },
   {
     id: 3,
     title: "Personal Portfolio Site",
     description:
-      "Built AI-powered conversational portfolio with in-house embedding generation and vector search. Features RAG-backed chatbot for visitor engagement, responsive Next.js frontend with Tailwind & Shadcn/UI, and production security hardening including HSTS headers and strict build validation.",
-    tags: ["Next.js", "TypeScript", "Tailwind", "AI/RAG", "Product"],
-    image: "https://placehold.co/1200x800/e0e7ff/0f172a?text=Portfolio+Site",
-    githubUrl: "",
-    liveUrl: "",
-  },
-  {
-    id: 4,
-    title: "Process Automation Tool",
-    description:
-      "Owned end-to-end development of critical automation tool at PSEG, transforming multi-day manual processes into near-instant execution, significantly improving operational efficiency.",
-    tags: ["Python", "Automation", "Salesforce", "Business Process"],
-    image: "https://placehold.co/1200x800/cffafe/0f172a?text=Automation+Tool",
-    githubUrl: "",
-    liveUrl: "",
+      "Full-stack AI-powered portfolio showcasing product & leadership roles. Built with Next.js 15 and TypeScript, featuring an interactive RAG chatbot for visitor engagement, responsive design with Tailwind & Shadcn/UI, production-grade security hardening (HSTS, CSP), and comprehensive analytics tracking. Live demonstration of modern web development and AI integration.",
+    tags: ["Next.js 15", "TypeScript", "RAG Chatbot", "Tailwind CSS", "PostgreSQL", "Vercel"],
+    image: "/project-banners/nextjs-ai-stack.svg",
+    githubUrl: "https://github.com/bsushin0/Personal-Portfolio-Site",
+    liveUrl: "https://www.sushinbandha.com",
   },
 ];

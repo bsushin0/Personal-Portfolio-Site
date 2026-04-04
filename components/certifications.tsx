@@ -1,40 +1,55 @@
+"use client"
+
+import { motion } from "framer-motion"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Award } from "lucide-react"
 import { certifications } from "@/lib/certifications"
+import { headingVariants, cardVariants, staggerContainer as containerVariants } from "@/lib/motion-variants"
 
 export default function Certifications() {
   return (
-    <section id="certifications" className="py-20 bg-gradient-futuristic border-t border-cyan-500/20">
-      <div className="text-center mb-16">
-        <h2 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-cyan-300 to-purple-400 bg-clip-text text-transparent mb-4">Certifications</h2>
-        <p className="text-cyan-200/70 dark:text-cyan-200/60 max-w-2xl mx-auto">
+    <section id="certifications" className="py-20 bg-gradient-lab dark:bg-gradient-neural border-t border-slate-200/80 dark:border-slate-800/80">
+      <motion.div
+        className="text-center mb-16"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.3 }}
+        variants={headingVariants}
+      >
+        <h2 className="text-3xl md:text-4xl font-bold text-foreground tracking-tight mb-4">Certifications</h2>
+        <p className="text-foreground/60 max-w-2xl mx-auto">
           Professional certifications demonstrating expertise in cybersecurity and industry best practices.
         </p>
-      </div>
+      </motion.div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <motion.div
+        className="grid grid-cols-1 md:grid-cols-2 gap-6"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.1 }}
+        variants={containerVariants}
+      >
         {certifications.map((cert) => (
-          <Card
-            key={cert.id}
-            className="bg-card dark:bg-gray-900 border-glow-purple hover:border-purple-400/60 hover:scale-[1.02] transition-all duration-300"
-          >
-            <CardHeader className="flex flex-row items-center gap-4">
-              <div className="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 border border-purple-500/30">
-                <Award size={24} />
-              </div>
-              <div>
-                <CardTitle className="text-lg text-cyan-300 dark:text-cyan-400">{cert.title}</CardTitle>
-                <CardDescription className="text-cyan-200/70 dark:text-cyan-200/60">
-                  {cert.issuer} • {cert.date}
-                </CardDescription>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <p className="text-cyan-100/80 dark:text-cyan-100/70">{cert.description}</p>
-            </CardContent>
-          </Card>
+          <motion.div key={cert.id} variants={cardVariants}>
+            <Card className="glass-effect-sm border-glow card-interactive h-full">
+              <CardHeader className="flex flex-row items-center gap-4">
+                <div className="flex items-center justify-center w-12 h-12 rounded-full bg-indigo-500/10 text-indigo-500 border border-indigo-500/20">
+                  <Award size={24} />
+                </div>
+                <div>
+                  <CardTitle className="text-lg text-foreground">{cert.title}</CardTitle>
+                  <CardDescription className="text-foreground/60">
+                    {cert.issuer} • {cert.date}
+                  </CardDescription>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <p className="text-foreground/70">{cert.description}</p>
+              </CardContent>
+            </Card>
+          </motion.div>
         ))}
-      </div>
+      </motion.div>
     </section>
   )
 }

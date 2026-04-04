@@ -2,20 +2,20 @@
 
 import { Button } from "@/components/ui/button"
 import AiAvatar from "./ai-avatar"
-import { ArrowDown, Github, Linkedin } from "lucide-react"
+import { ArrowDown, Github, Linkedin, Download } from "lucide-react"
 
 export default function Hero() {
   return (
-    <section className="py-20 md:py-32 flex flex-col items-center bg-gradient-futuristic-light dark:bg-gradient-futuristic">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+    <section className="py-20 md:py-32 flex flex-col items-center bg-gradient-lab dark:bg-gradient-neural">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 items-center">
         <div className="order-2 md:order-1">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 bg-gradient-to-r from-blue-600 via-cyan-500 to-purple-600 dark:from-cyan-400 dark:via-blue-400 dark:to-purple-500 text-transparent bg-clip-text">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 text-foreground tracking-tight">
             Sushin Bandha
           </h1>
-          <h2 className="text-xl md:text-2xl font-medium text-gray-700 dark:text-cyan-200 mb-6">
-            AI Student | Product Management & Innovation
+          <h2 className="text-xl md:text-2xl font-medium text-foreground/70 mb-6">
+            Building the future of AI through Product Management and Cybersecurity
           </h2>
-          <p className="text-gray-600 dark:text-cyan-100/80 mb-8 text-lg">
+          <p className="text-foreground/60 mb-8 text-lg">
             Purdue AI student specializing in user-centric products at the intersection of machine learning and business strategy.
             Proven leader who directed a 25-member team, now seeking to build and launch innovative, AI-powered solutions.
           </p>
@@ -23,9 +23,14 @@ export default function Hero() {
           <div className="flex flex-wrap gap-4">
             <Button
               onClick={() => document.getElementById("projects")?.scrollIntoView({ behavior: "smooth" })}
-              className="border-blue-500 text-white bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 dark:from-cyan-600 dark:to-blue-600 dark:hover:from-cyan-700 dark:hover:to-blue-700 shadow-lg shadow-blue-500/50 dark:shadow-cyan-500/50 transition-all"
             >
               View Projects
+            </Button>
+            <Button asChild variant="outline">
+              <a href="/sushin-bandha-resume.pdf" download>
+                <Download className="mr-2 h-4 w-4" />
+                Download Resume
+              </a>
             </Button>
           </div>
 
@@ -34,7 +39,7 @@ export default function Hero() {
               href="https://github.com/bsushin0"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-gray-700 hover:text-blue-600 dark:text-cyan-300 dark:hover:text-cyan-100 hover:scale-110 transition-all duration-300"
+              className="text-foreground/70 hover:text-primary hover:scale-110 transition-all duration-300"
             >
               <Github size={24} />
             </a>
@@ -42,7 +47,7 @@ export default function Hero() {
               href="https://linkedin.com/in/sushin-bandha"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-gray-700 hover:text-blue-600 dark:text-cyan-300 dark:hover:text-cyan-100 hover:scale-110 transition-all duration-300"
+              className="text-foreground/70 hover:text-primary hover:scale-110 transition-all duration-300"
             >
               <Linkedin size={24} />
             </a>
@@ -50,14 +55,18 @@ export default function Hero() {
         </div>
 
         <div className="order-1 md:order-2 hidden md:flex justify-center">
-          <AiAvatar />
+          <div className="relative flex items-center justify-center rounded-full p-[2px] aspect-square w-56 sm:w-64 md:w-72 lg:w-80 bg-[conic-gradient(from_0deg,rgba(148,163,184,0.35),rgba(148,163,184,0.05),rgba(148,163,184,0.35))] dark:bg-[conic-gradient(from_0deg,rgba(34,211,238,0.25),rgba(34,211,238,0),rgba(34,211,238,0.25))]">
+            <div className="flex items-center justify-center rounded-full aspect-square w-full h-full overflow-hidden border border-transparent dark:border-white/10 transition-all duration-500 filter brightness-100 saturate-100 drop-shadow-[0_10px_20px_rgba(0,0,0,0.08)] dark:brightness-110 dark:contrast-105 dark:drop-shadow-[0_0_15px_rgba(99,102,241,0.4)]">
+              <AiAvatar />
+            </div>
+          </div>
         </div>
       </div>
 
       <Button
         variant="ghost"
         size="icon"
-        className="mt-16 animate-bounce text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:text-cyan-400 dark:hover:text-cyan-300 dark:hover:bg-cyan-500/10"
+        className="mt-16 animate-bounce text-primary hover:text-primary/90 hover:bg-slate-100/70 dark:hover:bg-slate-900/40"
         onClick={() => document.getElementById("projects")?.scrollIntoView({ behavior: "smooth" })}
       >
         <ArrowDown className="h-6 w-6" />

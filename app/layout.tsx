@@ -4,8 +4,8 @@ import { Inter } from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { SpeedInsights } from "@vercel/speed-insights/next"
+import { Analytics } from "@vercel/analytics/next"
 import { Chatbot } from "@/components/chatbot"
-import DevelopmentBanner from "@/components/development-banner"
 import { VisitTracker } from "@/components/visit-tracker"
 
 const inter = Inter({ subsets: ["latin"] })
@@ -17,9 +17,28 @@ export const viewport: Viewport = {
   userScalable: true,
 }
 
+const siteUrl = "https://www.sushinbandha.com"
+const siteTitle = "Sushin Bandha - AI Engineer & Product Manager"
+const siteDescription =
+  "Purdue AI student specializing in user-centric products at the intersection of machine learning and business strategy. Explore projects in AI/ML, RAG systems, and software engineering."
+
 export const metadata: Metadata = {
-  title: "Sushin Bandha - AI & Cybersecurity Portfolio",
-  description: "Computer Science student at Purdue University specializing in AI, Cybersecurity, and Cloud Computing",
+  title: siteTitle,
+  description: siteDescription,
+  metadataBase: new URL(siteUrl),
+  openGraph: {
+    type: "website",
+    url: siteUrl,
+    title: siteTitle,
+    description: siteDescription,
+    siteName: "Sushin Bandha Portfolio",
+  },
+  twitter: {
+    card: "summary",
+    title: siteTitle,
+    description: siteDescription,
+    creator: "@sushinbandha",
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
@@ -37,11 +56,11 @@ export default function RootLayout({
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
           <VisitTracker />
-          <DevelopmentBanner />
           {children}
           <Chatbot />
         </ThemeProvider>
         <SpeedInsights />
+        <Analytics />
       </body>
     </html>
   )

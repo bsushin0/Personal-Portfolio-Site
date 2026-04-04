@@ -70,10 +70,10 @@ export function Chatbot() {
           className={cn(
             "fixed bottom-6 right-6 z-50",
             "w-16 h-16 rounded-full",
-            "bg-gradient-to-br from-cyan-500 to-blue-600",
-            "dark:from-cyan-400 dark:to-purple-600",
-            "shadow-lg shadow-cyan-500/50 dark:shadow-cyan-400/30",
-            "hover:shadow-xl hover:shadow-cyan-500/60 dark:hover:shadow-cyan-400/40",
+            "bg-gradient-to-br from-indigo-500 to-indigo-600",
+            "dark:from-indigo-500 dark:to-indigo-700",
+            "shadow-lg shadow-indigo-500/30 dark:shadow-indigo-500/30",
+            "hover:shadow-xl hover:shadow-indigo-500/40 dark:hover:shadow-indigo-500/40",
             "hover:scale-110 active:scale-95",
             "transition-all duration-300",
             "flex items-center justify-center",
@@ -96,23 +96,23 @@ export function Chatbot() {
             "w-full h-full md:h-[600px]",
             "flex flex-col",
             "glass-dark backdrop-blur-xl",
-            "border border-cyan-500/20 dark:border-cyan-400/20",
+            "border border-slate-200 dark:border-slate-800",
             "md:rounded-2xl rounded-none",
-            "shadow-2xl shadow-cyan-500/20 dark:shadow-cyan-400/10",
+            "shadow-2xl shadow-black/10 dark:shadow-black/40",
             "overflow-hidden"
           )}
         >
           {/* Header */}
-          <div className="flex items-center justify-between p-4 border-b border-cyan-500/20 dark:border-cyan-400/20 bg-gradient-to-r from-cyan-500/10 to-purple-500/10">
+          <div className="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-800 bg-background/70">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 dark:from-cyan-400 dark:to-purple-600 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-indigo-600 dark:from-indigo-500 dark:to-indigo-700 flex items-center justify-center">
                 <Sparkles className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h3 className="font-semibold text-cyan-900 dark:text-cyan-100">
+                <h3 className="font-semibold text-foreground">
                   Sushin&apos;s AI Assistant
                 </h3>
-                <p className="text-xs text-cyan-700 dark:text-cyan-300">
+                <p className="text-xs text-foreground/60">
                   Powered by Gemini
                 </p>
               </div>
@@ -121,7 +121,7 @@ export function Chatbot() {
               variant="ghost"
               size="icon"
               onClick={() => setIsOpen(false)}
-              className="hover:bg-cyan-500/10 dark:hover:bg-cyan-400/10"
+              className="hover:bg-slate-100/70 dark:hover:bg-slate-900/40"
             >
               <X className="w-5 h-5" />
             </Button>
@@ -152,8 +152,8 @@ export function Chatbot() {
                     "max-w-[80%] rounded-2xl px-4 py-3",
                     "break-words whitespace-pre-wrap",
                     message.role === 'user'
-                      ? "bg-gradient-to-br from-cyan-500 to-blue-600 dark:from-cyan-400 dark:to-purple-600 text-white"
-                      : "glass-effect dark:glass-dark border border-cyan-500/20 dark:border-cyan-400/20 text-cyan-900 dark:text-cyan-100"
+                      ? "bg-indigo-500 dark:bg-indigo-600 text-white"
+                      : "glass-effect dark:glass-dark border border-slate-200 dark:border-slate-800 text-foreground"
                   )}
                 >
                   <p className="text-sm leading-relaxed">{message.content}</p>
@@ -163,8 +163,8 @@ export function Chatbot() {
 
             {isLoading && (
               <div className="flex justify-start">
-                <div className="glass-effect dark:glass-dark border border-cyan-500/20 dark:border-cyan-400/20 rounded-2xl px-4 py-3">
-                  <Loader2 className="w-5 h-5 animate-spin text-cyan-600 dark:text-cyan-400" />
+                <div className="glass-effect dark:glass-dark border border-slate-200 dark:border-slate-800 rounded-2xl px-4 py-3">
+                  <Loader2 className="w-5 h-5 animate-spin text-indigo-500 dark:text-indigo-400" />
                 </div>
               </div>
             )}
@@ -173,7 +173,7 @@ export function Chatbot() {
           </div>
 
           {/* Input Area */}
-          <div className="p-4 border-t border-cyan-500/20 dark:border-cyan-400/20 bg-gradient-to-r from-cyan-500/5 to-purple-500/5">
+          <div className="p-4 border-t border-slate-200 dark:border-slate-800 bg-background/70">
             <form onSubmit={onSubmit} className="flex gap-2">
               <Input
                 ref={inputRef}
@@ -182,20 +182,18 @@ export function Chatbot() {
                 placeholder="Ask about Sushin&apos;s experience..."
                 disabled={isLoading}
                 className={cn(
-                  "flex-1 bg-white/50 dark:bg-gray-900/50",
-                  "border-cyan-500/20 dark:border-cyan-400/20",
-                  "focus:border-cyan-500 dark:focus:border-cyan-400",
-                  "placeholder:text-cyan-600/50 dark:placeholder:text-cyan-400/50"
+                  "flex-1 bg-white/70 dark:bg-slate-900/60",
+                  "border-slate-200 dark:border-slate-800",
+                  "focus:border-indigo-500 dark:focus:border-indigo-400",
+                  "placeholder:text-foreground/40"
                 )}
               />
               <Button
                 type="submit"
                 disabled={isLoading || !input.trim()}
                 className={cn(
-                  "bg-gradient-to-br from-cyan-500 to-blue-600",
-                  "dark:from-cyan-400 dark:to-purple-600",
-                  "hover:shadow-lg hover:shadow-cyan-500/50",
-                  "dark:hover:shadow-cyan-400/30",
+                  "bg-indigo-500 dark:bg-indigo-600",
+                  "hover:bg-indigo-600 dark:hover:bg-indigo-700",
                   "transition-all duration-300"
                 )}
               >
@@ -206,7 +204,7 @@ export function Chatbot() {
                 )}
               </Button>
             </form>
-            <p className="text-xs text-cyan-600/70 dark:text-cyan-400/70 mt-2 text-center">
+            <p className="text-xs text-foreground/50 mt-2 text-center">
               Powered by Google Gemini • Developed In-House
             </p>
           </div>
