@@ -70,7 +70,7 @@ export default function ContactForm() {
   }
 
   return (
-    <section id="contact" className="py-16 md:py-20 bg-gradient-lab dark:bg-gradient-neural border-t border-slate-200/80 dark:border-slate-800/80">
+    <section id="contact" className="py-16 md:py-20 bg-gradient-lab dark:bg-gradient-neural border-t border-border-subtle/80">
       <div className="max-w-3xl mx-auto px-4 sm:px-6">
         <motion.div
           className="text-center mb-10 md:mb-12"
@@ -95,19 +95,19 @@ export default function ContactForm() {
           variants={formVariants}
         >
         {submitted ? (
-          <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-6 text-center">
-            <CheckCircle className="mx-auto mb-3 text-green-400" size={32} />
-            <h3 className="text-lg font-semibold text-green-300 mb-2">Message Sent!</h3>
-            <p className="text-green-200/70">
+          <div className="bg-success/10 border border-success-border/30 rounded-lg p-6 text-center">
+            <CheckCircle className="mx-auto mb-3 text-success" size={32} />
+            <h3 className="text-lg font-semibold text-success mb-2">Message Sent!</h3>
+            <p className="text-success/70">
               Thanks for reaching out. I&apos;ll get back to you within 24-48 hours. You should receive a confirmation email shortly.
             </p>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-6">
             {error && (
-              <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4 flex items-start gap-3">
-                <AlertCircle className="text-red-400 mt-1 flex-shrink-0" size={20} />
-                <p className="text-red-300 text-sm">{error}</p>
+              <div className="bg-error/10 border border-error-border/30 rounded-lg p-4 flex items-start gap-3">
+                <AlertCircle className="text-error mt-1 flex-shrink-0" size={20} />
+                <p className="text-error-foreground text-sm">{error}</p>
               </div>
             )}
 
@@ -123,7 +123,7 @@ export default function ContactForm() {
                   onChange={handleChange}
                   placeholder="Your name"
                   required
-                  className="h-12 bg-white dark:bg-slate-900/60 border-slate-200 dark:border-slate-800 text-foreground placeholder:text-foreground/40 focus:border-primary focus:ring-primary/20"
+                  className="h-12 bg-surface-input border-border-subtle text-foreground placeholder:text-foreground/40 focus:border-primary focus:ring-primary/20"
                 />
               </div>
               <div className="space-y-2">
@@ -138,7 +138,7 @@ export default function ContactForm() {
                   onChange={handleChange}
                   placeholder="your.email@example.com"
                   required
-                  className="h-12 bg-white dark:bg-slate-900/60 border-slate-200 dark:border-slate-800 text-foreground placeholder:text-foreground/40 focus:border-primary focus:ring-primary/20"
+                  className="h-12 bg-surface-input border-border-subtle text-foreground placeholder:text-foreground/40 focus:border-primary focus:ring-primary/20"
                 />
               </div>
             </div>
@@ -154,7 +154,7 @@ export default function ContactForm() {
                 onChange={handleChange}
                 placeholder="What is this regarding?"
                 required
-                className="h-12 bg-white dark:bg-slate-900/60 border-slate-200 dark:border-slate-800 text-foreground placeholder:text-foreground/40 focus:border-primary focus:ring-primary/20"
+                className="h-12 bg-surface-input border-border-subtle text-foreground placeholder:text-foreground/40 focus:border-primary focus:ring-primary/20"
               />
             </div>
 
@@ -170,7 +170,7 @@ export default function ContactForm() {
                 placeholder="Your message..."
                 rows={5}
                 required
-                className="min-h-32 bg-white dark:bg-slate-900/60 border-slate-200 dark:border-slate-800 text-foreground placeholder:text-foreground/40 focus:border-primary focus:ring-primary/20 resize-none"
+                className="min-h-32 bg-surface-input border-border-subtle text-foreground placeholder:text-foreground/40 focus:border-primary focus:ring-primary/20 resize-none"
               />
             </div>
 

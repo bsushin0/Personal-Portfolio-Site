@@ -67,12 +67,12 @@ export default function Projects() {
 
                 {/* Status Banner */}
                 {project.status === "not-available" && (
-                  <div className="absolute top-4 right-4 bg-rose-500/90 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm font-medium">
+                  <div className="absolute top-4 right-4 bg-error/90 backdrop-blur-sm text-error-foreground px-3 py-1 rounded-full text-sm font-medium">
                     Not Available
                   </div>
                 )}
                 {project.status === "coming-soon" && (
-                  <div className="absolute top-4 right-4 bg-amber-500/90 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm font-medium">
+                  <div className="absolute top-4 right-4 bg-warning/90 backdrop-blur-sm text-warning-foreground px-3 py-1 rounded-full text-sm font-medium">
                     Coming Soon
                   </div>
                 )}
@@ -87,7 +87,7 @@ export default function Projects() {
                     <Badge
                       key={tag}
                       variant="secondary"
-                      className="bg-slate-100 text-slate-700 dark:bg-slate-900 dark:text-slate-200 border border-slate-200/80 dark:border-slate-800/80"
+                      className="bg-surface-tag text-foreground/70 border border-border-subtle/80"
                     >
                       {tag}
                     </Badge>
@@ -101,7 +101,7 @@ export default function Projects() {
                       asChild
                       variant="ghost"
                       size="sm"
-                      className="text-primary hover:text-primary/90 hover:bg-slate-100/70 dark:hover:bg-slate-900/40"
+                      className="text-primary hover:text-primary/90 hover:bg-surface-hover/70"
                     >
                       <a href={project.githubUrl} target="_blank" rel="noopener noreferrer">
                         <Github className="mr-2 h-4 w-4" />
@@ -114,7 +114,7 @@ export default function Projects() {
                       asChild
                       variant="ghost"
                       size="sm"
-                      className="text-primary hover:text-primary/90 hover:bg-slate-100/70 dark:hover:bg-slate-900/40"
+                      className="text-primary hover:text-primary/90 hover:bg-surface-hover/70"
                     >
                       <a href={project.liveUrl} target="_blank" rel="noopener noreferrer">
                         <ExternalLink className="mr-2 h-4 w-4" />

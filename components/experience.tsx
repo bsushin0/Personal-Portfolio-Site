@@ -174,7 +174,7 @@ export default function Experience() {
       {/* Timeline Container */}
       <div className="relative">
         {/* Timeline Line - only visible on md and up */}
-        <div className="hidden md:block absolute left-1/2 transform -translate-x-1/2 w-1 h-full bg-gradient-to-b from-slate-200 via-primary/30 to-slate-200 dark:from-slate-800 dark:via-primary/20 dark:to-slate-800" />
+        <div className="hidden md:block absolute left-1/2 transform -translate-x-1/2 w-1 h-full bg-gradient-to-b from-border-subtle via-primary/30 to-border-subtle" />
 
         {/* Timeline Items */}
         <div className="space-y-8 md:space-y-12">
@@ -199,10 +199,10 @@ export default function Experience() {
                         {/* Outer pulsing ring for overlap indicator */}
                         <div className="absolute w-6 h-6 bg-primary/20 rounded-full animate-pulse" />
                         {/* Main point */}
-                        <div className="w-4 h-4 bg-primary rounded-full border-4 border-background dark:border-slate-900 shadow-lg" />
+                        <div className="w-4 h-4 bg-primary rounded-full border-4 border-background shadow-lg" />
                       </>
                     ) : (
-                      <div className="w-4 h-4 bg-primary rounded-full border-4 border-background dark:border-slate-900 shadow-lg" />
+                      <div className="w-4 h-4 bg-primary rounded-full border-4 border-background shadow-lg" />
                     )}
                   </div>
                 </div>
@@ -220,7 +220,7 @@ export default function Experience() {
                         <div className="flex flex-col gap-2 md:flex-row md:justify-between pt-1">
                           <Badge
                             variant="outline"
-                            className="w-fit border-slate-200/80 dark:border-slate-800/80 text-foreground/70 md:order-2"
+                            className="w-fit border-border-subtle/80 text-foreground/70 md:order-2"
                           >
                             <Calendar className="h-3 w-3 mr-1" />
                             {exp.period}
@@ -248,7 +248,7 @@ export default function Experience() {
                           <Badge
                             key={skill}
                             variant="secondary"
-                            className="bg-slate-100 text-slate-700 dark:bg-slate-900 dark:text-slate-200 border border-slate-200/80 dark:border-slate-800/80"
+                            className="bg-surface-tag text-foreground/70 border border-border-subtle/80"
                           >
                             {skill}
                           </Badge>

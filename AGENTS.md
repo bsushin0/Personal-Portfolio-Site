@@ -1,6 +1,6 @@
 # AGENTS.md - Personal Portfolio Site
 
-## Current Version: 3.2.0
+## Current Version: 3.3.0
 **Last Updated**: 2026-04-06
 **Status**: Active Development
 
@@ -46,6 +46,18 @@ If owner ever simply says "push" then push all current changes to Main-Dev.
 - IP-based filtering (optional)
 
 ## Completed Work Log
+
+### v3.3.0 - 2026-04-06 (COMPONENT — Design Token System)
+- **CSS variable design token system**: `app/globals.css` is now the single source of truth for all palette values. New tokens added to both `:root` and `.dark` blocks: `--surface-raised/overlay/input/hover/tag` (surface variants), `--border-subtle/strong` (semantic borders), `--success/error/warning/info` with `-foreground` and `-border` variants (alert/status), `--ai-glow/secondary/gradient-from/to` (AI accent), and `--scrollbar-track/thumb/thumb-hover`.
+- **Duplicate body overrides removed**: `body.dark { background: #020617 }` and `body:not(.dark) { background: #F5F3F0 }` removed — CSS variable `bg-background` handles this correctly without the duplicate hex overrides.
+- **Glass utilities refactored**: `glass-neural` and `glass-lab` replaced hardcoded `#020617` and `bg-stone-100` references with `hsl(var(--background) / 0.70)` and `hsl(var(--surface-overlay) / 0.70)`. Borders use `hsl(var(--border-subtle))`.
+- **Border glow utilities**: All `border-glow*` variants now use `hsl(var(--border-subtle))` instead of `border-stone-300 dark:border-slate-800`.
+- **Text gradients updated**: `text-gradient-cyan` and `text-gradient-ai` now compose from `--foreground` and `--primary` CSS variables.
+- **Scrollbar styles**: All hardcoded `#EDE8E3`/`#0F172A`/`#6366F1`/`#4F46E5` values replaced with `hsl(var(--scrollbar-*))`.
+- **tailwind.config.ts expanded**: Added CSS-variable-backed color entries for all new semantic tokens; fixed `gradient-lab` start color from `#F8FAFC` to `#F5F3F0`.
+- **16 components updated**: `navbar`, `hero`, `about`, `interests`, `experience`, `projects`, `education`, `skills`, `certifications`, `contact-form`, `footer`, `chatbot`, `digital-human`, `ai-avatar`, `mode-toggle`, `ui/toast`. Replaced `slate-*`/`stone-*`/`gray-*` structural classes with `border-border-subtle`, `bg-surface-tag`, `bg-surface-input`, `bg-surface-hover`, `bg-success`, `bg-error`, `bg-warning`, `bg-ai-glow`, etc.
+- **Inline rgba/hex values in ai-avatar and digital-human**: Converted to `hsl()` notation using the same channel values as the CSS variables so the values are traceable back to the token definitions.
+- **Build**: Verified `pnpm build` passes cleanly (13 static pages, 0 errors, 0 warnings).
 
 ### v3.2.0 - 2026-04-06 (COMPONENT)
 - **Light theme neutral palette**: Replaced blue-tinted "Clean Lab" light theme with a warm, sophisticated "Warm Neutral Studio" palette. `:root` CSS variables updated: background (`34 20% 95%`), foreground (`20 14% 11%`), card/popover (`36 25% 97%`), secondary/muted/border/input all shifted to warm stone/amber tones. Body background changed from `#F8FAFC` to `#F5F3F0`. Scrollbar track updated from `#F8FAFC` to `#EDE8E3`.
@@ -129,12 +141,13 @@ The "Next Steps" section uses `[PATCH]` and `[COMPONENT]` tags to pre-label upco
 
 ### Next Steps (Prioritized)
 1. **[COMPONENT]** Collapse navbar into a dropdown/hamburger menu on medium breakpoints to handle the 9-item overflow (now more urgent given navbar growth)
-3. **[PATCH]** Add certification images to public/ or remove image display from certifications UI if not available
-4. **[COMPONENT]** Add `og:image` social preview image to public/ and reference in OpenGraph/Twitter metadata
-5. **[PATCH]** Audit all `#` placeholder `credentialUrl` values in certifications — add real links or remove button
-6. **[COMPONENT]** Add structured data (JSON-LD) for Person schema to improve SEO rich results
-7. **[PATCH]** Replace Shield icon with a more appropriate icon for "Product & Leadership" skills category
-8. **[COMPONENT]** Investigate and add project detail/modal views for projects — clicking a card could expand to show full case study content
+2. **[PATCH]** Add certification images to public/ or remove image display from certifications UI if not available
+3. **[COMPONENT]** Add `og:image` social preview image to public/ and reference in OpenGraph/Twitter metadata
+4. **[PATCH]** Audit all `#` placeholder `credentialUrl` values in certifications — add real links or remove button
+5. **[COMPONENT]** Add structured data (JSON-LD) for Person schema to improve SEO rich results
+6. **[PATCH]** Replace Shield icon with a more appropriate icon for "Product & Leadership" skills category
+7. **[COMPONENT]** Investigate and add project detail/modal views for projects — clicking a card could expand to show full case study content
+8. **[PATCH]** Add `prefers-reduced-motion` media query to Framer Motion animations for WCAG 2.1 AA compliance
 
 ## Chat Agent Guidance
 This portfolio includes a retrieval-augmented chatbot designed to accurately represent Sushin Bandha. The chatbot uses curated markdown bio files as its primary knowledge source and follows strict rules to prevent hallucination.

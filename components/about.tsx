@@ -30,7 +30,7 @@ export default function About() {
   ]
 
   return (
-    <section id="about" className="py-20 bg-gradient-lab dark:bg-gradient-neural border-t border-slate-200/80 dark:border-slate-800/80">
+    <section id="about" className="py-20 bg-gradient-lab dark:bg-gradient-neural border-t border-border-subtle/80">
       <motion.div
         className="text-center mb-16"
         initial="hidden"

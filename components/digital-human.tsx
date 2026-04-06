@@ -65,7 +65,8 @@ export default function DigitalHuman() {
         ref={containerRef}
         className="relative w-full aspect-[3/4] rounded-3xl overflow-hidden shadow-2xl"
         style={{
-          boxShadow: `0 0 ${40 + glowIntensity * 60}px rgba(99, 102, 241, ${0.2 + glowIntensity * 0.3}), 0 0 ${100 + glowIntensity * 100}px rgba(99, 102, 241, ${0.1 + glowIntensity * 0.15})`,
+          /* Using primary/indigo hue (239° 84% 67%) for the outer glow — consistent with --primary */
+          boxShadow: `0 0 ${40 + glowIntensity * 60}px hsl(239 84% 67% / ${0.2 + glowIntensity * 0.3}), 0 0 ${100 + glowIntensity * 100}px hsl(239 84% 67% / ${0.1 + glowIntensity * 0.15})`,
         }}
       >
         {/* Figure Inside Frame - Only this moves */}
@@ -104,7 +105,7 @@ export default function DigitalHuman() {
         <div
           className="absolute inset-0 pointer-events-none rounded-3xl"
           style={{
-            background: `radial-gradient(ellipse at ${50 + mousePos.x * 20}% ${50 + mousePos.y * 20}%, rgba(99, 102, 241, ${0.2 + glowIntensity * 0.3}), transparent 70%)`,
+            background: `radial-gradient(ellipse at ${50 + mousePos.x * 20}% ${50 + mousePos.y * 20}%, hsl(239 84% 67% / ${0.2 + glowIntensity * 0.3}), transparent 70%)`,
             mixBlendMode: 'screen',
             opacity: glowIntensity * 0.6,
           }}
@@ -119,25 +120,25 @@ export default function DigitalHuman() {
         />
 
         {/* HUD Overlay (Fixed) */}
-        <div className="absolute inset-0 pointer-events-none rounded-3xl border border-cyan-500/20 overflow-hidden">
-          
+        <div className="absolute inset-0 pointer-events-none rounded-3xl border border-ai-glow/20 overflow-hidden">
+
           {/* Status Badge */}
-          <div className="absolute top-6 right-6 flex items-center space-x-2 bg-black/70 backdrop-blur-sm border border-cyan-500/40 rounded-lg px-3 py-1.5 shadow-lg shadow-cyan-900/30">
-            <div className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
-            <span className="text-[10px] font-mono tracking-widest text-cyan-300">
+          <div className="absolute top-6 right-6 flex items-center space-x-2 bg-background/70 backdrop-blur-sm border border-ai-glow/40 rounded-lg px-3 py-1.5 shadow-lg shadow-background/30">
+            <div className="w-1.5 h-1.5 rounded-full bg-ai-glow animate-pulse" />
+            <span className="text-[10px] font-mono tracking-widest text-ai-glow">
               ONLINE
             </span>
           </div>
 
           {/* Subtle scanning lines */}
-          <div className="absolute left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-cyan-400/30 to-transparent animate-scan-fast" />
-          <div className="absolute left-0 w-full h-[1px] top-1/3 bg-gradient-to-r from-transparent via-cyan-400/20 to-transparent opacity-50" style={{ animationDelay: '1s' }} />
+          <div className="absolute left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-ai-glow/30 to-transparent animate-scan-fast" />
+          <div className="absolute left-0 w-full h-[1px] top-1/3 bg-gradient-to-r from-transparent via-ai-glow/20 to-transparent opacity-50" style={{ animationDelay: '1s' }} />
         </div>
       </div>
 
       {/* Ambient light reflection */}
-      <div 
-        className="absolute -bottom-8 left-1/2 -translate-x-1/2 w-4/5 h-12 bg-cyan-500/15 blur-2xl rounded-full -z-10 transition-all duration-500"
+      <div
+        className="absolute -bottom-8 left-1/2 -translate-x-1/2 w-4/5 h-12 bg-ai-glow/15 blur-2xl rounded-full -z-10 transition-all duration-500"
         style={{
           opacity: glowIntensity,
           transform: `scaleX(${1 + distance * 0.3})`,

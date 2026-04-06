@@ -96,7 +96,7 @@ export function Chatbot() {
             "w-full h-full md:h-[600px]",
             "flex flex-col",
             "glass-effect backdrop-blur-xl",
-            "border border-stone-300 dark:border-slate-800",
+            "border border-border-subtle",
             "md:rounded-2xl rounded-none",
             "shadow-2xl shadow-black/10 dark:shadow-black/40",
             "overflow-hidden"
@@ -121,16 +121,16 @@ export function Chatbot() {
               variant="ghost"
               size="icon"
               onClick={() => setIsOpen(false)}
-              className="hover:bg-slate-100/70 dark:hover:bg-slate-900/40"
+              className="hover:bg-surface-hover/70"
             >
               <X className="w-5 h-5" />
             </Button>
           </div>
 
           {/* Learning Notice */}
-          <div className="px-4 py-2 border-b border-yellow-300 dark:border-yellow-800/40 bg-yellow-50/80 dark:bg-yellow-900/30">
-            <div className="flex items-start gap-2 text-yellow-900 dark:text-yellow-100">
-              <AlertCircle className="w-4 h-4 mt-0.5 text-yellow-700 dark:text-yellow-300" />
+          <div className="px-4 py-2 border-b border-warning-border/40 bg-warning/10">
+            <div className="flex items-start gap-2 text-warning-foreground">
+              <AlertCircle className="w-4 h-4 mt-0.5 text-warning" />
               <p className="text-xs">
                 This AI assistant was developed in-house. It is still learning and may make mistakes.
               </p>
@@ -153,7 +153,7 @@ export function Chatbot() {
                     "break-words whitespace-pre-wrap",
                     message.role === 'user'
                       ? "bg-indigo-500 dark:bg-indigo-600 text-white"
-                      : "glass-effect border border-stone-300 dark:border-slate-800 text-foreground"
+                      : "glass-effect border border-border-subtle text-foreground"
                   )}
                 >
                   <p className="text-sm leading-relaxed">{message.content}</p>
@@ -163,7 +163,7 @@ export function Chatbot() {
 
             {isLoading && (
               <div className="flex justify-start">
-                <div className="glass-effect border border-stone-300 dark:border-slate-800 rounded-2xl px-4 py-3">
+                <div className="glass-effect border border-border-subtle rounded-2xl px-4 py-3">
                   <Loader2 className="w-5 h-5 animate-spin text-indigo-500 dark:text-indigo-400" />
                 </div>
               </div>
@@ -182,8 +182,8 @@ export function Chatbot() {
                 placeholder="Ask about Sushin&apos;s experience..."
                 disabled={isLoading}
                 className={cn(
-                  "flex-1 bg-stone-50/70 dark:bg-slate-900/60",
-                  "border-stone-300 dark:border-slate-800",
+                  "flex-1 bg-surface-input/70",
+                  "border-border-subtle",
                   "focus:border-indigo-500 dark:focus:border-indigo-400",
                   "placeholder:text-foreground/40"
                 )}
