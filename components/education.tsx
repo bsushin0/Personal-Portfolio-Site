@@ -27,7 +27,7 @@ const highlights = [
   },
   {
     icon: <Star className="h-5 w-5" />,
-    label: "ACERIAS Security Seminar",
+    label: "CERIAS Security Seminar",
     detail: "Specialized cybersecurity coursework (CS 59100) through Purdue's security research center",
   },
   {

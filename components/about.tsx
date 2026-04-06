@@ -44,7 +44,7 @@ export default function About() {
           pursuing a private pilot license on the side, and working toward an EMT certification — because I genuinely
           believe the best builders understand the systems and people they serve. My academic trajectory reflects that: I
           entered Purdue with 27 AP credits, joined The Data Mine corporate partners program to work on real industry
-          data problems, and completed the ACERIAS cybersecurity seminar.
+          data problems, and completed the CERIAS cybersecurity seminar.
         </p>
         <p className="text-foreground/60 max-w-3xl mx-auto text-lg leading-relaxed mt-4">
           Professionally, I&apos;ve spent two summers at PSEG as a Product Intern — owning an IAM product backlog of 50+
