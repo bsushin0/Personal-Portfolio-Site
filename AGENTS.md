@@ -1,7 +1,7 @@
 # AGENTS.md - Personal Portfolio Site
 
-## Current Version: 3.0.0
-**Last Updated**: 2026-04-02
+## Current Version: 3.2.0
+**Last Updated**: 2026-04-06
 **Status**: Active Development
 
 ## ⚠️ CRITICAL: Git Workflow
@@ -47,6 +47,13 @@ If owner ever simply says "push" then push all current changes to Main-Dev.
 
 ## Completed Work Log
 
+### v3.2.0 - 2026-04-06 (COMPONENT)
+- **Light theme neutral palette**: Replaced blue-tinted "Clean Lab" light theme with a warm, sophisticated "Warm Neutral Studio" palette. `:root` CSS variables updated: background (`34 20% 95%`), foreground (`20 14% 11%`), card/popover (`36 25% 97%`), secondary/muted/border/input all shifted to warm stone/amber tones. Body background changed from `#F8FAFC` to `#F5F3F0`. Scrollbar track updated from `#F8FAFC` to `#EDE8E3`.
+- **Light theme glass utilities**: `glass-lab` and `glass-lab-sm` updated from `bg-white/70 border-slate-200/70` to `bg-stone-100/70 border-stone-300/60` for visual consistency with warm palette.
+- **Light theme border utilities**: `border-glow`, `border-glow-lg`, `border-glow-purple`, `border-glow-purple-lg` light-mode values updated from `border-slate-200` to `border-stone-300`.
+- **Chatbot theme-awareness**: Chat panel was hardcoding `glass-dark` (the dark-only glass style), rendering the panel with near-black background regardless of active theme. Changed to `glass-effect` which adapts light vs dark automatically. All inline border references inside the chatbot panel (`border-slate-200`) updated to `border-stone-300` (light) with `dark:border-slate-800` preserved. Input field background updated from `bg-white/70` to `bg-stone-50/70` in light mode. Assistant message bubbles and loading indicator container updated to match.
+- **Build**: Verified `pnpm build` passes cleanly (13 static pages, 0 errors, 0 warnings).
+
 ### v3.0.0 - 2026-04-02 (MAJOR)
 - **Section Reorder**: Restructured `app/page.tsx` section order to match logical narrative flow: Hero → About → Interests → Experience → Projects → Education → Skills → Certifications → Contact (previously Education appeared between Experience and Skills, Projects appeared after Education)
 - **Navbar**: Updated `navItems` array in `components/navbar.tsx` to match new page order — Projects now appears before Education in the nav list
@@ -87,6 +94,16 @@ If owner ever simply says "push" then push all current changes to Main-Dev.
 - **Navbar**: Added "About" (`#about`) and "Skills" (`#skills`) links
 - **Certifications**: Removed broken image path (`/Data Handling Cert.png` — file not in public/) from Data Handling cert
 - **Certifications**: Fixed EMT issuer from generic "EMT Certification" to "National Registry of Emergency Medical Technicians (NREMT)"
+
+## Versioning Criteria (Semantic Versioning)
+
+| Bump | When to use | Examples |
+|------|-------------|---------|
+| **PATCH** `x.y.z` | Small fixes, content corrections, removing dead code, minor CSS/copy tweaks, dependency updates | CSS keyframe fix, analytics tag, SEO meta, dead component removal |
+| **MINOR** `x.y.0` | New components, significant content additions, new assets, new features, meaningful UI improvements | New SVG banners, enriched About content, new Education component |
+| **MAJOR** `x.0.0` | Large-scale restructuring, cross-cutting changes across many components, architectural shifts | Full section reorder + Framer Motion across all sections |
+
+The "Next Steps" section uses `[PATCH]` and `[COMPONENT]` tags to pre-label upcoming work by bump level. Always update `## Current Version` and `**Last Updated**` at the top of this file when bumping.
 
 ## Current Priorities & Focus Areas
 

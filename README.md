@@ -1,6 +1,6 @@
 # Sushin Bandha - AI Portfolio Site
 
-[![Version](https://img.shields.io/badge/version-3.0.0-blue?style=for-the-badge)](./AGENTS.md)
+[![Version](https://img.shields.io/badge/version-3.2.0-blue?style=for-the-badge)](./AGENTS.md)
 [![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://sushin-bandha.vercel.app)
 ![Next.js](https://img.shields.io/badge/Next.js-15-black?style=for-the-badge&logo=next.js)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=for-the-badge&logo=typescript)
@@ -227,6 +227,10 @@ Modify professional experience in `components/experience.tsx`. Update the `exper
 Edit `lib/certifications.ts` to add/update certifications and achievements.
 
 ## Changelog
+
+### v3.2.0 - 2026-04-06
+- **Light theme neutral palette**: Replaced blue-tinted light theme with a warm, sophisticated "Warm Neutral Studio" palette — off-white backgrounds (`#F5F3F0`), warm stone borders, muted warm-gray text. All CSS variables, glass utilities, and border utilities updated for visual consistency.
+- **Chatbot theme-awareness**: Chat panel now properly adapts to light and dark themes. Previously it was hardcoded to the dark glass style regardless of active theme. All border, background, and glass classes in the chatbot are now theme-aware using the established CSS variable system.
 
 ### v3.0.0 - 2026-04-02 (Major Release)
 - **Section Reorder**: Restructured page flow to logical narrative order — Hero → About → Interests → Experience → Projects → Education → Skills → Certifications → Contact

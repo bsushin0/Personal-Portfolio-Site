@@ -95,15 +95,15 @@ export function Chatbot() {
             "md:w-[400px] md:h-[600px]",
             "w-full h-full md:h-[600px]",
             "flex flex-col",
-            "glass-dark backdrop-blur-xl",
-            "border border-slate-200 dark:border-slate-800",
+            "glass-effect backdrop-blur-xl",
+            "border border-stone-300 dark:border-slate-800",
             "md:rounded-2xl rounded-none",
             "shadow-2xl shadow-black/10 dark:shadow-black/40",
             "overflow-hidden"
           )}
         >
           {/* Header */}
-          <div className="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-800 bg-background/70">
+          <div className="flex items-center justify-between p-4 border-b border-stone-300 dark:border-slate-800 bg-background/70">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-indigo-600 dark:from-indigo-500 dark:to-indigo-700 flex items-center justify-center">
                 <Sparkles className="w-5 h-5 text-white" />
@@ -128,7 +128,7 @@ export function Chatbot() {
           </div>
 
           {/* Learning Notice */}
-          <div className="px-4 py-2 border-b border-yellow-200 dark:border-yellow-800/40 bg-yellow-50 dark:bg-yellow-900/30">
+          <div className="px-4 py-2 border-b border-yellow-300 dark:border-yellow-800/40 bg-yellow-50/80 dark:bg-yellow-900/30">
             <div className="flex items-start gap-2 text-yellow-900 dark:text-yellow-100">
               <AlertCircle className="w-4 h-4 mt-0.5 text-yellow-700 dark:text-yellow-300" />
               <p className="text-xs">
@@ -153,7 +153,7 @@ export function Chatbot() {
                     "break-words whitespace-pre-wrap",
                     message.role === 'user'
                       ? "bg-indigo-500 dark:bg-indigo-600 text-white"
-                      : "glass-effect dark:glass-dark border border-slate-200 dark:border-slate-800 text-foreground"
+                      : "glass-effect border border-stone-300 dark:border-slate-800 text-foreground"
                   )}
                 >
                   <p className="text-sm leading-relaxed">{message.content}</p>
@@ -163,7 +163,7 @@ export function Chatbot() {
 
             {isLoading && (
               <div className="flex justify-start">
-                <div className="glass-effect dark:glass-dark border border-slate-200 dark:border-slate-800 rounded-2xl px-4 py-3">
+                <div className="glass-effect border border-stone-300 dark:border-slate-800 rounded-2xl px-4 py-3">
                   <Loader2 className="w-5 h-5 animate-spin text-indigo-500 dark:text-indigo-400" />
                 </div>
               </div>
@@ -173,7 +173,7 @@ export function Chatbot() {
           </div>
 
           {/* Input Area */}
-          <div className="p-4 border-t border-slate-200 dark:border-slate-800 bg-background/70">
+          <div className="p-4 border-t border-stone-300 dark:border-slate-800 bg-background/70">
             <form onSubmit={onSubmit} className="flex gap-2">
               <Input
                 ref={inputRef}
@@ -182,8 +182,8 @@ export function Chatbot() {
                 placeholder="Ask about Sushin&apos;s experience..."
                 disabled={isLoading}
                 className={cn(
-                  "flex-1 bg-white/70 dark:bg-slate-900/60",
-                  "border-slate-200 dark:border-slate-800",
+                  "flex-1 bg-stone-50/70 dark:bg-slate-900/60",
+                  "border-stone-300 dark:border-slate-800",
                   "focus:border-indigo-500 dark:focus:border-indigo-400",
                   "placeholder:text-foreground/40"
                 )}

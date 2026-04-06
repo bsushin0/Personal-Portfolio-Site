@@ -21,8 +21,8 @@ body.dark {
 
 /* Clean Lab Light Mode */
 body:not(.dark) {
-  background: #F8FAFC;
-  color: #0F172A;
+  background: #F5F3F0;
+  color: #1C1917;
 }
 
 @layer utilities {
@@ -87,11 +87,11 @@ body:not(.dark) {
   }
 
   .glass-lab {
-    @apply backdrop-blur-xl bg-white/70 border border-slate-200/70 saturate-150;
+    @apply backdrop-blur-xl bg-stone-100/70 border border-stone-300/60 saturate-150;
   }
 
   .glass-lab-sm {
-    @apply backdrop-blur-lg bg-white/70 shadow-[0_20px_50px_rgba(0,0,0,0.05)];
+    @apply backdrop-blur-lg bg-stone-100/70 shadow-[0_20px_50px_rgba(0,0,0,0.05)];
   }
   
   .glass-effect {
@@ -112,11 +112,11 @@ body:not(.dark) {
   
   /* Border Glow Effects */
   .border-glow {
-    @apply border border-slate-200 dark:border-slate-800 transition-all duration-300;
+    @apply border border-stone-300 dark:border-slate-800 transition-all duration-300;
   }
-  
+
   .border-glow-lg {
-    @apply border border-slate-200/80 dark:border-slate-800/80 transition-all duration-300;
+    @apply border border-stone-300/80 dark:border-slate-800/80 transition-all duration-300;
   }
 
   .border-glow-indigo {
@@ -128,11 +128,11 @@ body:not(.dark) {
   }
   
   .border-glow-purple {
-    @apply border border-slate-200 dark:border-slate-800 transition-all duration-300;
+    @apply border border-stone-300 dark:border-slate-800 transition-all duration-300;
   }
 
   .border-glow-purple-lg {
-    @apply border border-slate-200/80 dark:border-slate-800/80 transition-all duration-300;
+    @apply border border-stone-300/80 dark:border-slate-800/80 transition-all duration-300;
   }
 
   /* Interactive Cards */
@@ -156,25 +156,25 @@ body:not(.dark) {
 
 @layer base {
   :root {
-    /* Light Theme - Clean Lab */
-    --background: 210 40% 98%;
-    --foreground: 222 47% 11%;
-    --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
+    /* Light Theme - Warm Neutral Studio */
+    --background: 34 20% 95%;
+    --foreground: 20 14% 11%;
+    --card: 36 25% 97%;
+    --card-foreground: 20 14% 11%;
+    --popover: 36 25% 97%;
+    --popover-foreground: 20 14% 11%;
     --primary: 239 84% 67%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 214 32% 91%;
-    --secondary-foreground: 222 47% 11%;
+    --primary-foreground: 36 25% 97%;
+    --secondary: 30 15% 88%;
+    --secondary-foreground: 20 14% 11%;
     --accent: 239 84% 67%;
-    --accent-foreground: 210 40% 98%;
-    --muted: 214 32% 91%;
-    --muted-foreground: 215 16% 47%;
+    --accent-foreground: 36 25% 97%;
+    --muted: 30 15% 88%;
+    --muted-foreground: 25 10% 42%;
     --destructive: 0 84% 60%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
+    --destructive-foreground: 36 25% 97%;
+    --border: 30 12% 82%;
+    --input: 30 12% 82%;
     --ring: 239 84% 67%;
     --radius: 0.75rem;
   }
@@ -252,7 +252,7 @@ html {
 }
 
 ::-webkit-scrollbar-track {
-  background: #F8FAFC;
+  background: #EDE8E3;
 }
 
 .dark ::-webkit-scrollbar-track {
