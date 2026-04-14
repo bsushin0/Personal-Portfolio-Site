@@ -10,12 +10,12 @@ export default function About() {
     {
       icon: <GraduationCap className="h-6 w-6" />,
       title: "Education",
-      description: "B.S. Computer Science (AI major) at Purdue University — entering with 27 AP credits, Data Mine Corporate Partners participant, ACERIAS Security Seminar graduate.",
+      description: "B.S. Artificial Intelligence at Purdue University (Minor: CNIT) — entering with 27 AP credits, Data Mine Corporate Partners participant, CERIAS Security Seminar graduate.",
     },
     {
       icon: <Code className="h-6 w-6" />,
       title: "Product & ML",
-      description: "Two summers as Product Intern at PSEG (IAM ownership, 300+ UAT cases, 25-person team lead). Built a 92%-accurate wine sales forecasting system and a full MLOps pipeline for BASF.",
+      description: "Product Management Intern at PSEG in IAM (99% defect-free launch, 300+ UAT/SIT cases). Automation Intern leading a 25-person team. Built a 92%-accurate wine sales forecasting model and full MLOps pipeline for BASF.",
     },
     {
       icon: <Shield className="h-6 w-6" />,
@@ -40,7 +40,7 @@ export default function About() {
       >
         <h2 className="text-3xl md:text-4xl font-bold text-foreground tracking-tight mb-4">About Me</h2>
         <p className="text-foreground/60 max-w-3xl mx-auto text-lg leading-relaxed">
-          I&apos;m a Computer Science student specializing in Artificial Intelligence at Purdue University (class of 2027),
+          I&apos;m an Artificial Intelligence student at Purdue University (B.S. AI, class of 2027),
           pursuing a private pilot license on the side, and working toward an EMT certification — because I genuinely
           believe the best builders understand the systems and people they serve. My academic trajectory reflects that: I
           entered Purdue with 27 AP credits, joined The Data Mine corporate partners program to work on real industry

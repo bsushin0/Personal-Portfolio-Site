@@ -4,7 +4,7 @@ import type React from "react"
 import { motion } from "framer-motion"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Code, Shield, Cog, Brain } from "lucide-react"
+import { Code, Lock, Cog, Brain, Cloud, Users } from "lucide-react"
 import {
   headingVariants,
   cardVariants,
@@ -23,27 +23,39 @@ type SkillCategory = {
 const skillCategories: SkillCategory[] = [
   {
     id: 1,
-    title: "Programming Languages",
+    title: "Languages & Frameworks",
     icon: <Code className="h-5 w-5" />,
-    skills: ["Python", "Java", "C", "JavaScript", "TypeScript", "SQL", "R", "C++", "Power Fx"],
+    skills: ["Python", "Java", "C/C++", "SQL", "JavaScript", "TypeScript", "R", "HTML", "Bash/Linux", "Agile/Scrum"],
   },
   {
     id: 2,
-    title: "Platforms & Tools",
-    icon: <Cog className="h-5 w-5" />,
-    skills: ["Salesforce CRM", "ServiceNow ITSM", "SAP ERP", "Microsoft Power Platform", "Git"],
+    title: "AI & Machine Learning",
+    icon: <Brain className="h-5 w-5" />,
+    skills: ["PyTorch", "TensorFlow", "Scikit-learn", "NLP", "Deep Learning", "Generative AI", "RAG", "LLM Fine-tuning", "MLOps", "Time-Series Forecasting"],
   },
   {
     id: 3,
-    title: "AI & Machine Learning",
-    icon: <Brain className="h-5 w-5" />,
-    skills: ["TensorFlow", "Keras", "MLOps", "Data Analysis", "Time-Series Forecasting"],
+    title: "Cloud & DevOps",
+    icon: <Cloud className="h-5 w-5" />,
+    skills: ["AWS", "Vercel", "CI/CD (GitHub Actions)", "Docker", "Linux Systems Administration", "Serverless Architecture"],
   },
   {
     id: 4,
+    title: "Security & IAM",
+    icon: <Lock className="h-5 w-5" />,
+    skills: ["Identity & Access Management (IAM)", "UAT", "SIT", "Access Control", "Security Operations", "Risk Assessment", "Compliance Documentation"],
+  },
+  {
+    id: 5,
+    title: "Tools & Platforms",
+    icon: <Cog className="h-5 w-5" />,
+    skills: ["PostgreSQL", "Next.js", "Salesforce", "Git", "Power Platform", "Microsoft Azure", "SAP", "Resend", "Google API", "Prompt Engineering", "Ollama", "JIRA"],
+  },
+  {
+    id: 6,
     title: "Product & Leadership",
-    icon: <Shield className="h-5 w-5" />,
-    skills: ["Product Management", "Product Strategy", "Team Leadership", "UAT/SIT Testing", "Stakeholder Management"],
+    icon: <Users className="h-5 w-5" />,
+    skills: ["Product Management", "Technical Leadership", "Stakeholder Management", "Cross-functional Collaboration", "AI Ethics", "Analytical Problem-Solving", "Strategic Communication"],
   },
 ]
 
