@@ -29,6 +29,15 @@ export const projects: Project[] = [
     githubUrl: "https://github.com/bsushin0/Project-AiRa",
   },
   {
+    id: 4,
+    title: "Custom Agentic AI Chatbot",
+    description:
+      "Architecting an evolution from a RAG-based bot to a fully agentic AI model with memory, tool-use, and autonomous reasoning capabilities using Ollama and custom training datasets. Applied advanced prompt engineering, bot monitoring, and AI workers within a CI/CD framework to support iterative, test-driven model improvement.",
+    tags: ["Python", "Ollama", "RAG", "Agentic AI", "Prompt Engineering", "CI/CD"],
+    image: "/project-banners/project-aira.svg",
+    status: "coming-soon" as const,
+  },
+  {
     id: 3,
     title: "Personal Portfolio Site",
     description:

@@ -10,12 +10,14 @@ const coreCourses = [
   "Intro to Artificial Intelligence",
   "Data Mining & Machine Learning",
   "Data Structures & Algorithms",
-  "Intro to Analysis of Algorithms",
+  "Systems Programming",
   "Computer Architecture",
+  "OOP (Java)",
+  "Programming in C",
+  "Intro to Analysis of Algorithms",
   "Probability",
   "Linear Algebra",
   "Ethics of Data Science",
-  "Science Writing & Presentation",
   "Cognitive Psychology",
 ]
 
@@ -39,6 +41,11 @@ const highlights = [
     icon: <BookOpen className="h-5 w-5" />,
     label: "27 AP Transfer Credits",
     detail: "Entered Purdue with advanced standing in Biology, CS, English, Calculus I & II, and Psychology",
+  },
+  {
+    icon: <Star className="h-5 w-5" />,
+    label: "Floor Senator",
+    detail: "Purdue University Residences student government representative (Aug 2025 – May 2026)",
   },
 ]
 
@@ -99,7 +106,8 @@ export default function Education() {
                   <GraduationCap className="h-7 w-7" />
                 </div>
                 <div>
-                  <CardTitle className="text-xl text-foreground">B.S. Computer Science — AI Major</CardTitle>
+                  <CardTitle className="text-xl text-foreground">B.S. Artificial Intelligence</CardTitle>
+                  <p className="text-foreground/60 text-sm font-medium mt-0.5">Minor: Computer Networking and Information Technology (CNIT)</p>
                   <p className="text-foreground/70 font-medium mt-1">Purdue University, West Lafayette, IN</p>
                   <p className="text-foreground/50 text-sm mt-1">August 2023 – May 2027 (Expected)</p>
                 </div>
