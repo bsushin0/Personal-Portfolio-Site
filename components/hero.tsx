@@ -66,7 +66,7 @@ export default function Hero() {
       <Button
         variant="ghost"
         size="icon"
-        className="mt-16 animate-bounce text-primary hover:text-primary/90 hover:bg-slate-100/70 dark:hover:bg-slate-900/40"
+        className="mt-16 animate-bounce text-primary hover:text-primary/90 hover:bg-surface-hover/70"
         onClick={() => document.getElementById("projects")?.scrollIntoView({ behavior: "smooth" })}
       >
         <ArrowDown className="h-6 w-6" />

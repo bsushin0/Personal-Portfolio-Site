@@ -50,7 +50,7 @@ const skillCategories: SkillCategory[] = [
 
 export default function Skills() {
   return (
-    <section id="skills" className="py-20 bg-gradient-lab dark:bg-gradient-neural border-t border-slate-200/80 dark:border-slate-800/80">
+    <section id="skills" className="py-20 bg-gradient-lab dark:bg-gradient-neural border-t border-border-subtle/80">
       <motion.div
         className="text-center mb-16"
         initial="hidden"
@@ -93,7 +93,7 @@ export default function Skills() {
                   {category.skills.map((skill) => (
                     <motion.div key={skill} variants={badgeVariants}>
                       <Badge
-                        className="bg-slate-100 text-slate-700 dark:bg-slate-900 dark:text-slate-200 border border-slate-200/80 dark:border-slate-800/80 hover:scale-105 transition-transform cursor-default"
+                        className="bg-surface-tag text-foreground/70 border border-border-subtle/80 hover:scale-105 transition-transform cursor-default"
                       >
                         {skill}
                       </Badge>

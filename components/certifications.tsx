@@ -8,7 +8,7 @@ import { headingVariants, cardVariants, staggerContainer as containerVariants } 
 
 export default function Certifications() {
   return (
-    <section id="certifications" className="py-20 bg-gradient-lab dark:bg-gradient-neural border-t border-slate-200/80 dark:border-slate-800/80">
+    <section id="certifications" className="py-20 bg-gradient-lab dark:bg-gradient-neural border-t border-border-subtle/80">
       <motion.div
         className="text-center mb-16"
         initial="hidden"

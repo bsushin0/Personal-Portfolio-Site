@@ -58,6 +58,38 @@ const config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        // Semantic surface tokens
+        "surface-raised": "hsl(var(--surface-raised))",
+        "surface-overlay": "hsl(var(--surface-overlay))",
+        "surface-input": "hsl(var(--surface-input))",
+        "surface-hover": "hsl(var(--surface-hover))",
+        "surface-tag": "hsl(var(--surface-tag))",
+        // Semantic border tokens
+        "border-subtle": "hsl(var(--border-subtle))",
+        "border-strong": "hsl(var(--border-strong))",
+        // Status tokens
+        success: {
+          DEFAULT: "hsl(var(--success))",
+          foreground: "hsl(var(--success-foreground))",
+          border: "hsl(var(--success-border))",
+        },
+        error: {
+          DEFAULT: "hsl(var(--error))",
+          foreground: "hsl(var(--error-foreground))",
+          border: "hsl(var(--error-border))",
+        },
+        warning: {
+          DEFAULT: "hsl(var(--warning))",
+          foreground: "hsl(var(--warning-foreground))",
+          border: "hsl(var(--warning-border))",
+        },
+        info: {
+          DEFAULT: "hsl(var(--info))",
+          foreground: "hsl(var(--info-foreground))",
+        },
+        // AI accent
+        "ai-glow": "hsl(var(--ai-glow))",
+        "ai-secondary": "hsl(var(--ai-secondary))",
         neural: {
           "950": "#020617",
           "900": "#0f172a",
@@ -83,7 +115,7 @@ const config = {
       },
       backgroundImage: {
         "gradient-neural": "linear-gradient(135deg, #020617 0%, #0f172a 100%)",
-        "gradient-lab": "linear-gradient(135deg, #F8FAFC 0%, #FFFFFF 100%)",
+        "gradient-lab": "linear-gradient(135deg, #F5F3F0 0%, #FAF8F5 100%)",
         "gradient-cyan-glow": "linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(99, 102, 241, 0) 100%)",
         "gradient-indigo-glow": "linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(99, 102, 241, 0) 100%)",
         "gradient-ai-border": "conic-gradient(from 0deg, #6366F1, #A5B4FC, #6366F1)",

@@ -424,7 +424,8 @@ export default function AiAvatar() {
         <div
           className={`absolute inset-0 rounded-full blur-3xl transition-all duration-150 pointer-events-none`}
           style={{
-            background: `radial-gradient(circle, rgba(0, 193, 255, ${0.5 + expression.energy * 0.3}), rgba(157, 78, 221, ${0.25}), transparent)`,
+            /* --ai-glow: 188 100% 50% (cyan) | --ai-secondary: 278 68% 59% (purple) */
+            background: `radial-gradient(circle, hsl(188 100% 50% / ${0.5 + expression.energy * 0.3}), hsl(278 68% 59% / 0.25), transparent)`,
             transform: `scale(${1.1 + expression.energy * 0.15})`,
           }}
         />
@@ -432,7 +433,7 @@ export default function AiAvatar() {
         <div
           className={`absolute inset-0 rounded-full blur-2xl transition-all duration-150 pointer-events-none`}
           style={{
-            background: `radial-gradient(circle, rgba(157, 78, 221, ${0.4 + expression.energy * 0.2}), transparent)`,
+            background: `radial-gradient(circle, hsl(278 68% 59% / ${0.4 + expression.energy * 0.2}), transparent)`,
             transform: `scale(${1 + expression.energy * 0.1})`,
           }}
         />
@@ -441,11 +442,11 @@ export default function AiAvatar() {
         <div
           className={`relative w-48 h-48 sm:w-56 sm:h-56 md:w-64 md:h-64 lg:w-80 lg:h-80 rounded-full transition-all duration-300 overflow-hidden border-4 shadow-2xl ${
             isHovering || isDragging
-              ? "border-cyan-400 shadow-cyan-500/70 bg-gradient-to-br from-cyan-500 via-blue-500 to-purple-600 dark:from-cyan-600 dark:via-blue-600 dark:to-purple-700"
-              : "border-cyan-400 shadow-cyan-500/50 bg-gradient-to-br from-cyan-400 via-blue-400 to-purple-500 dark:from-cyan-500 dark:via-blue-500 dark:to-purple-600"
+              ? "border-ai-glow shadow-ai-glow/70 bg-gradient-to-br from-cyan-500 via-blue-500 to-purple-600 dark:from-cyan-600 dark:via-blue-600 dark:to-purple-700"
+              : "border-ai-glow shadow-ai-glow/50 bg-gradient-to-br from-cyan-400 via-blue-400 to-purple-500 dark:from-cyan-500 dark:via-blue-500 dark:to-purple-600"
           }`}
           style={{
-            filter: "drop-shadow(0 0 30px rgba(0, 193, 255, 0.5))",
+            filter: "drop-shadow(0 0 30px hsl(188 100% 50% / 0.5))",
           }}
         >
           {/* Inner animated glow layer */}
@@ -541,8 +542,8 @@ export default function AiAvatar() {
                   expression.blink ? "scale-y-0" : "scale-y-100"
                 }`}
                 style={{
-                  background: "linear-gradient(135deg, rgba(255,255,255,0.9), rgba(0, 193, 255, 0.6))",
-                  boxShadow: `0 0 20px rgba(0, 193, 255, ${0.4 + expression.energy * 0.3}), inset 0 0 10px rgba(255,255,255,0.3)`,
+                  background: "linear-gradient(135deg, rgba(255,255,255,0.9), hsl(188 100% 50% / 0.6))",
+                  boxShadow: `0 0 20px hsl(188 100% 50% / ${0.4 + expression.energy * 0.3}), inset 0 0 10px rgba(255,255,255,0.3)`,
                 }}
               >
                 <div className="absolute inset-1.5 rounded-full bg-gradient-to-br from-cyan-200 to-blue-200 dark:from-cyan-400 dark:to-blue-400" />
@@ -565,8 +566,8 @@ export default function AiAvatar() {
                   expression.blink ? "scale-y-0" : "scale-y-100"
                 }`}
                 style={{
-                  background: "linear-gradient(135deg, rgba(255,255,255,0.9), rgba(0, 193, 255, 0.6))",
-                  boxShadow: `0 0 20px rgba(0, 193, 255, ${0.4 + expression.energy * 0.3}), inset 0 0 10px rgba(255,255,255,0.3)`,
+                  background: "linear-gradient(135deg, rgba(255,255,255,0.9), hsl(188 100% 50% / 0.6))",
+                  boxShadow: `0 0 20px hsl(188 100% 50% / ${0.4 + expression.energy * 0.3}), inset 0 0 10px rgba(255,255,255,0.3)`,
                 }}
               >
                 <div className="absolute inset-1.5 rounded-full bg-gradient-to-br from-cyan-200 to-blue-200 dark:from-cyan-400 dark:to-blue-400" />
@@ -648,7 +649,7 @@ export default function AiAvatar() {
 
             {/* Accent glow when dragging */}
             {isDragging && (
-              <div className="absolute bottom-6 w-28 h-4 bg-gradient-to-r from-transparent via-cyan-300 to-transparent rounded-full blur-lg opacity-90 animate-pulse" />
+              <div className="absolute bottom-6 w-28 h-4 bg-gradient-to-r from-transparent via-ai-glow to-transparent rounded-full blur-lg opacity-90 animate-pulse" />
             )}
           </div>
         </div>

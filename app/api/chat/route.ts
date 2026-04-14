@@ -25,7 +25,7 @@ async function getEmbeddings(): Promise<EmbeddingChunk[]> {
 
 // Rate limiting: simple in-memory store (per session)
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
-const MAX_REQUESTS_PER_HOUR = 10;
+const MAX_REQUESTS_PER_HOUR = parseInt(process.env.CHAT_RATE_LIMIT || '10', 10);
 
 function checkRateLimit(sessionId: string): { allowed: boolean; remaining: number } {
   const now = Date.now();
@@ -156,7 +156,7 @@ export async function POST(req: NextRequest) {
 
     // Generate response with strict context adherence
     const { text: responseText } = await generateText({
-      model: google('gemini-2.5-flash-lite'),
+      model: google(process.env.GEMINI_MODEL || 'gemini-2.5-flash-lite'),
       messages: messages.slice(-5) as ChatMessage[], // Keep roecent conversation history
       system: SYSTEM_PROMPT + `\n\n${contextInstruction}`,
       temperature: 0.3, // Lower temperature for more factual, less creative responses

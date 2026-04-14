@@ -10,7 +10,7 @@ export default function Footer() {
   const currentYear = new Date().getFullYear()
 
   return (
-    <footer className="glass-effect border-t border-slate-200/80 dark:border-slate-800/80 py-12">
+    <footer className="glass-effect border-t border-border-subtle/80 py-12">
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row justify-between items-center">
           <div className="mb-6 md:mb-0">
@@ -48,7 +48,7 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-8 pt-8 border-t border-slate-200/80 dark:border-slate-800/80 text-center text-foreground/50 text-sm">
+        <div className="mt-8 pt-8 border-t border-border-subtle/80 text-center text-foreground/50 text-sm">
           <p>Built with Next.js, Tailwind CSS, and shadcn/ui • Powered by AI Innovation</p>
         </div>
       </div>

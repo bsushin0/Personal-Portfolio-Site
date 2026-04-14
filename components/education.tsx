@@ -27,7 +27,7 @@ const highlights = [
   },
   {
     icon: <Star className="h-5 w-5" />,
-    label: "ACERIAS Security Seminar",
+    label: "CERIAS Security Seminar",
     detail: "Specialized cybersecurity coursework (CS 59100) through Purdue's security research center",
   },
   {
@@ -69,7 +69,7 @@ const badgeContainerVariants: Variants = {
 
 export default function Education() {
   return (
-    <section id="education" className="py-20 border-t border-slate-200/80 dark:border-slate-800/80">
+    <section id="education" className="py-20 border-t border-border-subtle/80">
       <motion.div
         className="text-center mb-16"
         initial="hidden"
@@ -108,7 +108,7 @@ export default function Education() {
                 <Badge className="bg-indigo-500/10 text-indigo-600 dark:text-indigo-300 border border-indigo-500/20 w-fit">
                   GPA: 2.94 / 4.00
                 </Badge>
-                <Badge variant="outline" className="border-slate-200/80 dark:border-slate-800/80 text-foreground/60 w-fit">
+                <Badge variant="outline" className="border-border-subtle/80 text-foreground/60 w-fit">
                   Good Academic Standing
                 </Badge>
               </div>
@@ -180,7 +180,7 @@ export default function Education() {
                   <motion.div key={course} variants={badgeVariants}>
                     <Badge
                       variant="secondary"
-                      className="bg-slate-100 text-slate-700 dark:bg-slate-900 dark:text-slate-200 border border-slate-200/80 dark:border-slate-800/80"
+                      className="bg-surface-tag text-foreground/70 border border-border-subtle/80"
                     >
                       {course}
                     </Badge>

@@ -1,6 +1,6 @@
 # Sushin Bandha - AI Portfolio Site
 
-[![Version](https://img.shields.io/badge/version-3.0.0-blue?style=for-the-badge)](./AGENTS.md)
+[![Version](https://img.shields.io/badge/version-3.3.0-blue?style=for-the-badge)](./AGENTS.md)
 [![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://sushin-bandha.vercel.app)
 ![Next.js](https://img.shields.io/badge/Next.js-15-black?style=for-the-badge&logo=next.js)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=for-the-badge&logo=typescript)
@@ -227,6 +227,20 @@ Modify professional experience in `components/experience.tsx`. Update the `exper
 Edit `lib/certifications.ts` to add/update certifications and achievements.
 
 ## Changelog
+
+### v3.3.0 - 2026-04-06
+- **Universal CSS variable design token system**: `app/globals.css` is now the single source of truth for all colors. Added semantic tokens: `--surface-raised/overlay/input/hover/tag`, `--border-subtle/strong`, `--success/error/warning/info` (with `-foreground` and `-border` variants), and `--ai-glow/secondary/gradient-from/to` plus `--scrollbar-*` tokens.
+- **Scrollbar**: Previously hardcoded hex values `#EDE8E3` and `#0F172A` now reference `hsl(var(--scrollbar-track))` — adapts automatically with the theme.
+- **Glass utilities**: `glass-neural` and `glass-lab` no longer reference `#020617` or `bg-stone-100` — backgrounds and borders derive from `--background`, `--surface-overlay`, and `--border-subtle`.
+- **Border utilities**: All `border-glow*` variants replaced hardcoded `border-stone-300 dark:border-slate-800` with `hsl(var(--border-subtle))`.
+- **Text gradients**: `text-gradient-cyan` and `text-gradient-ai` now use `hsl(var(--foreground))` and `hsl(var(--primary))` instead of hardcoded slate/indigo hex.
+- **Body overrides removed**: Duplicate `body.dark` / `body:not(.dark)` hex overrides removed — CSS variable layer (`bg-background`) handles this correctly.
+- **tailwind.config.ts**: Added `surface-*`, `border-subtle/strong`, `success/error/warning/info`, and `ai-glow/ai-secondary` color entries pointing to CSS variables. Fixed `gradient-lab` to `#F5F3F0` (was wrong `#F8FAFC`).
+- **16 components updated**: All hardcoded `slate-*`, `stone-*`, `gray-*` structural color classes replaced with semantic tokens. Status banners in projects use `bg-error` / `bg-warning`. Contact form alerts use `bg-success` / `bg-error`. Chatbot warning notice uses `bg-warning`. Input backgrounds use `bg-surface-input`. Hover states use `bg-surface-hover`. Skill/course/experience tags use `bg-surface-tag`. Borders use `border-border-subtle`. Mode toggle uses `border-border-subtle`. Digital-human and AI avatar inline rgba values replaced with `hsl()` notation using the same hue values as the CSS variables.
+
+### v3.2.0 - 2026-04-06
+- **Light theme neutral palette**: Replaced blue-tinted light theme with a warm, sophisticated "Warm Neutral Studio" palette — off-white backgrounds (`#F5F3F0`), warm stone borders, muted warm-gray text. All CSS variables, glass utilities, and border utilities updated for visual consistency.
+- **Chatbot theme-awareness**: Chat panel now properly adapts to light and dark themes. Previously it was hardcoded to the dark glass style regardless of active theme. All border, background, and glass classes in the chatbot are now theme-aware using the established CSS variable system.
 
 ### v3.0.0 - 2026-04-02 (Major Release)
 - **Section Reorder**: Restructured page flow to logical narrative order — Hero → About → Interests → Experience → Projects → Education → Skills → Certifications → Contact
