@@ -23,19 +23,10 @@ export const projects: Project[] = [
     id: 2,
     title: "Project AiRa",
     description:
-      "Architected and deployed a production-grade Retrieval-Augmented Generation (RAG) system with in-house embedding generation and vector search capabilities. Implemented semantic similarity scoring with configurable thresholds, optimized document chunking strategies, and integrated with LLM backends for fact-grounded responses while preventing hallucination.",
-    tags: ["Python", "RAG", "Vector Search", "Embeddings", "LLM", "AI"],
+      "Architected and deployed a production-grade Retrieval-Augmented Generation (RAG) system with in-house embedding generation and vector search capabilities. Implemented semantic similarity scoring with configurable thresholds, optimized document chunking strategies, and integrated with LLM backends for fact-grounded responses while preventing hallucination. Currently evolving into a fully agentic AI model with memory, tool-use, and autonomous reasoning capabilities using Ollama and custom training datasets — with bot monitoring and AI workers in a CI/CD framework for iterative, test-driven improvement.",
+    tags: ["Python", "Ollama", "RAG", "Vector Search", "Embeddings", "LLM", "Prompt Engineering", "CI/CD"],
     image: "/project-banners/project-aira.svg",
     githubUrl: "https://github.com/bsushin0/Project-AiRa",
-  },
-  {
-    id: 4,
-    title: "Custom Agentic AI Chatbot",
-    description:
-      "Architecting an evolution from a RAG-based bot to a fully agentic AI model with memory, tool-use, and autonomous reasoning capabilities using Ollama and custom training datasets. Applied advanced prompt engineering, bot monitoring, and AI workers within a CI/CD framework to support iterative, test-driven model improvement.",
-    tags: ["Python", "Ollama", "RAG", "Prompt Engineering", "CI/CD"],
-    image: "/project-banners/project-aira.svg",
-    status: "coming-soon",
   },
   {
     id: 3,

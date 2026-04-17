@@ -94,10 +94,37 @@ const experiencesData: Omit<Experience, 'startDate' | 'endDate'>[] = [
     type: "Internship",
     description: [
       "Engineered and presented 5 Proof of Concept (PoC) automation tools to senior leadership, securing executive approval and budget allocation for full-scale product development",
-      "Led a cross-functional team of 25 interns to define requirements, architect, and launch a company-wide employee onboarding portal — directly accelerating new-hire time-to-productivity",
+      "Led a cross-functional team of 25 interns to define requirements, architect, and launch a company-wide employee onboarding portal — incorporating stakeholder and end-user discovery to refine requirements and success metrics, directly accelerating new-hire time-to-productivity",
       "Owned end-to-end development of a critical process automation tool using Python and Salesforce, transforming a multi-day manual workflow into a near-instant execution pipeline",
     ],
     skills: ["Product Strategy", "Cross-functional Leadership", "Automation", "POC Development", "Python", "Salesforce"],
+  },
+  {
+    id: 6,
+    title: "BGR Team Leader",
+    company: "Purdue University Orientation Programs",
+    period: "September 2023 - August 2024",
+    type: "Volunteer",
+    description: [
+      "Served as a Team Leader (TL) during Boiler Gold Rush, responsible for welcoming, mentoring, and supporting a cohort of 20–25 first-year students through orientation programs",
+      "Guided and coordinated student groups through events, campus navigation, and resources to accelerate acclimation and build community while fostering an inclusive and welcoming environment",
+      "Coordinated closely with fellow Team Leaders to design and deliver a cohesive, immersive orientation experience across sessions, aligning activities and messaging for consistent student support",
+      "Provided ongoing peer mentorship and informal advising — acting as a resource, friend, and advocate — and collaborated with Orientation Programs staff to train volunteers and iterate on programming based on participant feedback",
+    ],
+    skills: ["Leadership", "Group Facilitation", "Mentoring", "Event Coordination", "Campus Navigation", "Volunteer Training", "Community Building", "Team Collaboration"],
+  },
+  {
+    id: 8,
+    title: "Tutor",
+    company: "Kumon",
+    period: "June 2022 - August 2023",
+    type: "Part-time",
+    description: [
+      "Taught mathematics and English to elementary and middle school students, customizing instruction to individual learning styles and pace",
+      "Developed engaging lesson plans and assessments that improved student proficiency and test scores",
+      "Mentored struggling students through patient, one-on-one instruction and positive reinforcement",
+    ],
+    skills: ["Teaching", "Curriculum Development", "Student Mentoring", "Communication", "Patience"],
   },
 ]
 
