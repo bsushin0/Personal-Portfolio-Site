@@ -25,7 +25,7 @@ export default function About() {
     {
       icon: <Users className="h-6 w-6" />,
       title: "Leadership",
-      description: "Led 25-intern cross-functional teams at PSEG, mentored 20–25 first-year students as a Boiler Gold Rush Team Leader, and tutored students at Kumon.",
+      description: "Led 25-intern cross-functional teams at PSEG. NREMT-certified EMT with 56+ hours of clinical field experience across hospital ER and pre-hospital EMS environments.",
     },
   ]
 
@@ -41,8 +41,8 @@ export default function About() {
         <h2 className="text-3xl md:text-4xl font-bold text-foreground tracking-tight mb-4">About Me</h2>
         <p className="text-foreground/60 max-w-3xl mx-auto text-lg leading-relaxed">
           I&apos;m an Artificial Intelligence student at Purdue University (B.S. AI, class of 2027),
-          pursuing a private pilot license on the side, and working toward an EMT certification — because I genuinely
-          believe the best builders understand the systems and people they serve. My academic trajectory reflects that: I
+          pursuing a private pilot license on the side, and a NREMT-certified EMT with 56+ hours of clinical field
+          experience — because I genuinely believe the best builders understand the systems and people they serve. My academic trajectory reflects that: I
           entered Purdue with 27 AP credits, joined The Data Mine corporate partners program to work on real industry
           data problems, and completed the CERIAS cybersecurity seminar.
         </p>

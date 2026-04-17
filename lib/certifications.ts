@@ -22,9 +22,9 @@ export const certifications: Certification[] = [
     id: 2,
     title: "Emergency Medical Technician (EMT)",
     issuer: "National Registry of Emergency Medical Technicians (NREMT)",
-    date: "WIP",
+    date: "April 2026",
     image: "",
     credentialUrl: "#",
-    description: "Certified EMT with training in high-pressure decision-making, rapid assessment, and reliable response.",
+    description: "NREMT-certified EMT (Active) with 56+ hours of clinical field experience across hospital ER (IU Health) and pre-hospital EMS (TEAS) environments.",
   },
 ];
