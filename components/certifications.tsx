@@ -45,6 +45,16 @@ export default function Certifications() {
               </CardHeader>
               <CardContent>
                 <p className="text-foreground/70">{cert.description}</p>
+                {cert.credentialDetails && cert.credentialDetails.length > 0 && (
+                  <div className="mt-4 grid grid-cols-2 gap-2">
+                    {cert.credentialDetails.map((detail) => (
+                      <div key={detail.label} className="flex flex-col gap-0.5 bg-indigo-500/5 border border-indigo-500/15 rounded-md px-3 py-2">
+                        <span className="text-xs text-foreground/40 uppercase tracking-wider">{detail.label}</span>
+                        <span className="text-sm font-mono text-foreground/70">{detail.value}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </CardContent>
             </Card>
           </motion.div>

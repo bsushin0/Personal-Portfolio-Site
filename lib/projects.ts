@@ -14,8 +14,8 @@ export const projects: Project[] = [
     id: 1,
     title: "Wine Varietals Yield Forecasting",
     description:
-      "Delivered a machine learning solution providing 92% accurate wine sales forecasts for BASF. Built automated MLOps pipeline that reduced model update time from 2-3 days to 1-2 hours, enabling data-driven inventory and marketing decisions.",
-    tags: ["Python", "TensorFlow", "Keras", "MLOps", "Time-Series Forecasting"],
+      "Delivered a machine learning time-series forecasting model achieving 92% sales prediction accuracy for BASF. Designed and deployed an automated MLOps pipeline reducing model update turnaround from 2–3 days to ~1–2 hours (97% efficiency improvement). Refactored legacy analytics code, improving overall system reliability by 30%.",
+    tags: ["Python", "Scikit-learn", "MLOps", "Time-Series Forecasting"],
     image: "/project-banners/wine-forecasting.svg",
     status: "not-available",
   },
@@ -23,8 +23,8 @@ export const projects: Project[] = [
     id: 2,
     title: "Project AiRa",
     description:
-      "Architected and deployed a production-grade Retrieval-Augmented Generation (RAG) system with in-house embedding generation and vector search capabilities. Implemented semantic similarity scoring with configurable thresholds, optimized document chunking strategies, and integrated with LLM backends for fact-grounded responses while preventing hallucination.",
-    tags: ["Python", "RAG", "Vector Search", "Embeddings", "LLM", "AI"],
+      "Architected and deployed a production-grade Retrieval-Augmented Generation (RAG) system with in-house embedding generation and vector search capabilities. Implemented semantic similarity scoring with configurable thresholds, optimized document chunking strategies, and integrated with LLM backends for fact-grounded responses while preventing hallucination. Currently evolving into a fully agentic AI model with memory, tool-use, and autonomous reasoning capabilities using Ollama and custom training datasets — with bot monitoring and AI workers in a CI/CD framework for iterative, test-driven improvement.",
+    tags: ["Python", "Ollama", "RAG", "Vector Search", "Embeddings", "LLM", "Prompt Engineering", "CI/CD"],
     image: "/project-banners/project-aira.svg",
     githubUrl: "https://github.com/bsushin0/Project-AiRa",
   },

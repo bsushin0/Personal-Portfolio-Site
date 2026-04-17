@@ -88,16 +88,16 @@ const experiencesData: Omit<Experience, 'startDate' | 'endDate'>[] = [
   },
   {
     id: 5,
-    title: "Product Intern",
+    title: "Product Intern — Automation & Internal Tools",
     company: "PSEG",
     period: "June 2024 - August 2024",
     type: "Internship",
     description: [
-      "Pioneered product initiative by building and presenting five Proof of Concept tools, securing executive approval for full-scale development",
-      "Led cross-functional team of 25 interns to define and launch a company-wide onboarding site, incorporating stakeholder and end-user discovery to refine requirements and success metrics",
-      "Owned end-to-end development of critical automation tool, transforming multi-day manual process into near-instant execution",
+      "Engineered and presented 5 Proof of Concept (PoC) automation tools to senior leadership, securing executive approval and budget allocation for full-scale product development",
+      "Led a cross-functional team of 25 interns to define requirements, architect, and launch a company-wide employee onboarding portal — incorporating stakeholder and end-user discovery to refine requirements and success metrics, directly accelerating new-hire time-to-productivity",
+      "Owned end-to-end development of a critical process automation tool using Python and Salesforce, transforming a multi-day manual workflow into a near-instant execution pipeline",
     ],
-    skills: ["Product Strategy", "Cross-functional Leadership", "Automation", "POC Development", "Salesforce"],
+    skills: ["Product Strategy", "Cross-functional Leadership", "Automation", "POC Development", "Python", "Salesforce"],
   },
   {
     id: 6,
