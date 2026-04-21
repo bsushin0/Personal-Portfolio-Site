@@ -114,6 +114,32 @@ const experiencesData: Omit<Experience, 'startDate' | 'endDate'>[] = [
     skills: ["Leadership", "Group Facilitation", "Mentoring", "Event Coordination", "Campus Navigation", "Volunteer Training", "Community Building", "Team Collaboration"],
   },
   {
+    id: 7,
+    title: "Hospital Clinical Rotation — Emergency Department",
+    company: "IU Health — Arnett Hospital",
+    period: "October 2026 - December 2026",
+    type: "Clinical",
+    description: [
+      "Completed a 28-hour emergency department clinical rotation, observing and assisting with EMT functions within a hospital setting across live ER intake and patient care workflows",
+      "Gained hands-on exposure to hospital-based emergency protocols, learning how EMT scope of practice and standard of care (SOC) differs between pre-hospital and in-hospital ER operations",
+      "Supported clinical staff during patient assessment, triage support, and care coordination — developing adaptability across high-acuity, fast-paced medical environments",
+    ],
+    skills: ["Emergency Medicine", "Patient Assessment", "Triage", "Clinical Protocols", "Care Coordination", "NREMT"],
+  },
+  {
+    id: 9,
+    title: "Field Ride-Along Rotation — Pre-Hospital EMS",
+    company: "TEAS — Tippecanoe Emergency Ambulance Service",
+    period: "October 2026 - December 2026",
+    type: "Clinical",
+    description: [
+      "Completed a 28-hour field ride-along with the local Lafayette EMS system, responding to live emergency calls alongside certified EMTs and paramedics in a pre-hospital environment",
+      "Observed and assisted with patient assessment, scene management, and emergency medical interventions across a range of medical and trauma calls",
+      "Applied NREMT training in real-world field conditions, reinforcing clinical decision-making, patient communication, and protocol adherence under time-critical circumstances",
+    ],
+    skills: ["Pre-Hospital EMS", "Scene Management", "Trauma Response", "Clinical Decision-Making", "NREMT", "Emergency Response"],
+  },
+  {
     id: 8,
     title: "Tutor",
     company: "Kumon",
