@@ -70,9 +70,9 @@ export default function Skills() {
         viewport={{ once: true, amount: 0.3 }}
         variants={headingVariants}
       >
-        <h2 className="text-3xl md:text-4xl font-bold mb-4 text-foreground tracking-tight">Technical Skills</h2>
-        <p className="text-foreground/60 max-w-2xl mx-auto">
-          A comprehensive toolkit spanning programming, platforms, AI/ML, and product leadership.
+        <h2 className="text-3xl md:text-4xl font-bold mb-3 text-foreground tracking-tight">Technical Skills</h2>
+        <p className="text-foreground/55 max-w-2xl mx-auto text-sm">
+          Programming, platforms, AI/ML, and product leadership.
         </p>
       </motion.div>
 
@@ -86,9 +86,9 @@ export default function Skills() {
         {skillCategories.map((category) => (
           <motion.div key={category.id} variants={cardVariants}>
             <Card className="glass-effect-sm border-glow card-interactive h-full">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-3 text-lg text-foreground">
-                  <div className="p-2 rounded-lg bg-indigo-500/10 text-indigo-500 border border-indigo-500/20">
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center gap-3 text-base font-semibold text-foreground">
+                  <div className="p-2 rounded-lg bg-indigo-500/10 text-indigo-500 border border-indigo-500/20 shrink-0">
                     {category.icon}
                   </div>
                   {category.title}

@@ -2,131 +2,186 @@
 
 import { useState } from "react"
 import { motion, type Variants } from "framer-motion"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { ExternalLink, Github } from "lucide-react"
+import { Github, ArrowUpRight } from "lucide-react"
 import { projects } from "@/lib/projects"
 import { headingVariants, staggerContainerSlow as containerVariants } from "@/lib/motion-variants"
 
 const cardVariants: Variants = {
   hidden: { opacity: 0, y: 28 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.5, ease: "easeOut" },
-  },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
 }
 
 export default function Projects() {
   const [hoveredId, setHoveredId] = useState<number | null>(null)
+  const [featured, ...rest] = projects
 
   return (
     <section id="projects" className="py-20">
       <motion.div
-        className="text-center mb-16"
+        className="mb-16"
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, amount: 0.3 }}
         variants={headingVariants}
       >
-        <h2 className="text-3xl md:text-4xl font-bold mb-4 text-foreground tracking-tight">Featured Projects</h2>
-        <p className="text-foreground/60 max-w-2xl mx-auto">
-          Innovative projects combining AI, data analysis, and practical applications to solve real-world problems.
-        </p>
+        <p className="text-xs font-semibold tracking-[0.22em] uppercase text-primary/65 mb-3">Selected Work</p>
+        <h2 className="text-3xl md:text-4xl font-bold text-foreground tracking-tight">Featured Projects</h2>
       </motion.div>
 
       <motion.div
-        className="grid grid-cols-1 md:grid-cols-2 gap-8"
+        className="space-y-6"
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, amount: 0.1 }}
         variants={containerVariants}
       >
-        {projects.map((project) => (
-          <motion.div key={project.id} variants={cardVariants}>
-            <Card
-              className={`glass-effect-sm border-glow-indigo-lg overflow-hidden card-interactive-sm h-full flex flex-col ${
-                hoveredId === project.id ? "shadow-glow-indigo-lg" : ""
-              }`}
-              onMouseEnter={() => setHoveredId(project.id)}
-              onMouseLeave={() => setHoveredId(null)}
-            >
-              <div className="relative h-48 overflow-hidden">
-                <img
-                  src={project.image}
-                  alt={project.title}
-                  loading="lazy"
-                  decoding="async"
-                  className="w-full h-full object-cover transition-transform duration-500 ease-in-out"
-                  style={{
-                    transform: hoveredId === project.id ? "scale(1.05)" : "scale(1)",
-                  }}
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+        {/* Featured first project — full-width horizontal card */}
+        <motion.div variants={cardVariants}>
+          <Card
+            className={`glass-effect-sm border-glow-indigo-lg overflow-hidden card-interactive-sm flex flex-col md:flex-row ${
+              hoveredId === featured.id ? "shadow-glow-indigo-lg" : ""
+            }`}
+            onMouseEnter={() => setHoveredId(featured.id)}
+            onMouseLeave={() => setHoveredId(null)}
+          >
+            <div className="relative md:w-[42%] h-56 md:h-auto overflow-hidden flex-shrink-0">
+              <img
+                src={featured.image}
+                alt={featured.title}
+                loading="lazy"
+                decoding="async"
+                className="w-full h-full object-cover transition-transform duration-700 ease-in-out"
+                style={{ transform: hoveredId === featured.id ? "scale(1.04)" : "scale(1)" }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent md:bg-gradient-to-r md:from-transparent md:to-black/25" />
+              {featured.status === "not-available" && (
+                <div className="absolute top-4 left-4 bg-error/90 backdrop-blur-sm text-error-foreground px-3 py-1 rounded-full text-xs font-medium">
+                  Not Available
+                </div>
+              )}
+              {featured.status === "coming-soon" && (
+                <div className="absolute top-4 left-4 bg-warning/90 backdrop-blur-sm text-warning-foreground px-3 py-1 rounded-full text-xs font-medium">
+                  Coming Soon
+                </div>
+              )}
+            </div>
 
-                {/* Status Banner */}
-                {project.status === "not-available" && (
-                  <div className="absolute top-4 right-4 bg-error/90 backdrop-blur-sm text-error-foreground px-3 py-1 rounded-full text-sm font-medium">
-                    Not Available
-                  </div>
+            <div className="flex flex-col flex-1 p-6 md:p-8">
+              <div className="flex items-start justify-between mb-2">
+                <span className="text-[11px] font-semibold tracking-[0.18em] uppercase text-primary/55">
+                  Featured Project
+                </span>
+                <span className="text-5xl font-bold text-foreground/[0.05] select-none leading-none">01</span>
+              </div>
+              <h3 className="text-2xl font-bold text-foreground tracking-tight mb-3">{featured.title}</h3>
+              <p className="text-foreground/60 mb-5 leading-relaxed flex-1 text-[0.95rem]">{featured.description}</p>
+              <div className="flex flex-wrap gap-1.5 mb-5">
+                {featured.tags.map((tag) => (
+                  <Badge key={tag} variant="secondary" className="bg-surface-tag text-foreground/70 border border-border-subtle/80 text-xs">
+                    {tag}
+                  </Badge>
+                ))}
+              </div>
+              <div className="flex gap-4 pt-3 border-t border-border-subtle/40">
+                {featured.githubUrl && (
+                  <Button asChild variant="ghost" size="sm" className="text-primary hover:text-primary/90 hover:bg-surface-hover/70 px-0 h-8">
+                    <a href={featured.githubUrl} target="_blank" rel="noopener noreferrer">
+                      <Github className="mr-1.5 h-3.5 w-3.5" />
+                      View Code
+                    </a>
+                  </Button>
                 )}
-                {project.status === "coming-soon" && (
-                  <div className="absolute top-4 right-4 bg-warning/90 backdrop-blur-sm text-warning-foreground px-3 py-1 rounded-full text-sm font-medium">
-                    Coming Soon
-                  </div>
+                {featured.liveUrl && (
+                  <Button asChild variant="ghost" size="sm" className="text-primary hover:text-primary/90 hover:bg-surface-hover/70 px-0 h-8">
+                    <a href={featured.liveUrl} target="_blank" rel="noopener noreferrer">
+                      <ArrowUpRight className="mr-1.5 h-3.5 w-3.5" />
+                      Live Demo
+                    </a>
+                  </Button>
                 )}
               </div>
-              <CardHeader>
-                <CardTitle className="text-foreground">{project.title}</CardTitle>
-                <CardDescription className="text-foreground/60">{project.description}</CardDescription>
-              </CardHeader>
-              <CardContent className="flex-1">
-                <div className="flex flex-wrap gap-2">
-                  {project.tags.map((tag) => (
-                    <Badge
-                      key={tag}
-                      variant="secondary"
-                      className="bg-surface-tag text-foreground/70 border border-border-subtle/80"
-                    >
-                      {tag}
-                    </Badge>
-                  ))}
+            </div>
+          </Card>
+        </motion.div>
+
+        {/* Remaining projects — 2-col grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {rest.map((project, idx) => (
+            <motion.div key={project.id} variants={cardVariants}>
+              <Card
+                className={`glass-effect-sm border-glow-indigo-lg overflow-hidden card-interactive-sm h-full flex flex-col ${
+                  hoveredId === project.id ? "shadow-glow-indigo-lg" : ""
+                }`}
+                onMouseEnter={() => setHoveredId(project.id)}
+                onMouseLeave={() => setHoveredId(null)}
+              >
+                <div className="relative h-44 overflow-hidden">
+                  <img
+                    src={project.image}
+                    alt={project.title}
+                    loading="lazy"
+                    decoding="async"
+                    className="w-full h-full object-cover transition-transform duration-500 ease-in-out"
+                    style={{ transform: hoveredId === project.id ? "scale(1.05)" : "scale(1)" }}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                  {project.status === "not-available" && (
+                    <div className="absolute top-3 right-3 bg-error/90 backdrop-blur-sm text-error-foreground px-2.5 py-0.5 rounded-full text-xs font-medium">
+                      Not Available
+                    </div>
+                  )}
+                  {project.status === "coming-soon" && (
+                    <div className="absolute top-3 right-3 bg-warning/90 backdrop-blur-sm text-warning-foreground px-2.5 py-0.5 rounded-full text-xs font-medium">
+                      Coming Soon
+                    </div>
+                  )}
                 </div>
-              </CardContent>
-              <CardFooter className="flex flex-wrap gap-2 justify-between">
-                <div className="flex gap-2">
+
+                <CardHeader className="pb-2">
+                  <div className="flex items-start justify-between gap-2">
+                    <h3 className="text-lg font-bold text-foreground tracking-tight">{project.title}</h3>
+                    <span className="text-3xl font-bold text-foreground/[0.06] select-none leading-none shrink-0">
+                      0{idx + 2}
+                    </span>
+                  </div>
+                  <p className="text-sm text-foreground/60 leading-relaxed">{project.description}</p>
+                </CardHeader>
+
+                <CardContent className="flex-1 pt-0">
+                  <div className="flex flex-wrap gap-1.5">
+                    {project.tags.map((tag) => (
+                      <Badge key={tag} variant="secondary" className="bg-surface-tag text-foreground/70 border border-border-subtle/80 text-xs">
+                        {tag}
+                      </Badge>
+                    ))}
+                  </div>
+                </CardContent>
+
+                <CardFooter className="pt-2 gap-3 border-t border-border-subtle/40">
                   {project.githubUrl && (
-                    <Button
-                      asChild
-                      variant="ghost"
-                      size="sm"
-                      className="text-primary hover:text-primary/90 hover:bg-surface-hover/70"
-                    >
+                    <Button asChild variant="ghost" size="sm" className="text-primary hover:text-primary/90 hover:bg-surface-hover/70 px-0 h-8">
                       <a href={project.githubUrl} target="_blank" rel="noopener noreferrer">
-                        <Github className="mr-2 h-4 w-4" />
+                        <Github className="mr-1.5 h-3.5 w-3.5" />
                         View Code
                       </a>
                     </Button>
                   )}
                   {project.liveUrl && (
-                    <Button
-                      asChild
-                      variant="ghost"
-                      size="sm"
-                      className="text-primary hover:text-primary/90 hover:bg-surface-hover/70"
-                    >
+                    <Button asChild variant="ghost" size="sm" className="text-primary hover:text-primary/90 hover:bg-surface-hover/70 px-0 h-8">
                       <a href={project.liveUrl} target="_blank" rel="noopener noreferrer">
-                        <ExternalLink className="mr-2 h-4 w-4" />
+                        <ArrowUpRight className="mr-1.5 h-3.5 w-3.5" />
                         Live Demo
                       </a>
                     </Button>
                   )}
-                </div>
-              </CardFooter>
-            </Card>
-          </motion.div>
-        ))}
+                </CardFooter>
+              </Card>
+            </motion.div>
+          ))}
+        </div>
       </motion.div>
     </section>
   )

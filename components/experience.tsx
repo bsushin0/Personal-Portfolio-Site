@@ -186,23 +186,24 @@ export default function Experience() {
   return (
     <section id="experience" className="py-20">
       <motion.div
-        className="text-center mb-16"
+        className="mb-16"
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, amount: 0.3 }}
         variants={headingVariants}
       >
-        <h2 className="text-3xl md:text-4xl font-bold mb-4 text-foreground tracking-tight">Experience</h2>
-        <p className="text-foreground/60 max-w-2xl mx-auto">
-          Product and leadership roles are highlighted here. For technical AI work, see the
-          <a href="#projects" className="ml-1 text-primary underline underline-offset-4 hover:text-primary/80">Projects</a> section.
+        <p className="text-xs font-semibold tracking-[0.22em] uppercase text-primary/65 mb-3">Career</p>
+        <h2 className="text-3xl md:text-4xl font-bold text-foreground tracking-tight mb-3">Experience</h2>
+        <p className="text-foreground/55 text-sm">
+          Product and leadership roles. For technical AI work, see the{" "}
+          <a href="#projects" className="text-primary underline underline-offset-4 hover:text-primary/80">Projects</a> section.
         </p>
       </motion.div>
 
       {/* Timeline Container */}
       <div className="relative">
         {/* Timeline Line - only visible on md and up */}
-        <div className="hidden md:block absolute left-1/2 transform -translate-x-1/2 w-1 h-full bg-gradient-to-b from-border-subtle via-primary/30 to-border-subtle" />
+        <div className="hidden md:block absolute left-1/2 transform -translate-x-1/2 w-0.5 h-full bg-gradient-to-b from-transparent via-primary/25 to-transparent" />
 
         {/* Timeline Items */}
         <div className="space-y-8 md:space-y-12">
@@ -238,45 +239,41 @@ export default function Experience() {
                 {/* Content Card */}
                 <div className={`md:w-1/2 ${index % 2 === 0 ? "md:pr-12 md:text-right" : "md:pl-12 md:text-left"}`}>
                   <Card className={`glass-effect-sm border-glow card-interactive h-full ${isOverlapping ? "border-primary/40 dark:border-primary/30" : ""}`}>
-                    <CardHeader>
-                      <div className="flex flex-col gap-2">
-                        <CardTitle className="text-lg text-foreground">{exp.title}</CardTitle>
-                        <CardDescription className="text-base font-medium text-foreground/70">
-                          {exp.company}
-                        </CardDescription>
-
-                        <div className="flex flex-col gap-2 md:flex-row md:justify-between pt-1">
-                          <Badge
-                            variant="outline"
-                            className="w-fit border-border-subtle/80 text-foreground/70 md:order-2"
-                          >
-                            <Calendar className="h-3 w-3 mr-1" />
-                            {exp.period}
-                          </Badge>
+                    <CardHeader className="pb-3">
+                      <div className="flex flex-col gap-1">
+                        <div className={`flex items-center gap-2 flex-wrap ${index % 2 === 0 ? "md:justify-end" : ""}`}>
                           <Badge
                             variant="secondary"
-                            className="w-fit bg-indigo-500/10 text-indigo-600 dark:text-indigo-300 border border-indigo-500/20"
+                            className="w-fit text-[11px] px-2 py-0 bg-indigo-500/10 text-indigo-600 dark:text-indigo-300 border border-indigo-500/20"
                           >
                             {exp.type}
                           </Badge>
+                          <span className="text-xs text-foreground/40 flex items-center gap-1">
+                            <Calendar className="h-3 w-3" />
+                            {exp.period}
+                          </span>
                         </div>
+                        <CardTitle className="text-xl font-bold text-foreground leading-snug mt-1">{exp.title}</CardTitle>
+                        <CardDescription className="text-sm font-medium text-foreground/55">
+                          {exp.company}
+                        </CardDescription>
                       </div>
                     </CardHeader>
                     <CardContent>
-                      <ul className="space-y-2 mb-6">
+                      <ul className="space-y-3 mb-5">
                         {exp.description.map((item, i) => (
-                          <li key={i} className="flex items-start gap-2 text-foreground/70">
-                            <span className={`text-foreground/40 ${index % 2 === 0 ? "md:text-right" : ""}`}>●</span>
+                          <li key={i} className="flex items-start gap-2.5 text-sm text-foreground/65 leading-relaxed">
+                            <span className="text-primary/40 mt-[0.18em] shrink-0 font-medium">—</span>
                             <span>{item}</span>
                           </li>
                         ))}
                       </ul>
-                      <div className={`flex flex-wrap gap-2 ${index % 2 === 0 ? "md:justify-end" : ""}`}>
+                      <div className={`flex flex-wrap gap-1.5 ${index % 2 === 0 ? "md:justify-end" : ""}`}>
                         {exp.skills.map((skill) => (
                           <Badge
                             key={skill}
                             variant="secondary"
-                            className="bg-surface-tag text-foreground/70 border border-border-subtle/80"
+                            className="bg-surface-tag text-foreground/60 border border-border-subtle/80 text-xs"
                           >
                             {skill}
                           </Badge>
