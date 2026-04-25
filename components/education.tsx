@@ -21,6 +21,19 @@ const coreCourses = [
   "Cognitive Psychology",
 ]
 
+const anthropicCourses = [
+  "Claude 101",
+  "Claude Code 101",
+  "Introduction to Claude at Work",
+  "Claude Code in Action",
+  "Building with the Claude API",
+  "AI Fluency for Educators",
+  "AI Fluency for Students",
+  "AI Fluency for Nonprofits",
+  "Introduction to Agent Skills",
+  "Introduction to Subagents",
+]
+
 const highlights = [
   {
     icon: <Star className="h-5 w-5" />,
@@ -176,29 +189,59 @@ export default function Education() {
                 Relevant Coursework
               </CardTitle>
             </CardHeader>
-            <CardContent>
-              <motion.div
-                className="flex flex-wrap gap-2"
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, amount: 0.2 }}
-                variants={badgeContainerVariants}
-              >
-                {coreCourses.map((course) => (
-                  <motion.div key={course} variants={badgeVariants}>
-                    <Badge
-                      variant="secondary"
-                      className="bg-surface-tag text-foreground/70 border border-border-subtle/80"
-                    >
-                      {course}
-                    </Badge>
-                  </motion.div>
-                ))}
-              </motion.div>
-              <p className="text-xs text-foreground/40 mt-4">
-                Also completed: Multivariate Calculus, Intro to Statistics, Philosophy of Science, Cognitive Psychology,
-                and ongoing Aviation coursework (AT 43300 Supervised Aviation Experience).
-              </p>
+            <CardContent className="space-y-6">
+              {/* Purdue University */}
+              <div>
+                <p className="text-xs font-semibold text-foreground/50 uppercase tracking-widest mb-3">Purdue University</p>
+                <motion.div
+                  className="flex flex-wrap gap-2"
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true, amount: 0.2 }}
+                  variants={badgeContainerVariants}
+                >
+                  {coreCourses.map((course) => (
+                    <motion.div key={course} variants={badgeVariants}>
+                      <Badge
+                        variant="secondary"
+                        className="bg-surface-tag text-foreground/70 border border-border-subtle/80"
+                      >
+                        {course}
+                      </Badge>
+                    </motion.div>
+                  ))}
+                </motion.div>
+                <p className="text-xs text-foreground/40 mt-4">
+                  Also completed: Multivariate Calculus, Intro to Statistics, Philosophy of Science, Cognitive Psychology,
+                  and ongoing Aviation coursework (AT 43300 Supervised Aviation Experience).
+                </p>
+              </div>
+
+              {/* Divider */}
+              <div className="border-t border-border-subtle/60" />
+
+              {/* Anthropic Academy */}
+              <div>
+                <p className="text-xs font-semibold text-foreground/50 uppercase tracking-widest mb-3">Anthropic Academy</p>
+                <motion.div
+                  className="flex flex-wrap gap-2"
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true, amount: 0.2 }}
+                  variants={badgeContainerVariants}
+                >
+                  {anthropicCourses.map((course) => (
+                    <motion.div key={course} variants={badgeVariants}>
+                      <Badge
+                        variant="secondary"
+                        className="bg-indigo-500/10 text-indigo-600 dark:text-indigo-300 border border-indigo-500/20"
+                      >
+                        {course}
+                      </Badge>
+                    </motion.div>
+                  ))}
+                </motion.div>
+              </div>
             </CardContent>
           </Card>
         </motion.div>
