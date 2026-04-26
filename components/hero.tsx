@@ -4,6 +4,16 @@ import { motion, type Variants } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import AiAvatar from "./ai-avatar"
 import { Github, Linkedin, Download, ArrowDown } from "lucide-react"
+import { useTypewriter } from "@/hooks/use-typewriter"
+import { blurUpVariants } from "@/lib/motion-variants"
+
+const ROLES = [
+  "AI Engineer",
+  "ML Practitioner",
+  "Product Thinker",
+  "Purdue Builder",
+  "Systems Designer",
+]
 
 const container: Variants = {
   hidden: {},
@@ -12,10 +22,21 @@ const container: Variants = {
 
 const item: Variants = {
   hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.65, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] } },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.65, ease: [0.23, 1, 0.32, 1] as [number, number, number, number] },
+  },
+}
+
+const headlineContainer: Variants = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.08, delayChildren: 0.1 } },
 }
 
 export default function Hero() {
+  const { displayText, cursorVisible } = useTypewriter(ROLES)
+
   return (
     <section className="py-20 md:py-36 flex flex-col items-center">
       <motion.div
@@ -25,22 +46,49 @@ export default function Hero() {
         variants={container}
       >
         <div className="order-2 md:order-1">
-          <motion.p variants={item} className="text-xs font-semibold tracking-[0.22em] uppercase text-primary/65 mb-5">
+          <motion.p
+            variants={item}
+            className="text-xs font-semibold tracking-[0.22em] uppercase text-primary/65 mb-5"
+          >
             AI · Product Management · Cybersecurity
           </motion.p>
 
-          <motion.h1
-            variants={item}
-            className="font-display text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.02] text-foreground mb-5"
-          >
-            Sushin<br />Bandha
-          </motion.h1>
+          <motion.div variants={item} className="mb-4">
+            <motion.div
+              className="font-display text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.02] text-foreground"
+              initial="hidden"
+              animate="visible"
+              variants={headlineContainer}
+            >
+              {["Sushin", "Bandha"].map((word) => (
+                <motion.span key={word} className="block" variants={blurUpVariants}>
+                  {word}
+                </motion.span>
+              ))}
+            </motion.div>
+          </motion.div>
+
+          {/* Typewriter role line */}
+          <motion.div variants={item} className="h-6 mb-4 flex items-center">
+            <span className="text-sm font-medium text-primary/80 tracking-wide font-mono">
+              {displayText}
+              <span
+                className="ml-px"
+                style={{ opacity: cursorVisible ? 1 : 0, transition: "opacity 0.1s" }}
+              >
+                |
+              </span>
+            </span>
+          </motion.div>
 
           <motion.div variants={item} className="w-10 h-0.5 bg-primary mb-6" />
 
-          <motion.p variants={item} className="text-foreground/60 mb-8 text-[1.05rem] leading-relaxed max-w-[38ch]">
-            Purdue AI student at the intersection of machine learning, product strategy, and security.
-            Directed a 25-member team. Shipped products. Building what&apos;s next.
+          <motion.p
+            variants={item}
+            className="text-foreground/60 mb-8 text-[1.05rem] leading-relaxed max-w-[38ch]"
+          >
+            Purdue AI student at the intersection of machine learning, product strategy, and
+            security. Directed a 25-member team. Shipped products. Building what&apos;s next.
           </motion.p>
 
           <motion.div variants={item} className="flex flex-wrap gap-3">

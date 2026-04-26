@@ -7,6 +7,8 @@ import { SpeedInsights } from "@vercel/speed-insights/next"
 import { Analytics } from "@vercel/analytics/next"
 import { Chatbot } from "@/components/chatbot"
 import { VisitTracker } from "@/components/visit-tracker"
+import AmbientBackground from "@/components/ambient-background"
+import CursorSystem from "@/components/cursor-system"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -55,6 +57,8 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
+          <AmbientBackground />
+          <CursorSystem />
           <VisitTracker />
           {children}
           <Chatbot />

@@ -63,6 +63,10 @@ export default function AiAvatar() {
   const [particles, setParticles] = useState<Particle[]>([])
   const [isKeyboardInteracting, setIsKeyboardInteracting] = useState(false)
   const [focusEnergy, setFocusEnergy] = useState(0)
+  const [rippleActive, setRippleActive] = useState(false)
+  const [isProximate, setIsProximate] = useState(false)
+  const [isIdle, setIsIdle] = useState(false)
+  const idleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   // Placeholder particle generator to prevent runtime errors in production
   const createParticles = useCallback(() => {
@@ -293,9 +297,34 @@ export default function AiAvatar() {
     if (rightPupilRef.current) rightPupilRef.current.style.transform = `translate(${eyeX}px, ${eyeY}px)`
   }, [mousePosition])
 
-  // Click handler - big celebration
+  // Proximity detection — activates when cursor is within 200px
+  useEffect(() => {
+    if (!avatarRef.current) return
+    const rect = avatarRef.current.getBoundingClientRect()
+    const cx = rect.left + rect.width / 2
+    const cy = rect.top + rect.height / 2
+    const dx = mousePosition.x - cx
+    const dy = mousePosition.y - cy
+    const dist = Math.sqrt(dx * dx + dy * dy)
+    setIsProximate(dist < 200)
+  }, [mousePosition])
+
+  // Idle detection — 4s without any mouse movement near avatar
+  useEffect(() => {
+    if (idleTimerRef.current) clearTimeout(idleTimerRef.current)
+    setIsIdle(false)
+    idleTimerRef.current = setTimeout(() => setIsIdle(true), 4000)
+    return () => {
+      if (idleTimerRef.current) clearTimeout(idleTimerRef.current)
+    }
+  }, [mousePosition])
+
+  // Click handler - ripple + expression
   const handleClick = () => {
     setExpression((prev: ExpressionState) => ({ ...prev, surprise: 1, energy: 1 }))
+    setRippleActive(false)
+    requestAnimationFrame(() => setRippleActive(true))
+    setTimeout(() => setRippleActive(false), 650)
     createParticles()
     createParticles()
     setTimeout(() => {
@@ -420,13 +449,33 @@ export default function AiAvatar() {
           }`,
         }}
       >
+        {/* Ripple on click */}
+        {rippleActive && (
+          <div
+            className="absolute inset-0 rounded-full border-2 border-primary/60 pointer-events-none animate-avatar-ripple"
+            aria-hidden="true"
+          />
+        )}
+
+        {/* Proximity halo — appears when cursor is within 200px */}
+        <div
+          className="absolute inset-0 rounded-full pointer-events-none transition-all duration-500"
+          style={{
+            boxShadow: isProximate
+              ? `0 0 40px hsl(239 84% 67% / 0.25), 0 0 80px hsl(239 84% 67% / 0.10)`
+              : "none",
+          }}
+          aria-hidden="true"
+        />
+
         {/* Enhanced Aura/Energy glow with multiple layers */}
         <div
           className={`absolute inset-0 rounded-full blur-3xl transition-all duration-150 pointer-events-none`}
           style={{
             /* --ai-glow: 188 100% 50% (cyan) | --ai-secondary: 278 68% 59% (purple) */
-            background: `radial-gradient(circle, hsl(188 100% 50% / ${0.5 + expression.energy * 0.3}), hsl(278 68% 59% / 0.25), transparent)`,
-            transform: `scale(${1.1 + expression.energy * 0.15})`,
+            background: `radial-gradient(circle, hsl(188 100% 50% / ${(isIdle ? 0.3 : 0.5) + expression.energy * 0.3}), hsl(278 68% 59% / 0.25), transparent)`,
+            transform: `scale(${(isProximate ? 1.2 : isIdle ? 1.0 : 1.1) + expression.energy * 0.15})`,
+            transition: "transform 800ms cubic-bezier(0.23,1,0.32,1)",
           }}
         />
 

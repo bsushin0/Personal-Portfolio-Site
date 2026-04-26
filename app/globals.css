@@ -321,6 +321,22 @@ body {
   animation: pulse-glow 2.5s ease-in-out infinite;
 }
 
+/* Avatar click ripple */
+@keyframes avatar-ripple {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+}
+
+.animate-avatar-ripple {
+  animation: avatar-ripple 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+}
+
 /* Smooth scrolling */
 html {
   scroll-behavior: smooth;
