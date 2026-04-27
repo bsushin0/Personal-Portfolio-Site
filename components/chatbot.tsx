@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { X, Send, Loader2, AlertCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
@@ -8,7 +8,48 @@ import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { useChatContext } from '@/context/chat-context';
 
-// ── Mini avatar face (shared visual) ─────────────────────────────────────────
+// ── Section tooltip copy — personal, CTA-forward ─────────────────────────────
+type SectionTooltip = {
+  quip: string;
+  cta: string;
+};
+
+const SECTION_TIPS: Record<string, SectionTooltip> = {
+  about: {
+    quip: "This is where it all started.",
+    cta: "Ask me more about this",
+  },
+  interests: {
+    quip: "These are the things that actually light me up.",
+    cta: "Want to know what drives me?",
+  },
+  experience: {
+    quip: "Earned every step of this.",
+    cta: "Want to know more about this experience?",
+  },
+  projects: {
+    quip: "Here's what I've actually shipped.",
+    cta: "Want me to walk you through Project AiRa?",
+  },
+  education: {
+    quip: "Purdue built the foundation.",
+    cta: "Want to know more about my academic background?",
+  },
+  skills: {
+    quip: "What I build with — and what I'm still learning.",
+    cta: "Curious how I use any of these?",
+  },
+  certifications: {
+    quip: "Proof of work, not just talk.",
+    cta: "Ask me about any of these certs",
+  },
+  contact: {
+    quip: "Let's build something together.",
+    cta: "Ask me anything",
+  },
+};
+
+// ── Mini avatar face SVG ──────────────────────────────────────────────────────
 function AvatarFace({ size = 32 }: { size?: number }) {
   return (
     <svg
@@ -42,43 +83,199 @@ function AvatarFace({ size = 32 }: { size?: number }) {
       <circle cx="38" cy="26" r="0.7" fill="hsl(188 100% 70%)" opacity="0.8" />
       <path d="M 22 37 Q 30 43 38 37" stroke="hsl(239 84% 85%)" strokeWidth="2.2" fill="none" strokeLinecap="round" />
     </svg>
-  )
+  );
 }
 
-// ── Floating trigger button (avatar morphs here when closed) ─────────────────
-function ChatTrigger({ onClick }: { onClick: () => void }) {
+// ── Speech bubble tooltip ─────────────────────────────────────────────────────
+interface TooltipBubbleProps {
+  tip: SectionTooltip;
+  onClose: () => void;
+  onAskMe: () => void;
+  prefersReduced: boolean;
+}
+
+function TooltipBubble({ tip, onClose, onAskMe, prefersReduced }: TooltipBubbleProps) {
   return (
-    <motion.button
-      layoutId="chat-avatar"
-      onClick={onClick}
-      className={cn(
-        "fixed bottom-6 right-6 z-50",
-        "w-16 h-16 rounded-full",
-        "overflow-hidden",
-        "shadow-lg shadow-indigo-500/30",
-        "hover:shadow-xl hover:shadow-indigo-500/40",
-        "hover:scale-110 active:scale-95",
-        "transition-shadow duration-300",
-        "animate-pulse-glow",
-        "flex items-center justify-center"
-      )}
-      style={{
-        background: "linear-gradient(135deg, hsl(188 100% 50% / 0.25), hsl(239 84% 67%), hsl(278 68% 59%))",
-        border: "2px solid hsl(188 100% 50% / 0.45)",
-      }}
-      aria-label="Open AI chat"
-      initial={false}
-      transition={{ type: "spring", stiffness: 340, damping: 30 }}
+    <motion.div
+      key="avatar-tooltip"
+      initial={prefersReduced ? { opacity: 0 } : { opacity: 0, y: 8, scale: 0.92 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={prefersReduced ? { opacity: 0 } : { opacity: 0, y: 8, scale: 0.92 }}
+      transition={{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }}
+      className="absolute bottom-full mb-3 right-0 w-max max-w-[220px]"
+      style={{ willChange: "transform" }}
     >
-      <AvatarFace size={52} />
-    </motion.button>
-  )
+      <div className="glass-effect border border-border-subtle rounded-2xl px-3.5 py-3 shadow-xl">
+        {/* Close button */}
+        <button
+          onClick={(e) => { e.stopPropagation(); onClose(); }}
+          className="absolute top-2 right-2 text-foreground/40 hover:text-foreground/70 transition-colors"
+          aria-label="Dismiss"
+        >
+          <X className="w-3 h-3" />
+        </button>
+
+        <p className="text-xs text-foreground/70 leading-snug pr-4 mb-2">{tip.quip}</p>
+
+        <button
+          onClick={onAskMe}
+          className="text-xs font-medium text-primary hover:text-primary/80 transition-colors flex items-center gap-1 group"
+        >
+          {tip.cta}
+          <span className="opacity-0 group-hover:opacity-100 transition-opacity">→</span>
+        </button>
+      </div>
+
+      {/* Bubble tail pointing down-right */}
+      <div
+        className="absolute right-6 -bottom-[6px] w-0 h-0"
+        style={{
+          borderLeft: "6px solid transparent",
+          borderRight: "6px solid transparent",
+          borderTop: "6px solid hsl(var(--border-subtle))",
+        }}
+      />
+    </motion.div>
+  );
+}
+
+// ── Unified corner avatar — chat trigger + section guide ──────────────────────
+// Visible only when user has scrolled past the hero section.
+// Uses layoutId="aira-avatar" so it morphs into the chat header on open.
+function AvatarCornerButton() {
+  const { openChat } = useChatContext();
+  const [isPastHero, setIsPastHero] = useState(false);
+  const [tooltip, setTooltip] = useState<SectionTooltip | null>(null);
+  const [prefersReduced, setPrefersReduced] = useState(false);
+  const tooltipTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const lastSectionRef = useRef<string>("");
+
+  // Detect reduced motion once on mount
+  useEffect(() => {
+    setPrefersReduced(window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  }, []);
+
+  // Hero intersection — show/hide corner button
+  useEffect(() => {
+    const heroEl = document.querySelector<HTMLElement>("section:first-of-type");
+    if (!heroEl) return;
+
+    const obs = new IntersectionObserver(
+      ([entry]) => { setIsPastHero(!entry.isIntersecting); },
+      { threshold: 0.15 }
+    );
+    obs.observe(heroEl);
+    return () => obs.disconnect();
+  }, []);
+
+  // Show tooltip, auto-dismiss after 4s
+  const showTooltip = useCallback((tip: SectionTooltip) => {
+    if (tooltipTimerRef.current) clearTimeout(tooltipTimerRef.current);
+    setTooltip(tip);
+    tooltipTimerRef.current = setTimeout(() => setTooltip(null), 4000);
+  }, []);
+
+  const dismissTooltip = useCallback(() => {
+    if (tooltipTimerRef.current) clearTimeout(tooltipTimerRef.current);
+    setTooltip(null);
+  }, []);
+
+  // Section intersection observers — fire tooltip as each section enters view
+  useEffect(() => {
+    if (!isPastHero) return;
+    const observers: IntersectionObserver[] = [];
+
+    Object.keys(SECTION_TIPS).forEach((id) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const obs = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting && lastSectionRef.current !== id) {
+            lastSectionRef.current = id;
+            showTooltip(SECTION_TIPS[id]);
+          }
+        },
+        { threshold: 0.35 }
+      );
+      obs.observe(el);
+      observers.push(obs);
+    });
+
+    return () => observers.forEach((o) => o.disconnect());
+  }, [isPastHero, showTooltip]);
+
+  const handleOpenChat = useCallback(() => {
+    dismissTooltip();
+    openChat();
+  }, [dismissTooltip, openChat]);
+
+  return (
+    <AnimatePresence>
+      {isPastHero && (
+        <motion.div
+          key="avatar-corner"
+          initial={prefersReduced ? { opacity: 0 } : { opacity: 0, scale: 0.5, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={prefersReduced ? { opacity: 0 } : { opacity: 0, scale: 0.5, y: 20 }}
+          transition={{ type: "spring", stiffness: 340, damping: 28 }}
+          className="fixed bottom-6 right-6 z-50 flex flex-col items-end"
+          style={{ willChange: "transform" }}
+        >
+          {/* Tooltip speech bubble */}
+          <AnimatePresence>
+            {tooltip && (
+              <TooltipBubble
+                tip={tooltip}
+                onClose={dismissTooltip}
+                onAskMe={handleOpenChat}
+                prefersReduced={prefersReduced}
+              />
+            )}
+          </AnimatePresence>
+
+          {/* Pulse ring — CSS-driven, no RAF needed */}
+          <div
+            className="absolute inset-0 rounded-full pointer-events-none"
+            aria-hidden="true"
+            style={{
+              animation: prefersReduced ? "none" : "corner-avatar-pulse 2.8s ease-in-out infinite",
+            }}
+          />
+
+          {/* The avatar button — layoutId shared with chat header */}
+          <motion.button
+            layoutId="aira-avatar"
+            onClick={handleOpenChat}
+            whileHover={prefersReduced ? {} : { scale: 1.08 }}
+            whileTap={prefersReduced ? {} : { scale: 0.94 }}
+            className={cn(
+              "relative w-16 h-16 rounded-full overflow-hidden",
+              "border-2 shadow-xl cursor-pointer select-none",
+              "flex items-center justify-center"
+            )}
+            style={{
+              borderColor: "hsl(188 100% 50% / 0.5)",
+              boxShadow: "0 0 20px hsl(188 100% 50% / 0.28), 0 4px 20px rgba(0,0,0,0.22)",
+              background: "linear-gradient(135deg, hsl(188 100% 50% / 0.18), hsl(239 84% 67%), hsl(278 68% 59%))",
+              animation: prefersReduced ? "none" : "corner-avatar-float 3.8s ease-in-out infinite",
+              willChange: "transform",
+            }}
+            aria-label="Open AI chat assistant"
+            initial={false}
+            transition={{ type: "spring", stiffness: 340, damping: 30 }}
+          >
+            <AvatarFace size={52} />
+          </motion.button>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
 }
 
 // ── Main chatbot component ────────────────────────────────────────────────────
 export function Chatbot() {
   const { isOpen, openChat, closeChat } = useChatContext();
-  const [messages, setMessages] = useState<Array<{id: string; role: 'user' | 'assistant'; content: string}>>([
+  const [messages, setMessages] = useState<Array<{ id: string; role: 'user' | 'assistant'; content: string }>>([
     {
       id: 'welcome',
       role: 'assistant',
@@ -90,7 +287,7 @@ export function Chatbot() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Auto-scroll to bottom when new messages arrive
+  // Auto-scroll to bottom on new messages
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
@@ -102,7 +299,6 @@ export function Chatbot() {
     }
   }, [isOpen]);
 
-  // Handle form submission
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!input.trim() || isLoading) return;
@@ -130,17 +326,16 @@ export function Chatbot() {
       setMessages(prev => [...prev, { id: (Date.now() + 1).toString(), role: 'assistant', content: 'Sorry, I encountered an error. Please try again.' }]);
     } finally {
       setIsLoading(false);
-      setTimeout(() => {
-        inputRef.current?.focus();
-      }, 100);
+      setTimeout(() => inputRef.current?.focus(), 100);
     }
   };
 
   return (
     <>
-      {/* Floating trigger — only when closed */}
+      {/* Unified corner avatar — chat trigger + section guide */}
+      {/* Hidden when chat is open (layoutId handles the morph into the header) */}
       <AnimatePresence>
-        {!isOpen && <ChatTrigger onClick={openChat} />}
+        {!isOpen && <AvatarCornerButton />}
       </AnimatePresence>
 
       {/* Chat Panel */}
@@ -166,16 +361,17 @@ export function Chatbot() {
               "overflow-hidden"
             )}
           >
-            {/* Header — avatar morphs from trigger button into here */}
+            {/* Header — avatar morphs from corner button into here */}
             <div className="flex items-center justify-between p-4 border-b border-stone-300 dark:border-slate-800 bg-background/70">
               <div className="flex items-center gap-3">
-                {/* Avatar — layoutId shared with trigger button */}
+                {/* Avatar — layoutId shared with corner button */}
                 <motion.div
-                  layoutId="chat-avatar"
+                  layoutId="aira-avatar"
                   className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0"
                   style={{
                     background: "linear-gradient(135deg, hsl(188 100% 50% / 0.2), hsl(239 84% 67%), hsl(278 68% 59%))",
                     border: "1.5px solid hsl(188 100% 50% / 0.4)",
+                    willChange: "transform",
                   }}
                   transition={{ type: "spring", stiffness: 340, damping: 30 }}
                 >

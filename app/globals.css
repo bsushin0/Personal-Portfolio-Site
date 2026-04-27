@@ -347,15 +347,15 @@ body {
   animation: avatar-idle-float 4s ease-in-out infinite;
 }
 
-/* Avatar guide float & pulse animations */
-@keyframes avatar-guide-float {
+/* Corner avatar float & pulse animations */
+@keyframes corner-avatar-float {
   0%, 100% { transform: translateY(0px); }
   50%       { transform: translateY(-6px); }
 }
 
-@keyframes guide-pulse-ring {
+@keyframes corner-avatar-pulse {
   0%   { box-shadow: 0 0 0 0   hsl(188 100% 50% / 0.35); }
-  60%  { box-shadow: 0 0 0 14px hsl(188 100% 50% / 0);   }
+  60%  { box-shadow: 0 0 0 16px hsl(188 100% 50% / 0);   }
   100% { box-shadow: 0 0 0 0   hsl(188 100% 50% / 0);    }
 }
 
