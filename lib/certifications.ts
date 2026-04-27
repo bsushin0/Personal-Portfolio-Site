@@ -102,7 +102,7 @@ export const certifications: Certification[] = [
   },
   {
     id: 9,
-    title: "Introduction to Claude at Work",
+    title: "Introduction to Claude Cowork",
     issuer: "Anthropic Academy",
     date: "Apr 2026",
     image: "",
