@@ -181,16 +181,22 @@ function AvatarCornerButton() {
     setPrefersReduced(window.matchMedia("(prefers-reduced-motion: reduce)").matches);
   }, []);
 
-  // Hero intersection — threshold 0.05: fires when hero is almost gone (5% visible)
+  // Hero intersection — threshold 0.50: avatar only returns to hero when 50% of hero is visible
   useEffect(() => {
     const heroEl = document.querySelector<HTMLElement>("section:first-of-type");
     if (!heroEl) return;
 
     const obs = new IntersectionObserver(
       ([entry]) => {
-        setIsPastHero(!entry.isIntersecting);
+        // Scrolling down: fire as soon as hero begins to leave (intersectionRatio < 0.5)
+        // Scrolling up: only snap back once hero is at least 50% visible again
+        if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
+          setIsPastHero(false);
+        } else if (!entry.isIntersecting) {
+          setIsPastHero(true);
+        }
       },
-      { threshold: 0.05 }
+      { threshold: [0, 0.5] }
     );
     obs.observe(heroEl);
     return () => obs.disconnect();

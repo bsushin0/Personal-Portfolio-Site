@@ -1,6 +1,6 @@
 "use client"
 
-import { motion, type Variants, AnimatePresence } from "framer-motion"
+import { motion, type Variants, AnimatePresence, useScroll, useTransform } from "framer-motion"
 import { useEffect, useRef, useState } from "react"
 import { Button } from "@/components/ui/button"
 import AiAvatar from "./ai-avatar"
@@ -43,12 +43,31 @@ export default function Hero() {
   const { displayText, cursorVisible } = useTypewriter(ROLES)
   const { isPastHero, openChat } = useChatContext()
   const avatarWrapperRef = useRef<HTMLDivElement>(null)
+  const heroSectionRef = useRef<HTMLElement>(null)
   const tiltRafRef = useRef<number | null>(null)
   const mousePosRef = useRef({ x: -9999, y: -9999 })
   const hasShownIntroRef = useRef(false)
   const [showIntro, setShowIntro] = useState(false)
   const introTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const introDismissTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  // ── Scroll-progress-driven avatar travel animation ──────────────────────────
+  // scrollYProgress goes 0→1 as the hero section scrolls out of view
+  const { scrollYProgress } = useScroll({
+    target: heroSectionRef,
+    offset: ["start start", "end start"],
+  })
+
+  // Scale: 1 at scroll=0, shrinks to ~0 at scroll=1
+  // The corner button is 64px; hero avatar is ~288px → ratio ≈ 0.22
+  // We overshoot slightly and let the snap handle the final state
+  const flyingScale = useTransform(scrollYProgress, [0, 0.85], [1, 0])
+
+  // Opacity of the hero avatar: visible until ~50% scroll, then fades
+  const heroAvatarOpacity = useTransform(scrollYProgress, [0, 0.45, 0.75], [1, 1, 0])
+
+  // Flying avatar opacity: appears on first scroll, gone when hero avatar fades
+  const flyingOpacity = useTransform(scrollYProgress, [0, 0.05, 0.75, 0.85], [0, 1, 1, 0])
 
   useEffect(() => {
     if (window.matchMedia("(pointer: coarse)").matches) return
@@ -112,7 +131,7 @@ export default function Hero() {
   }, [])
 
   return (
-    <section className="pt-6 pb-20 md:pt-8 md:pb-36 flex flex-col items-center">
+    <section ref={heroSectionRef} className="pt-6 pb-20 md:pt-8 md:pb-36 flex flex-col items-center">
       <motion.div
         className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 items-center w-full"
         initial="hidden"
@@ -250,11 +269,12 @@ export default function Hero() {
             </AnimatePresence>
 
             {/* Shared layout avatar — layoutId="aira-avatar" morphs to corner button on scroll */}
+            {/* Fix: rounded-full + overflow-hidden on the layoutId wrapper eliminates the square outline */}
             <motion.div
               layoutId="aira-avatar"
               transition={{ type: "spring", stiffness: 280, damping: 22 }}
-              style={{ willChange: "transform" }}
-              className={isPastHero ? "opacity-0 pointer-events-none" : ""}
+              className="rounded-full overflow-hidden"
+              style={{ willChange: "transform", opacity: heroAvatarOpacity }}
             >
               <div
                 ref={avatarWrapperRef}
@@ -265,6 +285,61 @@ export default function Hero() {
                   <AiAvatar />
                 </div>
               </div>
+            </motion.div>
+
+            {/* Flying avatar clone — scroll-progress-driven, fixed position, travels to corner */}
+            {/* Positioned at the corner button location (bottom-6 right-6 = 24px) at 64px base size.
+                Scale transform grows it outward from bottom-right toward hero size at scroll=0,
+                shrinks it back to corner-button size at scroll=1. */}
+            <motion.div
+              aria-hidden="true"
+              className="fixed pointer-events-none z-40 rounded-full overflow-hidden flex items-center justify-center"
+              style={{
+                bottom: "24px",
+                right: "24px",
+                width: "64px",
+                height: "64px",
+                transformOrigin: "bottom right",
+                scale: flyingScale,
+                opacity: flyingOpacity,
+                willChange: "transform, opacity",
+                background: "linear-gradient(135deg, hsl(188 100% 50% / 0.18), hsl(239 84% 67%), hsl(278 68% 59%))",
+                border: "2px solid hsl(188 100% 50% / 0.5)",
+                boxShadow: "0 0 20px hsl(188 100% 50% / 0.28), 0 4px 20px rgba(0,0,0,0.22)",
+              }}
+            >
+              {/* AvatarFace SVG — same as the corner button at 52px, scales via parent transform */}
+              <svg
+                width={52}
+                height={52}
+                viewBox="0 0 60 60"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                aria-hidden="true"
+              >
+                <defs>
+                  <radialGradient id="hero-fly-face" cx="50%" cy="50%" r="50%">
+                    <stop offset="0%" stopColor="hsl(188 100% 50%)" />
+                    <stop offset="50%" stopColor="hsl(239 84% 67%)" />
+                    <stop offset="100%" stopColor="hsl(278 68% 59%)" />
+                  </radialGradient>
+                  <radialGradient id="hero-fly-eye" cx="50%" cy="35%" r="60%">
+                    <stop offset="0%" stopColor="rgba(255,255,255,0.9)" />
+                    <stop offset="100%" stopColor="hsl(188 100% 50% / 0.5)" />
+                  </radialGradient>
+                </defs>
+                <circle cx="30" cy="30" r="28" fill="url(#hero-fly-face)" />
+                <circle cx="22" cy="22" r="12" fill="rgba(255,255,255,0.12)" />
+                <ellipse cx="21" cy="27" rx="6" ry="6.5" fill="url(#hero-fly-eye)" />
+                <circle cx="21" cy="27" r="3.5" fill="#0f172a" />
+                <circle cx="19.5" cy="25.5" r="1.4" fill="white" opacity="0.9" />
+                <circle cx="20" cy="26" r="0.7" fill="hsl(188 100% 70%)" opacity="0.8" />
+                <ellipse cx="39" cy="27" rx="6" ry="6.5" fill="url(#hero-fly-eye)" />
+                <circle cx="39" cy="27" r="3.5" fill="#0f172a" />
+                <circle cx="37.5" cy="25.5" r="1.4" fill="white" opacity="0.9" />
+                <circle cx="38" cy="26" r="0.7" fill="hsl(188 100% 70%)" opacity="0.8" />
+                <path d="M 22 37 Q 30 43 38 37" stroke="hsl(239 84% 85%)" strokeWidth="2.2" fill="none" strokeLinecap="round" />
+              </svg>
             </motion.div>
           </div>
         </motion.div>
