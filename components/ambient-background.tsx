@@ -37,6 +37,9 @@ export default function AmbientBackground() {
 
     const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches
 
+    // Returns true when the site is in light mode (no .dark class on <html>)
+    const isLightMode = () => !document.documentElement.classList.contains("dark")
+
     let width = window.innerWidth
     let height = window.innerHeight
     canvas.width = width
@@ -58,7 +61,10 @@ export default function AmbientBackground() {
         vx: (Math.random() - 0.5) * 0.45,
         vy: (Math.random() - 0.5) * 0.45,
         radius: Math.random() * 2.2 + 0.8,
-        opacity: Math.random() * 0.35 + 0.25,
+        // Light mode gets higher base opacity so particles are clearly visible
+        opacity: isLightMode()
+          ? Math.random() * 0.45 + 0.45
+          : Math.random() * 0.35 + 0.25,
         hue: hues[Math.floor(Math.random() * hues.length)],
       }))
 
@@ -69,9 +75,11 @@ export default function AmbientBackground() {
         y: height * (0.2 + Math.random() * 0.65),
         radius: isMobile() ? 140 + Math.random() * 80 : 200 + Math.random() * 160,
         hue: hues[i % hues.length],
-        saturation: 75 + Math.random() * 20,
-        lightness: 58 + Math.random() * 10,
-        opacity: 0.055 + Math.random() * 0.045,
+        // In light mode: lower lightness (more saturated/darker colour), higher saturation
+        saturation: isLightMode() ? 88 + Math.random() * 12 : 75 + Math.random() * 20,
+        lightness: isLightMode() ? 44 + Math.random() * 8 : 58 + Math.random() * 10,
+        // In light mode: substantially higher opacity so orbs read against the warm-white bg
+        opacity: isLightMode() ? 0.18 + Math.random() * 0.12 : 0.055 + Math.random() * 0.045,
         vx: (Math.random() - 0.5) * 0.12,
         vy: (Math.random() - 0.5) * 0.08,
         phase: Math.random() * Math.PI * 2,
@@ -148,10 +156,13 @@ export default function AmbientBackground() {
 
         // Subtle opacity pulse per particle
         const pulsedOpacity = p.opacity * (0.8 + 0.2 * Math.sin(frame * 0.02 + i))
+        // Light mode: darker particle colour (50% lightness vs 67%) for contrast on warm-white bg
+        const lightness = isLightMode() ? 42 : 67
+        const lineAlphaScale = isLightMode() ? 1.8 : 1.0
 
         ctx.beginPath()
         ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2)
-        ctx.fillStyle = `hsl(${p.hue} 84% 67% / ${pulsedOpacity})`
+        ctx.fillStyle = `hsl(${p.hue} 84% ${lightness}% / ${pulsedOpacity})`
         ctx.fill()
 
         // Connection lines — increased range and alpha
@@ -162,11 +173,11 @@ export default function AmbientBackground() {
           const d = Math.sqrt(cx * cx + cy * cy)
 
           if (d < 130) {
-            const alpha = (1 - d / 130) * 0.32
+            const alpha = (1 - d / 130) * 0.32 * lineAlphaScale
             ctx.beginPath()
             ctx.moveTo(p.x, p.y)
             ctx.lineTo(q.x, q.y)
-            ctx.strokeStyle = `hsl(${p.hue} 84% 67% / ${alpha})`
+            ctx.strokeStyle = `hsl(${p.hue} 84% ${lightness}% / ${alpha})`
             ctx.lineWidth = 0.7
             ctx.stroke()
           }
@@ -177,10 +188,11 @@ export default function AmbientBackground() {
     }
 
     if (prefersReduced) {
+      const lightness = isLightMode() ? 42 : 67
       for (const p of particles) {
         ctx.beginPath()
         ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2)
-        ctx.fillStyle = `hsl(${p.hue} 84% 67% / ${p.opacity * 0.6})`
+        ctx.fillStyle = `hsl(${p.hue} 84% ${lightness}% / ${p.opacity * 0.6})`
         ctx.fill()
       }
     } else {
@@ -205,11 +217,19 @@ export default function AmbientBackground() {
       orbs = makeOrbs()
     }
 
+    // Re-initialise particles/orbs when the theme class changes (dark ↔ light toggle)
+    const themeObserver = new MutationObserver(() => {
+      particles = makeParticles(particleCount)
+      orbs = makeOrbs()
+    })
+    themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] })
+
     window.addEventListener("mousemove", handleMouseMove)
     window.addEventListener("resize", handleResize)
 
     return () => {
       cancelAnimationFrame(rafId)
+      themeObserver.disconnect()
       window.removeEventListener("mousemove", handleMouseMove)
       window.removeEventListener("resize", handleResize)
     }

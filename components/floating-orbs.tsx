@@ -6,13 +6,12 @@ export default function FloatingOrbs() {
     <div className="fixed inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 1 }} aria-hidden="true">
       {/* Top-left indigo orb */}
       <div
-        className="absolute rounded-full"
+        className="absolute rounded-full floating-orb-a"
         style={{
           width: "clamp(260px, 35vw, 520px)",
           height: "clamp(260px, 35vw, 520px)",
           top: "-8%",
           left: "-6%",
-          background: "radial-gradient(circle, hsl(239 84% 67% / 0.12) 0%, hsl(239 84% 67% / 0.05) 45%, transparent 70%)",
           animation: "orb-drift-a 18s ease-in-out infinite",
           willChange: "transform",
         }}
@@ -20,13 +19,12 @@ export default function FloatingOrbs() {
 
       {/* Top-right cyan orb */}
       <div
-        className="absolute rounded-full"
+        className="absolute rounded-full floating-orb-b"
         style={{
           width: "clamp(200px, 28vw, 420px)",
           height: "clamp(200px, 28vw, 420px)",
           top: "5%",
           right: "-4%",
-          background: "radial-gradient(circle, hsl(188 100% 50% / 0.10) 0%, hsl(188 100% 50% / 0.04) 50%, transparent 70%)",
           animation: "orb-drift-b 22s ease-in-out infinite",
           willChange: "transform",
         }}
@@ -34,13 +32,12 @@ export default function FloatingOrbs() {
 
       {/* Mid-left purple orb */}
       <div
-        className="absolute rounded-full"
+        className="absolute rounded-full floating-orb-c"
         style={{
           width: "clamp(180px, 24vw, 380px)",
           height: "clamp(180px, 24vw, 380px)",
           top: "38%",
           left: "-3%",
-          background: "radial-gradient(circle, hsl(278 68% 59% / 0.09) 0%, hsl(278 68% 59% / 0.03) 50%, transparent 70%)",
           animation: "orb-drift-c 26s ease-in-out infinite",
           willChange: "transform",
         }}
@@ -48,13 +45,12 @@ export default function FloatingOrbs() {
 
       {/* Mid-right indigo orb */}
       <div
-        className="absolute rounded-full"
+        className="absolute rounded-full floating-orb-d"
         style={{
           width: "clamp(150px, 20vw, 320px)",
           height: "clamp(150px, 20vw, 320px)",
           top: "52%",
           right: "2%",
-          background: "radial-gradient(circle, hsl(239 84% 67% / 0.08) 0%, transparent 65%)",
           animation: "orb-drift-d 20s ease-in-out infinite",
           willChange: "transform",
         }}
@@ -62,19 +58,52 @@ export default function FloatingOrbs() {
 
       {/* Bottom-center cyan orb */}
       <div
-        className="absolute rounded-full"
+        className="absolute rounded-full floating-orb-e"
         style={{
           width: "clamp(220px, 30vw, 460px)",
           height: "clamp(220px, 30vw, 460px)",
           bottom: "-10%",
           left: "35%",
-          background: "radial-gradient(circle, hsl(188 100% 50% / 0.08) 0%, hsl(278 68% 59% / 0.04) 45%, transparent 70%)",
           animation: "orb-drift-e 24s ease-in-out infinite",
           willChange: "transform",
         }}
       />
 
       <style>{`
+        /* ── Dark mode (default) — low opacity, high lightness ── */
+        .floating-orb-a {
+          background: radial-gradient(circle, hsl(239 84% 67% / 0.12) 0%, hsl(239 84% 67% / 0.05) 45%, transparent 70%);
+        }
+        .floating-orb-b {
+          background: radial-gradient(circle, hsl(188 100% 50% / 0.10) 0%, hsl(188 100% 50% / 0.04) 50%, transparent 70%);
+        }
+        .floating-orb-c {
+          background: radial-gradient(circle, hsl(278 68% 59% / 0.09) 0%, hsl(278 68% 59% / 0.03) 50%, transparent 70%);
+        }
+        .floating-orb-d {
+          background: radial-gradient(circle, hsl(239 84% 67% / 0.08) 0%, transparent 65%);
+        }
+        .floating-orb-e {
+          background: radial-gradient(circle, hsl(188 100% 50% / 0.08) 0%, hsl(278 68% 59% / 0.04) 45%, transparent 70%);
+        }
+
+        /* ── Light mode overrides — darker hues, much higher opacity ── */
+        :root:not(.dark) .floating-orb-a {
+          background: radial-gradient(circle, hsl(239 84% 48% / 0.28) 0%, hsl(239 84% 48% / 0.12) 45%, transparent 70%);
+        }
+        :root:not(.dark) .floating-orb-b {
+          background: radial-gradient(circle, hsl(188 100% 36% / 0.22) 0%, hsl(188 100% 36% / 0.09) 50%, transparent 70%);
+        }
+        :root:not(.dark) .floating-orb-c {
+          background: radial-gradient(circle, hsl(278 68% 44% / 0.22) 0%, hsl(278 68% 44% / 0.08) 50%, transparent 70%);
+        }
+        :root:not(.dark) .floating-orb-d {
+          background: radial-gradient(circle, hsl(239 84% 48% / 0.20) 0%, transparent 65%);
+        }
+        :root:not(.dark) .floating-orb-e {
+          background: radial-gradient(circle, hsl(188 100% 36% / 0.18) 0%, hsl(278 68% 44% / 0.10) 45%, transparent 70%);
+        }
+
         @keyframes orb-drift-a {
           0%, 100% { transform: translate(0, 0) scale(1); }
           33% { transform: translate(30px, 20px) scale(1.04); }
@@ -101,7 +130,7 @@ export default function FloatingOrbs() {
           68% { transform: translate(25px, 10px) scale(0.96); }
         }
         @media (prefers-reduced-motion: reduce) {
-          [style*="orb-drift"] { animation: none !important; }
+          [class*="floating-orb-"] { animation: none !important; }
         }
       `}</style>
     </div>

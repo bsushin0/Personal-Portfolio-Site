@@ -1,4 +1,5 @@
 import { Github, Linkedin, Mail } from "lucide-react"
+import pkg from "@/package.json"
 
 const name = "Sushin Bandha"
 const title = "AI Engineer & Product Manager"
@@ -48,8 +49,9 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-8 pt-8 border-t border-border-subtle/80 text-center text-foreground/50 text-sm">
-          <p>Built with Next.js, Tailwind CSS, and shadcn/ui • Powered by AI Innovation</p>
+        <div className="mt-8 pt-8 border-t border-border-subtle/80 flex items-center justify-between text-foreground/50 text-sm">
+          <p className="text-center flex-1">Built with Next.js, Tailwind CSS, and shadcn/ui • Powered by AI Innovation</p>
+          <span className="text-xs text-foreground/40 shrink-0 ml-4">v{pkg.version}</span>
         </div>
       </div>
     </footer>
