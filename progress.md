@@ -15,6 +15,17 @@ All active goals and work logs are recorded here by Mira and her team.
 
 -->
 
+## [2026-04-27] mira — v3.12.2
+- Task: Hero → button scroll transition with shared layout animation (AiRa avatar morphs from hero to corner button on scroll)
+- Files modified:
+  - context/chat-context.tsx — added isPastHero + setIsPastHero to ChatContextValue and ChatProvider state
+  - components/hero.tsx — added layoutId="aira-avatar" motion.div wrapping AiAvatar; intro speech bubble (INTRO_MESSAGE, fires once per session after 1.5s, auto-dismisses after 5s, hasShownIntroRef gate); avatar visibility toggled via isPastHero from context; AnimatePresence + X close button on tooltip; imported useChatContext, AnimatePresence, X, useState
+  - components/chatbot.tsx — AvatarCornerButton reads isPastHero/setIsPastHero from context (removed local state); IntersectionObserver threshold lowered 0.15→0.05; always mounted (removed AnimatePresence gate); State 1 renders placeholder outlined ring with 12% ghost silhouette; State 2/3 renders layoutId="aira-avatar" motion.button with spring stiffness:280 damping:22; tooltip only shown when isPastHero; removed outer AnimatePresence wrapper in Chatbot export
+  - app/layout.tsx — added LayoutGroup id="aira-shared" wrapping {children} + Chatbot so all three layoutId instances share the same group
+  - package.json — 3.12.1 → 3.12.2
+- Status: COMPLETE
+- Next: NONE
+
 ## [2026-04-27] mira — v3.12.1
 - Task: Four focused fixes — tooltip randomization, animation lag, avatar alignment, coursework modals
 - Files modified:

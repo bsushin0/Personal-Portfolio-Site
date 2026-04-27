@@ -11,6 +11,7 @@ import AmbientBackground from "@/components/ambient-background"
 import CursorSystem from "@/components/cursor-system"
 import FloatingOrbs from "@/components/floating-orbs"
 import { ChatProvider } from "@/context/chat-context"
+import { LayoutGroup } from "framer-motion"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -64,8 +65,10 @@ export default function RootLayout({
             <FloatingOrbs />
             <CursorSystem />
             <VisitTracker />
-            {children}
-            <Chatbot />
+            <LayoutGroup id="aira-shared">
+              {children}
+              <Chatbot />
+            </LayoutGroup>
           </ChatProvider>
         </ThemeProvider>
         <SpeedInsights />

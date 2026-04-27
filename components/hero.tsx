@@ -1,12 +1,13 @@
 "use client"
 
-import { motion, type Variants } from "framer-motion"
-import { useEffect, useRef } from "react"
+import { motion, type Variants, AnimatePresence } from "framer-motion"
+import { useEffect, useRef, useState } from "react"
 import { Button } from "@/components/ui/button"
 import AiAvatar from "./ai-avatar"
-import { Github, Linkedin, Download, ArrowDown } from "lucide-react"
+import { Github, Linkedin, Download, ArrowDown, X } from "lucide-react"
 import { useTypewriter } from "@/hooks/use-typewriter"
 import { blurUpVariants } from "@/lib/motion-variants"
+import { useChatContext } from "@/context/chat-context"
 
 const ROLES = [
   "AI Engineer",
@@ -35,11 +36,19 @@ const headlineContainer: Variants = {
   visible: { transition: { staggerChildren: 0.08, delayChildren: 0.1 } },
 }
 
+const INTRO_MESSAGE =
+  "Hey, I'm AiRa — Bandha's AI assistant. Scroll down to explore, or ask me anything."
+
 export default function Hero() {
   const { displayText, cursorVisible } = useTypewriter(ROLES)
+  const { isPastHero, openChat } = useChatContext()
   const avatarWrapperRef = useRef<HTMLDivElement>(null)
   const tiltRafRef = useRef<number | null>(null)
   const mousePosRef = useRef({ x: -9999, y: -9999 })
+  const hasShownIntroRef = useRef(false)
+  const [showIntro, setShowIntro] = useState(false)
+  const introTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const introDismissTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
     if (window.matchMedia("(pointer: coarse)").matches) return
@@ -85,6 +94,20 @@ export default function Hero() {
     return () => {
       window.removeEventListener("mousemove", onMouseMove)
       if (tiltRafRef.current) cancelAnimationFrame(tiltRafRef.current)
+    }
+  }, [])
+
+  // Hero intro tooltip — fires once per session, 1.5s after mount, auto-dismisses after 5s
+  useEffect(() => {
+    if (hasShownIntroRef.current) return
+    introTimerRef.current = setTimeout(() => {
+      hasShownIntroRef.current = true
+      setShowIntro(true)
+      introDismissTimerRef.current = setTimeout(() => setShowIntro(false), 5000)
+    }, 1500)
+    return () => {
+      if (introTimerRef.current) clearTimeout(introTimerRef.current)
+      if (introDismissTimerRef.current) clearTimeout(introDismissTimerRef.current)
     }
   }, [])
 
@@ -184,14 +207,65 @@ export default function Hero() {
           variants={item}
           className="order-1 md:order-2 hidden md:flex justify-center"
         >
-          <div
-            ref={avatarWrapperRef}
-            className="relative flex items-center justify-center rounded-full p-[2px] aspect-square w-56 sm:w-64 md:w-72 lg:w-80 bg-[conic-gradient(from_0deg,rgba(148,163,184,0.35),rgba(148,163,184,0.05),rgba(148,163,184,0.35))] dark:bg-[conic-gradient(from_0deg,rgba(34,211,238,0.25),rgba(34,211,238,0),rgba(34,211,238,0.25))]"
-            style={{ willChange: "transform", transformStyle: "preserve-3d" }}
-          >
-            <div className="flex items-center justify-center rounded-full aspect-square w-full h-full overflow-hidden border border-transparent dark:border-white/10 transition-all duration-500 filter brightness-100 saturate-100 drop-shadow-[0_10px_20px_rgba(0,0,0,0.08)] dark:brightness-110 dark:contrast-105 dark:drop-shadow-[0_0_15px_rgba(99,102,241,0.4)]">
-              <AiAvatar />
-            </div>
+          {/* Intro speech bubble — fires once per session after 1.5s */}
+          <div className="relative flex flex-col items-center">
+            <AnimatePresence>
+              {showIntro && !isPastHero && (
+                <motion.div
+                  key="hero-intro-bubble"
+                  initial={{ opacity: 0, y: 6, scale: 0.94 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 6, scale: 0.94 }}
+                  transition={{ duration: 0.22, ease: [0.23, 1, 0.32, 1] }}
+                  className="mb-4 w-max max-w-[260px] relative"
+                  style={{ willChange: "transform, opacity" }}
+                >
+                  <div className="glass-effect border border-border-subtle rounded-2xl px-4 py-3 shadow-xl">
+                    <button
+                      onClick={() => { setShowIntro(false); if (introDismissTimerRef.current) clearTimeout(introDismissTimerRef.current) }}
+                      className="absolute top-2 right-2 text-foreground/40 hover:text-foreground/70 transition-colors"
+                      aria-label="Dismiss"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                    <button
+                      onClick={() => { setShowIntro(false); openChat() }}
+                      className="text-xs font-medium text-primary hover:text-primary/80 transition-colors flex items-center gap-1 group pr-4 text-left"
+                    >
+                      {INTRO_MESSAGE}
+                      <span className="opacity-0 group-hover:opacity-100 transition-opacity ml-1">→</span>
+                    </button>
+                  </div>
+                  {/* Tail pointing down toward avatar */}
+                  <div
+                    className="absolute left-1/2 -translate-x-1/2 -bottom-[6px] w-0 h-0"
+                    style={{
+                      borderLeft: "6px solid transparent",
+                      borderRight: "6px solid transparent",
+                      borderTop: "6px solid hsl(var(--border-subtle))",
+                    }}
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Shared layout avatar — layoutId="aira-avatar" morphs to corner button on scroll */}
+            <motion.div
+              layoutId="aira-avatar"
+              transition={{ type: "spring", stiffness: 280, damping: 22 }}
+              style={{ willChange: "transform" }}
+              className={isPastHero ? "opacity-0 pointer-events-none" : ""}
+            >
+              <div
+                ref={avatarWrapperRef}
+                className="relative flex items-center justify-center rounded-full p-[2px] aspect-square w-56 sm:w-64 md:w-72 lg:w-80 bg-[conic-gradient(from_0deg,rgba(148,163,184,0.35),rgba(148,163,184,0.05),rgba(148,163,184,0.35))] dark:bg-[conic-gradient(from_0deg,rgba(34,211,238,0.25),rgba(34,211,238,0),rgba(34,211,238,0.25))]"
+                style={{ willChange: "transform", transformStyle: "preserve-3d" }}
+              >
+                <div className="flex items-center justify-center rounded-full aspect-square w-full h-full overflow-hidden border border-transparent dark:border-white/10 transition-all duration-500 filter brightness-100 saturate-100 drop-shadow-[0_10px_20px_rgba(0,0,0,0.08)] dark:brightness-110 dark:contrast-105 dark:drop-shadow-[0_0_15px_rgba(99,102,241,0.4)]">
+                  <AiAvatar />
+                </div>
+              </div>
+            </motion.div>
           </div>
         </motion.div>
       </motion.div>

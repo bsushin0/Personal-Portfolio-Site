@@ -167,8 +167,7 @@ function TooltipBubble({ message, onClose, onAskMe, prefersReduced }: TooltipBub
 
 // ── Unified corner avatar — chat trigger + section guide ──────────────────────
 function AvatarCornerButton() {
-  const { openChat } = useChatContext();
-  const [isPastHero, setIsPastHero] = useState(false);
+  const { openChat, isPastHero, setIsPastHero } = useChatContext();
   const [tooltipMsg, setTooltipMsg] = useState<string | null>(null);
   const [prefersReduced, setPrefersReduced] = useState(false);
 
@@ -182,24 +181,20 @@ function AvatarCornerButton() {
     setPrefersReduced(window.matchMedia("(prefers-reduced-motion: reduce)").matches);
   }, []);
 
-  // Hero intersection — show/hide corner button; fires at most once per crossing
+  // Hero intersection — threshold 0.05: fires when hero is almost gone (5% visible)
   useEffect(() => {
     const heroEl = document.querySelector<HTMLElement>("section:first-of-type");
     if (!heroEl) return;
 
     const obs = new IntersectionObserver(
       ([entry]) => {
-        // Use functional setter to avoid stale closure — no re-render triggered by observer
-        setIsPastHero((prev) => {
-          const next = !entry.isIntersecting;
-          return prev === next ? prev : next; // only update if actually changed
-        });
+        setIsPastHero(!entry.isIntersecting);
       },
-      { threshold: 0.15 }
+      { threshold: 0.05 }
     );
     obs.observe(heroEl);
     return () => obs.disconnect();
-  }, []);
+  }, [setIsPastHero]);
 
   // Show tooltip — ref gate ensures no cascade of re-renders
   const showTooltip = useCallback((msg: string) => {
@@ -250,70 +245,80 @@ function AvatarCornerButton() {
   }, [dismissTooltip, openChat]);
 
   return (
-    <AnimatePresence>
-      {isPastHero && (
-        <motion.div
-          key="avatar-corner"
-          initial={prefersReduced ? { opacity: 0 } : { opacity: 0, scale: 0.5, y: 20 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={prefersReduced ? { opacity: 0 } : { opacity: 0, scale: 0.5, y: 20 }}
-          transition={{ type: "spring", stiffness: 340, damping: 28 }}
-          className="fixed bottom-6 right-6 z-50 flex flex-col items-end"
-          style={{ willChange: "transform, opacity" }}
-        >
-          {/* Tooltip speech bubble */}
-          <AnimatePresence mode="wait">
-            {tooltipMsg && (
-              <TooltipBubble
-                message={tooltipMsg}
-                onClose={dismissTooltip}
-                onAskMe={handleOpenChat}
-                prefersReduced={prefersReduced}
-              />
-            )}
-          </AnimatePresence>
+    // Always mounted so the placeholder ring is visible in hero (State 1) and transitions to filled (State 2)
+    <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end">
+      {/* Tooltip speech bubble — only shown when past hero */}
+      <AnimatePresence mode="wait">
+        {tooltipMsg && isPastHero && (
+          <TooltipBubble
+            message={tooltipMsg}
+            onClose={dismissTooltip}
+            onAskMe={handleOpenChat}
+            prefersReduced={prefersReduced}
+          />
+        )}
+      </AnimatePresence>
 
-          {/* Avatar container — fixed 64×64, all children fill via absolute inset */}
-          <div className="relative w-16 h-16" style={{ willChange: "transform, opacity" }}>
-            {/* Pulse ring — position: absolute; inset: -4px so it wraps concentrically at 72×72 */}
-            <div
-              className="absolute rounded-full pointer-events-none"
-              aria-hidden="true"
-              style={{
-                inset: "-4px",
-                animation: prefersReduced ? "none" : "corner-avatar-pulse 2.8s ease-in-out infinite",
-                willChange: "box-shadow",
-              }}
-            />
+      {/* Avatar container — fixed 64×64 */}
+      <div className="relative w-16 h-16" style={{ willChange: "transform, opacity" }}>
+        {/* Pulse ring — only visible when past hero */}
+        {isPastHero && (
+          <div
+            className="absolute rounded-full pointer-events-none"
+            aria-hidden="true"
+            style={{
+              inset: "-4px",
+              animation: prefersReduced ? "none" : "corner-avatar-pulse 2.8s ease-in-out infinite",
+              willChange: "box-shadow",
+            }}
+          />
+        )}
 
-            {/* The avatar button — layoutId shared with chat header */}
-            <motion.button
-              layoutId="aira-avatar"
-              onClick={handleOpenChat}
-              whileHover={prefersReduced ? {} : { scale: 1.08 }}
-              whileTap={prefersReduced ? {} : { scale: 0.94 }}
-              className={cn(
-                "absolute inset-0 rounded-full overflow-hidden",
-                "border-2 shadow-xl cursor-pointer select-none",
-                "flex items-center justify-center"
-              )}
-              style={{
-                borderColor: "hsl(188 100% 50% / 0.5)",
-                boxShadow: "0 0 20px hsl(188 100% 50% / 0.28), 0 4px 20px rgba(0,0,0,0.22)",
-                background: "linear-gradient(135deg, hsl(188 100% 50% / 0.18), hsl(239 84% 67%), hsl(278 68% 59%))",
-                animation: prefersReduced ? "none" : "corner-avatar-float 3.8s ease-in-out infinite",
-                willChange: "transform",
-              }}
-              aria-label="Open AI chat assistant"
-              initial={false}
-              transition={{ type: "spring", stiffness: 340, damping: 30 }}
-            >
-              <AvatarFace size={52} />
-            </motion.button>
+        {/* State 1 (in hero): empty outlined ring placeholder — no layoutId, just visual hint */}
+        {!isPastHero && (
+          <div
+            className="absolute inset-0 rounded-full"
+            aria-hidden="true"
+            style={{
+              border: "2px solid hsl(188 100% 50% / 0.40)",
+              background: "transparent",
+            }}
+          >
+            {/* Ghost silhouette at 12% opacity — hints at what will land here */}
+            <div className="absolute inset-0 rounded-full overflow-hidden opacity-[0.12]">
+              <AvatarFace size={64} />
+            </div>
           </div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+        )}
+
+        {/* State 2/3 (past hero): filled avatar button with layoutId — springs in from hero */}
+        {isPastHero && (
+          <motion.button
+            layoutId="aira-avatar"
+            onClick={handleOpenChat}
+            whileHover={prefersReduced ? {} : { scale: 1.08 }}
+            whileTap={prefersReduced ? {} : { scale: 0.94 }}
+            className={cn(
+              "absolute inset-0 rounded-full overflow-hidden",
+              "border-2 shadow-xl cursor-pointer select-none",
+              "flex items-center justify-center"
+            )}
+            style={{
+              borderColor: "hsl(188 100% 50% / 0.5)",
+              boxShadow: "0 0 20px hsl(188 100% 50% / 0.28), 0 4px 20px rgba(0,0,0,0.22)",
+              background: "linear-gradient(135deg, hsl(188 100% 50% / 0.18), hsl(239 84% 67%), hsl(278 68% 59%))",
+              animation: prefersReduced ? "none" : "corner-avatar-float 3.8s ease-in-out infinite",
+              willChange: "transform",
+            }}
+            aria-label="Open AI chat assistant"
+            initial={false}
+            transition={{ type: "spring", stiffness: 280, damping: 22 }}
+          >
+            <AvatarFace size={52} />
+          </motion.button>
+        )}
+      </div>
+    </div>
   );
 }
 
@@ -377,11 +382,8 @@ export function Chatbot() {
 
   return (
     <>
-      {/* Unified corner avatar — chat trigger + section guide */}
-      {/* Hidden when chat is open (layoutId handles the morph into the header) */}
-      <AnimatePresence>
-        {!isOpen && <AvatarCornerButton />}
-      </AnimatePresence>
+      {/* Corner avatar — always mounted; hidden when chat is open (layoutId morphs into header) */}
+      {!isOpen && <AvatarCornerButton />}
 
       {/* Chat Panel */}
       <AnimatePresence>
