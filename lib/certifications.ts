@@ -6,6 +6,7 @@ export type Certification = {
   image: string;
   credentialUrl: string;
   description: string;
+  pdfPath?: string;
 };
 
 export const certifications: Certification[] = [
@@ -17,6 +18,7 @@ export const certifications: Certification[] = [
     image: "",
     credentialUrl: "#",
     description: "Active NREMT certification (EMS ID: 3668-4546-3129) with 56+ hours of clinical field experience across hospital ER and pre-hospital EMS environments.",
+    pdfPath: "/certs/nremt.pdf",
   },
   {
     id: 2,
@@ -26,6 +28,7 @@ export const certifications: Certification[] = [
     image: "",
     credentialUrl: "#",
     description: "Certified in student educational record privacy rights, permissible disclosures, and institutional compliance obligations under FERPA.",
+    pdfPath: "/certs/ferpa.pdf",
   },
   {
     id: 3,
@@ -35,6 +38,7 @@ export const certifications: Certification[] = [
     image: "",
     credentialUrl: "#",
     description: "Certified in protected health information (PHI) handling, patient privacy rights, and healthcare data security compliance under HIPAA.",
+    pdfPath: "/certs/hipaa.pdf",
   },
   {
     id: 4,
@@ -44,6 +48,7 @@ export const certifications: Certification[] = [
     image: "",
     credentialUrl: "#",
     description: "Certified in financial data privacy obligations, safeguarding consumer information, and institutional compliance under the Gramm-Leach-Bliley Act.",
+    pdfPath: "/certs/glba.pdf",
   },
   {
     id: 5,
@@ -53,6 +58,7 @@ export const certifications: Certification[] = [
     image: "",
     credentialUrl: "#",
     description: "Demonstrates proficiency in institutional data classification tiers, handling requirements, and secure data management best practices.",
+    pdfPath: "/certs/data-classification.pdf",
   },
   {
     id: 6,
@@ -62,6 +68,7 @@ export const certifications: Certification[] = [
     image: "",
     credentialUrl: "#",
     description: "Certified in proper handling, storage, and protection of Social Security Numbers in compliance with university policy and federal requirements.",
+    pdfPath: "/certs/protecting-ssn.pdf",
   },
   {
     id: 7,
@@ -71,6 +78,7 @@ export const certifications: Certification[] = [
     image: "",
     credentialUrl: "#",
     description: "Foundational course covering Claude's capabilities, core principles, and best practices for effective human-AI collaboration.",
+    pdfPath: "/certs/claude-101.pdf",
   },
   {
     id: 8,
@@ -80,6 +88,7 @@ export const certifications: Certification[] = [
     image: "",
     credentialUrl: "#",
     description: "Introductory course on Claude Code, Anthropic's AI-powered CLI tool for software engineering tasks directly in the terminal.",
+    pdfPath: "/certs/claude-code-101.pdf",
   },
   {
     id: 9,
@@ -89,6 +98,7 @@ export const certifications: Certification[] = [
     image: "",
     credentialUrl: "#",
     description: "Practical introduction to integrating Claude into professional workflows to enhance productivity and decision-making in workplace settings.",
+    pdfPath: "/certs/intro-claude-work.pdf",
   },
   {
     id: 10,
@@ -98,6 +108,7 @@ export const certifications: Certification[] = [
     image: "",
     credentialUrl: "#",
     description: "Hands-on course demonstrating real-world applications of Claude Code for software development, debugging, and agentic coding tasks.",
+    pdfPath: "/certs/claude-code-action.pdf",
   },
   {
     id: 11,
@@ -107,6 +118,7 @@ export const certifications: Certification[] = [
     image: "",
     credentialUrl: "#",
     description: "Comprehensive framework for understanding AI systems, responsible use principles, and foundational concepts for navigating the AI landscape.",
+    pdfPath: "/certs/ai-fluency-framework.pdf",
   },
   {
     id: 12,
@@ -116,6 +128,7 @@ export const certifications: Certification[] = [
     image: "",
     credentialUrl: "#",
     description: "Technical course on integrating the Claude API into applications, covering authentication, prompt engineering, and production deployment patterns.",
+    pdfPath: "/certs/claude-api.pdf",
   },
   {
     id: 13,
@@ -125,6 +138,7 @@ export const certifications: Certification[] = [
     image: "",
     credentialUrl: "#",
     description: "Introduction to MCP, an open standard for connecting AI models to external tools, data sources, and services in a standardized way.",
+    pdfPath: "/certs/intro-mcp.pdf",
   },
   {
     id: 14,
@@ -134,6 +148,7 @@ export const certifications: Certification[] = [
     image: "",
     credentialUrl: "#",
     description: "Specialized course equipping educators with AI literacy skills, pedagogical strategies, and frameworks for responsibly incorporating AI into educational environments.",
+    pdfPath: "/certs/ai-fluency-educators.pdf",
   },
   {
     id: 15,
@@ -143,6 +158,7 @@ export const certifications: Certification[] = [
     image: "",
     credentialUrl: "#",
     description: "Course designed to help students develop AI literacy, critical thinking around AI outputs, and skills for effective academic use of AI tools.",
+    pdfPath: "/certs/ai-fluency-students.pdf",
   },
   {
     id: 16,
@@ -152,6 +168,7 @@ export const certifications: Certification[] = [
     image: "",
     credentialUrl: "#",
     description: "Technical course on deploying and scaling Claude models via Google Cloud's Vertex AI platform for enterprise-grade AI applications.",
+    pdfPath: "/certs/claude-vertex-ai.pdf",
   },
   {
     id: 17,
@@ -161,6 +178,7 @@ export const certifications: Certification[] = [
     image: "",
     credentialUrl: "#",
     description: "Advanced course on instructional design and curriculum development for teaching AI fluency concepts to diverse learner populations.",
+    pdfPath: "/certs/teaching-ai-fluency.pdf",
   },
   {
     id: 18,
@@ -170,6 +188,7 @@ export const certifications: Certification[] = [
     image: "",
     credentialUrl: "#",
     description: "Tailored AI fluency training for nonprofit professionals, covering mission-aligned AI use, resource considerations, and responsible adoption strategies.",
+    pdfPath: "/certs/ai-fluency-nonprofits.pdf",
   },
   {
     id: 19,
@@ -179,6 +198,7 @@ export const certifications: Certification[] = [
     image: "",
     credentialUrl: "#",
     description: "Introduction to building and deploying Claude Agent Skills — reusable, composable capabilities that extend Claude's functionality in agentic workflows.",
+    pdfPath: "/certs/intro-agent-skills.pdf",
   },
   {
     id: 20,
@@ -188,5 +208,6 @@ export const certifications: Certification[] = [
     image: "",
     credentialUrl: "#",
     description: "Course covering the design and orchestration of subagents within multi-agent systems, enabling complex task delegation and parallel AI workflows.",
+    pdfPath: "/certs/intro-subagents.pdf",
   },
 ];

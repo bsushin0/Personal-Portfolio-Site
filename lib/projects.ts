@@ -11,15 +11,6 @@ export type Project = {
 
 export const projects: Project[] = [
   {
-    id: 1,
-    title: "Wine Varietals Yield Forecasting",
-    description:
-      "Delivered a machine learning solution providing 92% accurate wine sales forecasts for BASF. Built automated MLOps pipeline that reduced model update time from 2-3 days to 1-2 hours, enabling data-driven inventory and marketing decisions.",
-    tags: ["Python", "TensorFlow", "Keras", "MLOps", "Time-Series Forecasting"],
-    image: "/project-banners/wine-forecasting.svg",
-    status: "not-available",
-  },
-  {
     id: 2,
     title: "Project AiRa",
     description:
@@ -27,6 +18,15 @@ export const projects: Project[] = [
     tags: ["Python", "RAG", "Vector Search", "Embeddings", "LLM", "AI"],
     image: "/project-banners/project-aira.svg",
     githubUrl: "https://github.com/bsushin0/Project-AiRa",
+  },
+  {
+    id: 1,
+    title: "Wine Varietals Yield Forecasting",
+    description:
+      "Delivered a machine learning solution providing 92% accurate wine sales forecasts for BASF. Built automated MLOps pipeline that reduced model update time from 2-3 days to 1-2 hours, enabling data-driven inventory and marketing decisions.",
+    tags: ["Python", "TensorFlow", "Keras", "MLOps", "Time-Series Forecasting"],
+    image: "/project-banners/wine-forecasting.svg",
+    status: "not-available",
   },
   {
     id: 3,
