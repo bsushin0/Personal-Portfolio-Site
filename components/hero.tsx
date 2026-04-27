@@ -112,7 +112,7 @@ export default function Hero() {
   }, [])
 
   return (
-    <section className="py-20 md:py-36 flex flex-col items-center">
+    <section className="pt-6 pb-20 md:pt-8 md:pb-36 flex flex-col items-center">
       <motion.div
         className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 items-center w-full"
         initial="hidden"
