@@ -7,6 +7,7 @@ export type Project = {
   githubUrl?: string;
   liveUrl?: string;
   status?: "available" | "coming-soon" | "not-available";
+  isPrivate?: boolean;
 };
 
 export const projects: Project[] = [
@@ -17,7 +18,7 @@ export const projects: Project[] = [
       "Architected and deployed a production-grade Retrieval-Augmented Generation (RAG) system with in-house embedding generation and vector search capabilities. Implemented semantic similarity scoring with configurable thresholds, optimized document chunking strategies, and integrated with LLM backends for fact-grounded responses while preventing hallucination.",
     tags: ["Python", "RAG", "Vector Search", "Embeddings", "LLM", "AI"],
     image: "/project-banners/project-aira.svg",
-    githubUrl: "https://github.com/bsushin0/Project-AiRa",
+    isPrivate: true,
   },
   {
     id: 1,

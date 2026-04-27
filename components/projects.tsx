@@ -5,7 +5,7 @@ import { motion, type Variants } from "framer-motion"
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Github, ArrowUpRight } from "lucide-react"
+import { Github, ArrowUpRight, Lock } from "lucide-react"
 import { projects } from "@/lib/projects"
 import { headingVariants, staggerContainerSlow as containerVariants } from "@/lib/motion-variants"
 import TiltCard from "@/components/tilt-card"
@@ -78,7 +78,15 @@ export default function Projects() {
                   </span>
                   <span className="text-5xl font-bold text-foreground/[0.05] select-none leading-none">01</span>
                 </div>
-                <h3 className="text-2xl font-bold text-foreground tracking-tight mb-3">{featured.title}</h3>
+                <div className="flex items-center gap-2 mb-3">
+                  <h3 className="text-2xl font-bold text-foreground tracking-tight">{featured.title}</h3>
+                  {featured.isPrivate && (
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold tracking-wide uppercase bg-amber-500/15 text-amber-400 border border-amber-500/30">
+                      <Lock className="h-2.5 w-2.5" />
+                      Private
+                    </span>
+                  )}
+                </div>
                 <p className="text-foreground/60 mb-5 leading-relaxed flex-1 text-[0.95rem]">{featured.description}</p>
                 <div className="flex flex-wrap gap-1.5 mb-5">
                   {featured.tags.map((tag) => (
@@ -160,7 +168,15 @@ export default function Projects() {
 
                   <CardHeader className="pb-2">
                     <div className="flex items-start justify-between gap-2">
-                      <h3 className="text-lg font-bold text-foreground tracking-tight">{project.title}</h3>
+                      <div className="flex items-center gap-2">
+                        <h3 className="text-lg font-bold text-foreground tracking-tight">{project.title}</h3>
+                        {project.isPrivate && (
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold tracking-wide uppercase bg-amber-500/15 text-amber-400 border border-amber-500/30">
+                            <Lock className="h-2.5 w-2.5" />
+                            Private
+                          </span>
+                        )}
+                      </div>
                       <span className="text-3xl font-bold text-foreground/[0.06] select-none leading-none shrink-0">
                         0{idx + 2}
                       </span>
