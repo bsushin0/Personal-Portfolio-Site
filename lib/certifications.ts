@@ -21,6 +21,16 @@ export const certifications: Certification[] = [
     pdfPath: "/certs/nremt.pdf",
   },
   {
+    id: 21,
+    title: "CPR / AED with Basic Life Support (BLS)",
+    issuer: "American Heart Association",
+    date: "Active",
+    image: "",
+    credentialUrl: "#",
+    description: "American Heart Association certification in cardiopulmonary resuscitation (CPR), AED use, and Basic Life Support — maintained as part of active NREMT credentials.",
+    pdfPath: "/certs/aha-cpr-bls.pdf",
+  },
+  {
     id: 2,
     title: "FERPA — Family Educational Rights and Privacy Act",
     issuer: "Purdue University",
