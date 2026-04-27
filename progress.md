@@ -15,6 +15,18 @@ All active goals and work logs are recorded here by Mira and her team.
 
 -->
 
+## [2026-04-27] mira — v3.12.0
+- Task: Avatar UX overhaul — eliminate dual-avatar, unified single avatar system
+- Files modified:
+  - components/chatbot.tsx — added AvatarCornerButton with layoutId="aira-avatar" shared to chat header; IntersectionObserver hero detection; section-aware tooltips with CTA copy (4s auto-dismiss, X close, click-to-open-chat); prefers-reduced-motion respected; corner-avatar-float + corner-avatar-pulse CSS animations; no RAF setState on scroll/mouse
+  - app/layout.tsx — removed AvatarGuide import and mount
+  - app/globals.css — renamed guide keyframes to corner-avatar-float / corner-avatar-pulse
+  - package.json (3.11.2 → 3.12.0)
+- Files deleted:
+  - components/avatar-guide.tsx
+- Status: COMPLETE
+- Next: NONE
+
 ## [2026-04-27] mira — v3.11.0
 - Task: Three interactivity features — background personality animations, avatar guide bubble, avatar-to-chat morph
 - Files modified:
