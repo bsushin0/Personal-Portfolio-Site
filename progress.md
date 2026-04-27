@@ -15,6 +15,20 @@ All active goals and work logs are recorded here by Mira and her team.
 
 -->
 
+## [2026-04-27] mira — v3.11.0
+- Task: Three interactivity features — background personality animations, avatar guide bubble, avatar-to-chat morph
+- Files modified:
+  - components/ambient-background.tsx — personality animation system (shooting star, orb pulse, constellation, ripple, color shift) on 8–20s random timer; all effects respect prefers-reduced-motion
+  - components/chatbot.tsx — rewired to ChatContext; Framer Motion layoutId avatar morphs between trigger button and chat header; AvatarFace SVG replaces Sparkles icon in all avatar positions (trigger, header, message rows)
+  - app/layout.tsx — added ChatProvider wrapper, mounted AvatarGuide
+  - app/globals.css — added avatar-guide-float and guide-pulse-ring keyframes
+  - package.json (3.10.1 → 3.11.0)
+- Files created:
+  - context/chat-context.tsx — shared ChatProvider + useChatContext hook (isOpen, openChat, closeChat, toggleChat)
+  - components/avatar-guide.tsx — floating avatar bubble that appears after hero scroll-past; IntersectionObserver per section fires contextual tooltips (3s auto-dismiss); click scrolls to top; chat sub-button opens chat
+- Status: COMPLETE
+- Next: NONE
+
 ## [2026-04-27] mira
 - Task: v3.9.0 — five-feature release: featured project reorder, site-wide cursor/tilt animations, skills popups, cert PDF viewer, experience card collapse+modal
 - Files modified:

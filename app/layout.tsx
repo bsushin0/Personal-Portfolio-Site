@@ -10,6 +10,8 @@ import { VisitTracker } from "@/components/visit-tracker"
 import AmbientBackground from "@/components/ambient-background"
 import CursorSystem from "@/components/cursor-system"
 import FloatingOrbs from "@/components/floating-orbs"
+import AvatarGuide from "@/components/avatar-guide"
+import { ChatProvider } from "@/context/chat-context"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -58,12 +60,15 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
-          <AmbientBackground />
-          <FloatingOrbs />
-          <CursorSystem />
-          <VisitTracker />
-          {children}
-          <Chatbot />
+          <ChatProvider>
+            <AmbientBackground />
+            <FloatingOrbs />
+            <CursorSystem />
+            <VisitTracker />
+            {children}
+            <AvatarGuide />
+            <Chatbot />
+          </ChatProvider>
         </ThemeProvider>
         <SpeedInsights />
         <Analytics />
