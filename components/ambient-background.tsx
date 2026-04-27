@@ -10,6 +10,14 @@ interface Particle {
   radius: number
   opacity: number
   hue: number
+  // per-particle noise parameters for organic drift
+  noiseFreqX: number
+  noiseFreqY: number
+  noisePhaseX: number
+  noisePhaseY: number
+  // soft wrap: delay counter before reversing when past edge
+  edgeDelayX: number
+  edgeDelayY: number
 }
 
 interface Orb {
@@ -24,6 +32,14 @@ interface Orb {
   vy: number
   phase: number
   phaseSpeed: number
+  // second independent noise axis for organic path variety
+  noiseFreqX: number
+  noiseFreqY: number
+  noisePhaseX: number
+  noisePhaseY: number
+  // soft wrap state
+  edgeDelayX: number
+  edgeDelayY: number
 }
 
 // ── Personality animation types ─────────────────────────────────────────────
@@ -105,6 +121,13 @@ export default function AmbientBackground() {
           ? Math.random() * 0.45 + 0.45
           : Math.random() * 0.35 + 0.25,
         hue: hues[Math.floor(Math.random() * hues.length)],
+        // randomised noise parameters so no two particles share a path
+        noiseFreqX: 0.008 + Math.random() * 0.018,
+        noiseFreqY: 0.006 + Math.random() * 0.016,
+        noisePhaseX: Math.random() * Math.PI * 2,
+        noisePhaseY: Math.random() * Math.PI * 2,
+        edgeDelayX: 0,
+        edgeDelayY: 0,
       }))
 
     // Soft drifting background orbs for depth
@@ -121,6 +144,13 @@ export default function AmbientBackground() {
         vy: (Math.random() - 0.5) * 0.08,
         phase: Math.random() * Math.PI * 2,
         phaseSpeed: 0.004 + Math.random() * 0.004,
+        // independent noise axes per orb
+        noiseFreqX: 0.003 + Math.random() * 0.005,
+        noiseFreqY: 0.002 + Math.random() * 0.004,
+        noisePhaseX: Math.random() * Math.PI * 2,
+        noisePhaseY: Math.random() * Math.PI * 2,
+        edgeDelayX: 0,
+        edgeDelayY: 0,
       }))
 
     let particles = makeParticles(particleCount)
@@ -380,17 +410,60 @@ export default function AmbientBackground() {
       // Color shift wash (behind everything)
       drawColorShift()
 
+      // ── Soft edge return helper ──────────────────────────────────────────
+      // Once an element drifts ~10% past the viewport edge, we count down a
+      // short delay (≈60 frames ≈ 1 s) then apply an exponentially eased
+      // steering force that pushes it back — no instant snap.
+      const EDGE_MARGIN = 0.10   // 10% of dimension past the viewport
+      const EDGE_DELAY  = 60     // frames to wait before steering begins
+      const STEER_STR   = 0.006  // steering acceleration (gentle)
+
+      const softWrapX = (el: { x: number; vx: number; edgeDelayX: number }, dim: number) => {
+        const margin = dim * EDGE_MARGIN
+        const past = el.x < -margin ? -1 : el.x > dim + margin ? 1 : 0
+        if (past !== 0) {
+          el.edgeDelayX++
+          if (el.edgeDelayX > EDGE_DELAY) {
+            // eased pull back: stronger the further out it is
+            const overshoot = past === -1 ? Math.abs(el.x + margin) : Math.abs(el.x - dim - margin)
+            const ease = Math.min(1, overshoot / (dim * 0.15))
+            el.vx -= past * STEER_STR * (1 + ease * 2)
+          }
+        } else {
+          el.edgeDelayX = 0
+        }
+      }
+
+      const softWrapY = (el: { y: number; vy: number; edgeDelayY: number }, dim: number) => {
+        const margin = dim * EDGE_MARGIN
+        const past = el.y < -margin ? -1 : el.y > dim + margin ? 1 : 0
+        if (past !== 0) {
+          el.edgeDelayY++
+          if (el.edgeDelayY > EDGE_DELAY) {
+            const overshoot = past === -1 ? Math.abs(el.y + margin) : Math.abs(el.y - dim - margin)
+            const ease = Math.min(1, overshoot / (dim * 0.15))
+            el.vy -= past * STEER_STR * (1 + ease * 2)
+          }
+        } else {
+          el.edgeDelayY = 0
+        }
+      }
+
       // Draw soft orbs first (background layer)
       for (const orb of orbs) {
         orb.phase += orb.phaseSpeed
-        orb.x += orb.vx + Math.sin(orb.phase * 0.7) * 0.18
-        orb.y += orb.vy + Math.cos(orb.phase * 0.5) * 0.12
+        // Two independent sin/cos waves per orb give a continuously varying,
+        // non-repeating Lissajous-style path instead of a single sine loop.
+        orb.noisePhaseX += orb.noiseFreqX
+        orb.noisePhaseY += orb.noiseFreqY
+        const noiseX = Math.sin(orb.noisePhaseX) * 0.22 + Math.cos(orb.noisePhaseX * 0.61) * 0.10
+        const noiseY = Math.cos(orb.noisePhaseY) * 0.15 + Math.sin(orb.noisePhaseY * 0.73) * 0.08
+        orb.x += orb.vx + noiseX
+        orb.y += orb.vy + noiseY
 
-        // Soft boundary bounce
-        if (orb.x < -orb.radius) orb.x = width + orb.radius
-        if (orb.x > width + orb.radius) orb.x = -orb.radius
-        if (orb.y < -orb.radius) orb.y = height + orb.radius
-        if (orb.y > height + orb.radius) orb.y = -orb.radius
+        // Soft return instead of instant teleport
+        softWrapX(orb, width)
+        softWrapY(orb, height)
 
         const grad = ctx.createRadialGradient(orb.x, orb.y, 0, orb.x, orb.y, orb.radius)
         const pulsedOpacity = orb.opacity * (0.85 + 0.15 * Math.sin(orb.phase))
@@ -420,6 +493,13 @@ export default function AmbientBackground() {
           p.vy += (dy / dist) * force
         }
 
+        // Per-particle organic noise: two sin waves with unique freq/phase
+        // so each particle traces its own continuously varying path.
+        p.noisePhaseX += p.noiseFreqX
+        p.noisePhaseY += p.noiseFreqY
+        const pNoiseX = Math.sin(p.noisePhaseX) * 0.08 + Math.cos(p.noisePhaseX * 0.57) * 0.04
+        const pNoiseY = Math.cos(p.noisePhaseY) * 0.06 + Math.sin(p.noisePhaseY * 0.71) * 0.03
+
         p.vx *= 0.983
         p.vy *= 0.983
 
@@ -429,13 +509,12 @@ export default function AmbientBackground() {
           p.vy = (p.vy / speed) * 2.2
         }
 
-        p.x += p.vx
-        p.y += p.vy
+        p.x += p.vx + pNoiseX
+        p.y += p.vy + pNoiseY
 
-        if (p.x < 0) p.x = width
-        if (p.x > width) p.x = 0
-        if (p.y < 0) p.y = height
-        if (p.y > height) p.y = 0
+        // Soft edge return instead of instant teleport
+        softWrapX(p, width)
+        softWrapY(p, height)
 
         // Subtle opacity pulse per particle
         const pulsedOpacity = p.opacity * (0.8 + 0.2 * Math.sin(frame * 0.02 + i))

@@ -105,29 +105,54 @@ export default function FloatingOrbs() {
         }
 
         @keyframes orb-drift-a {
-          0%, 100% { transform: translate(0, 0) scale(1); }
-          33% { transform: translate(30px, 20px) scale(1.04); }
-          66% { transform: translate(-15px, 35px) scale(0.97); }
+          0%   { transform: translate(0px,   0px)  scale(1);    }
+          12%  { transform: translate(14px,  8px)  scale(1.02); }
+          27%  { transform: translate(30px,  22px) scale(1.04); }
+          41%  { transform: translate(18px,  38px) scale(1.02); }
+          55%  { transform: translate(-8px,  30px) scale(0.98); }
+          70%  { transform: translate(-18px, 12px) scale(0.96); }
+          84%  { transform: translate(-6px, -10px) scale(0.99); }
+          100% { transform: translate(0px,   0px)  scale(1);    }
         }
         @keyframes orb-drift-b {
-          0%, 100% { transform: translate(0, 0) scale(1); }
-          40% { transform: translate(-25px, 30px) scale(1.06); }
-          70% { transform: translate(10px, -20px) scale(0.96); }
+          0%   { transform: translate(0px,   0px)  scale(1);    }
+          15%  { transform: translate(-10px, 14px) scale(1.02); }
+          32%  { transform: translate(-26px, 28px) scale(1.05); }
+          48%  { transform: translate(-14px, 10px) scale(1.03); }
+          60%  { transform: translate(8px,  -12px) scale(0.98); }
+          74%  { transform: translate(16px, -22px) scale(0.95); }
+          88%  { transform: translate(6px,  -8px)  scale(0.99); }
+          100% { transform: translate(0px,   0px)  scale(1);    }
         }
         @keyframes orb-drift-c {
-          0%, 100% { transform: translate(0, 0) scale(1); }
-          30% { transform: translate(20px, -30px) scale(1.05); }
-          65% { transform: translate(-10px, 20px) scale(0.98); }
+          0%   { transform: translate(0px,   0px)  scale(1);    }
+          10%  { transform: translate(8px,  -14px) scale(1.02); }
+          25%  { transform: translate(22px, -32px) scale(1.05); }
+          42%  { transform: translate(30px, -18px) scale(1.03); }
+          57%  { transform: translate(12px,  6px)  scale(0.99); }
+          71%  { transform: translate(-12px, 22px) scale(0.97); }
+          86%  { transform: translate(-6px,  10px) scale(0.99); }
+          100% { transform: translate(0px,   0px)  scale(1);    }
         }
         @keyframes orb-drift-d {
-          0%, 100% { transform: translate(0, 0) scale(1); }
-          45% { transform: translate(-30px, -15px) scale(1.03); }
-          75% { transform: translate(15px, 25px) scale(0.97); }
+          0%   { transform: translate(0px,   0px)  scale(1);    }
+          14%  { transform: translate(-12px, -6px) scale(1.01); }
+          29%  { transform: translate(-28px,-16px) scale(1.03); }
+          44%  { transform: translate(-22px,  4px) scale(1.02); }
+          58%  { transform: translate(-8px,  18px) scale(0.99); }
+          73%  { transform: translate(12px,  26px) scale(0.97); }
+          87%  { transform: translate(8px,   10px) scale(0.99); }
+          100% { transform: translate(0px,   0px)  scale(1);    }
         }
         @keyframes orb-drift-e {
-          0%, 100% { transform: translate(0, 0) scale(1); }
-          35% { transform: translate(-20px, -25px) scale(1.05); }
-          68% { transform: translate(25px, 10px) scale(0.96); }
+          0%   { transform: translate(0px,   0px)  scale(1);    }
+          11%  { transform: translate(-8px, -10px) scale(1.01); }
+          26%  { transform: translate(-22px,-26px) scale(1.04); }
+          40%  { transform: translate(-10px,-16px) scale(1.02); }
+          54%  { transform: translate(10px, -4px)  scale(1.00); }
+          68%  { transform: translate(24px,  10px) scale(0.96); }
+          83%  { transform: translate(12px,   6px) scale(0.98); }
+          100% { transform: translate(0px,   0px)  scale(1);    }
         }
         @media (prefers-reduced-motion: reduce) {
           [class*="floating-orb-"] { animation: none !important; }
