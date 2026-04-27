@@ -15,6 +15,15 @@ All active goals and work logs are recorded here by Mira and her team.
 
 -->
 
+## [2026-04-27] mira — v3.12.1
+- Task: Four focused fixes — tooltip randomization, animation lag, avatar alignment, coursework modals
+- Files modified:
+  - components/chatbot.tsx — replaced single-message SECTION_TIPS with per-section message pools (3–4 messages each); pickTooltip() selects randomly with no-consecutive-repeat via lastUsedIndex ref; isAnimatingRef gate debounces rapid IntersectionObserver crossings (600ms lockout); tooltip simplified to single CTA string (no quip/cta split); avatar container refactored to position:relative w-16 h-16 fixed container with pulse ring at inset:-4px and avatar button at inset:0 (concentric circles fix); added will-change:transform,opacity to outer motion.div, tooltip, and pulse ring; AnimatePresence mode="wait" on tooltip to prevent double-fire re-renders
+  - components/education.tsx — added courseDetails record with first-person factual narratives for all 12 Purdue courses + 10 Anthropic Academy courses; CourseBadge component with cursor-pointer + hover highlight + keyboard support; CourseModal using Radix Dialog (same pattern as skills.tsx); section subtitle updated to hint at click affordance
+  - package.json — 3.12.0 → 3.12.1
+- Status: COMPLETE
+- Next: NONE
+
 ## [2026-04-27] mira — v3.12.0
 - Task: Avatar UX overhaul — eliminate dual-avatar, unified single avatar system
 - Files modified:

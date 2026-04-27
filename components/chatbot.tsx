@@ -8,46 +8,74 @@ import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { useChatContext } from '@/context/chat-context';
 
-// ── Section tooltip copy — personal, CTA-forward ─────────────────────────────
-type SectionTooltip = {
-  quip: string;
-  cta: string;
+// ── Section tooltip pools — randomized, no consecutive repeat ─────────────────
+type SectionTooltipPool = string[];
+
+const SECTION_POOLS: Record<string, SectionTooltipPool> = {
+  about: [
+    "Ask me more about this",
+    "Want to know what drives me?",
+    "There's a story behind each of these",
+    "I'm happy to go deeper on any of this",
+  ],
+  interests: [
+    "Ask me more about this",
+    "Want to know what drives me?",
+    "There's a story behind each of these",
+    "I'm happy to go deeper on any of this",
+  ],
+  experience: [
+    "Want to know more about this experience?",
+    "Ask me about my time here",
+    "I can walk you through what I actually did",
+    "There's more behind this role — ask me",
+  ],
+  projects: [
+    "Want me to walk you through Project AiRa?",
+    "Ask me anything about these projects",
+    "Curious what tech stack I used here?",
+    "I built these — ask me how",
+  ],
+  education: [
+    "Want to know more about my academic path?",
+    "Ask me about my coursework",
+    "There's more to this than grades — ask me",
+  ],
+  skills: [
+    "Curious how I use any of these?",
+    "Ask me about any of these skills",
+    "Some of these have interesting stories behind them",
+    "Want to know which ones I use most?",
+  ],
+  certifications: [
+    "Ask me about any of these certs",
+    "Want to know why I got into this?",
+    "Some of these changed how I think about AI",
+    "Ask me which ones I'd recommend",
+  ],
+  contact: [
+    "Ask me anything",
+    "I'm happy to answer any questions",
+    "Let's talk — ask me something",
+  ],
 };
 
-const SECTION_TIPS: Record<string, SectionTooltip> = {
-  about: {
-    quip: "This is where it all started.",
-    cta: "Ask me more about this",
-  },
-  interests: {
-    quip: "These are the things that actually light me up.",
-    cta: "Want to know what drives me?",
-  },
-  experience: {
-    quip: "Earned every step of this.",
-    cta: "Want to know more about this experience?",
-  },
-  projects: {
-    quip: "Here's what I've actually shipped.",
-    cta: "Want me to walk you through Project AiRa?",
-  },
-  education: {
-    quip: "Purdue built the foundation.",
-    cta: "Want to know more about my academic background?",
-  },
-  skills: {
-    quip: "What I build with — and what I'm still learning.",
-    cta: "Curious how I use any of these?",
-  },
-  certifications: {
-    quip: "Proof of work, not just talk.",
-    cta: "Ask me about any of these certs",
-  },
-  contact: {
-    quip: "Let's build something together.",
-    cta: "Ask me anything",
-  },
-};
+// Per-section last-used index tracking (persists across section re-entries in session)
+const lastUsedIndex: Record<string, number> = {};
+
+function pickTooltip(sectionId: string): string {
+  const pool = SECTION_POOLS[sectionId];
+  if (!pool || pool.length === 0) return "Ask me anything";
+  if (pool.length === 1) return pool[0];
+
+  let idx: number;
+  do {
+    idx = Math.floor(Math.random() * pool.length);
+  } while (idx === lastUsedIndex[sectionId]);
+
+  lastUsedIndex[sectionId] = idx;
+  return pool[idx];
+}
 
 // ── Mini avatar face SVG ──────────────────────────────────────────────────────
 function AvatarFace({ size = 32 }: { size?: number }) {
@@ -88,22 +116,22 @@ function AvatarFace({ size = 32 }: { size?: number }) {
 
 // ── Speech bubble tooltip ─────────────────────────────────────────────────────
 interface TooltipBubbleProps {
-  tip: SectionTooltip;
+  message: string;
   onClose: () => void;
   onAskMe: () => void;
   prefersReduced: boolean;
 }
 
-function TooltipBubble({ tip, onClose, onAskMe, prefersReduced }: TooltipBubbleProps) {
+function TooltipBubble({ message, onClose, onAskMe, prefersReduced }: TooltipBubbleProps) {
   return (
     <motion.div
       key="avatar-tooltip"
       initial={prefersReduced ? { opacity: 0 } : { opacity: 0, y: 8, scale: 0.92 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={prefersReduced ? { opacity: 0 } : { opacity: 0, y: 8, scale: 0.92 }}
-      transition={{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }}
+      transition={{ duration: 0.18, ease: [0.23, 1, 0.32, 1] }}
       className="absolute bottom-full mb-3 right-0 w-max max-w-[220px]"
-      style={{ willChange: "transform" }}
+      style={{ willChange: "transform, opacity" }}
     >
       <div className="glass-effect border border-border-subtle rounded-2xl px-3.5 py-3 shadow-xl">
         {/* Close button */}
@@ -115,13 +143,11 @@ function TooltipBubble({ tip, onClose, onAskMe, prefersReduced }: TooltipBubbleP
           <X className="w-3 h-3" />
         </button>
 
-        <p className="text-xs text-foreground/70 leading-snug pr-4 mb-2">{tip.quip}</p>
-
         <button
           onClick={onAskMe}
-          className="text-xs font-medium text-primary hover:text-primary/80 transition-colors flex items-center gap-1 group"
+          className="text-xs font-medium text-primary hover:text-primary/80 transition-colors flex items-center gap-1 group pr-4"
         >
-          {tip.cta}
+          {message}
           <span className="opacity-0 group-hover:opacity-100 transition-opacity">→</span>
         </button>
       </div>
@@ -140,60 +166,74 @@ function TooltipBubble({ tip, onClose, onAskMe, prefersReduced }: TooltipBubbleP
 }
 
 // ── Unified corner avatar — chat trigger + section guide ──────────────────────
-// Visible only when user has scrolled past the hero section.
-// Uses layoutId="aira-avatar" so it morphs into the chat header on open.
 function AvatarCornerButton() {
   const { openChat } = useChatContext();
   const [isPastHero, setIsPastHero] = useState(false);
-  const [tooltip, setTooltip] = useState<SectionTooltip | null>(null);
+  const [tooltipMsg, setTooltipMsg] = useState<string | null>(null);
   const [prefersReduced, setPrefersReduced] = useState(false);
+
+  // Refs — avoid triggering re-renders on every observer callback
   const tooltipTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const lastSectionRef = useRef<string>("");
+  const isAnimatingRef = useRef(false); // gate: debounce rapid section crossings
 
   // Detect reduced motion once on mount
   useEffect(() => {
     setPrefersReduced(window.matchMedia("(prefers-reduced-motion: reduce)").matches);
   }, []);
 
-  // Hero intersection — show/hide corner button
+  // Hero intersection — show/hide corner button; fires at most once per crossing
   useEffect(() => {
     const heroEl = document.querySelector<HTMLElement>("section:first-of-type");
     if (!heroEl) return;
 
     const obs = new IntersectionObserver(
-      ([entry]) => { setIsPastHero(!entry.isIntersecting); },
+      ([entry]) => {
+        // Use functional setter to avoid stale closure — no re-render triggered by observer
+        setIsPastHero((prev) => {
+          const next = !entry.isIntersecting;
+          return prev === next ? prev : next; // only update if actually changed
+        });
+      },
       { threshold: 0.15 }
     );
     obs.observe(heroEl);
     return () => obs.disconnect();
   }, []);
 
-  // Show tooltip, auto-dismiss after 4s
-  const showTooltip = useCallback((tip: SectionTooltip) => {
+  // Show tooltip — ref gate ensures no cascade of re-renders
+  const showTooltip = useCallback((msg: string) => {
     if (tooltipTimerRef.current) clearTimeout(tooltipTimerRef.current);
-    setTooltip(tip);
-    tooltipTimerRef.current = setTimeout(() => setTooltip(null), 4000);
+    setTooltipMsg(msg);
+    tooltipTimerRef.current = setTimeout(() => setTooltipMsg(null), 4500);
   }, []);
 
   const dismissTooltip = useCallback(() => {
     if (tooltipTimerRef.current) clearTimeout(tooltipTimerRef.current);
-    setTooltip(null);
+    setTooltipMsg(null);
   }, []);
 
-  // Section intersection observers — fire tooltip as each section enters view
+  // Section observers — fire tooltip only once per section, debounced via isAnimatingRef
   useEffect(() => {
     if (!isPastHero) return;
     const observers: IntersectionObserver[] = [];
 
-    Object.keys(SECTION_TIPS).forEach((id) => {
+    Object.keys(SECTION_POOLS).forEach((id) => {
       const el = document.getElementById(id);
       if (!el) return;
+
       const obs = new IntersectionObserver(
         ([entry]) => {
-          if (entry.isIntersecting && lastSectionRef.current !== id) {
-            lastSectionRef.current = id;
-            showTooltip(SECTION_TIPS[id]);
-          }
+          if (!entry.isIntersecting) return;
+          if (lastSectionRef.current === id) return; // same section, skip
+          if (isAnimatingRef.current) return; // debounce rapid crossings
+
+          isAnimatingRef.current = true;
+          lastSectionRef.current = id;
+          showTooltip(pickTooltip(id));
+
+          // Unlock after 600ms — prevents firing for every micro-crossing during fast scroll
+          setTimeout(() => { isAnimatingRef.current = false; }, 600);
         },
         { threshold: 0.35 }
       );
@@ -219,13 +259,13 @@ function AvatarCornerButton() {
           exit={prefersReduced ? { opacity: 0 } : { opacity: 0, scale: 0.5, y: 20 }}
           transition={{ type: "spring", stiffness: 340, damping: 28 }}
           className="fixed bottom-6 right-6 z-50 flex flex-col items-end"
-          style={{ willChange: "transform" }}
+          style={{ willChange: "transform, opacity" }}
         >
           {/* Tooltip speech bubble */}
-          <AnimatePresence>
-            {tooltip && (
+          <AnimatePresence mode="wait">
+            {tooltipMsg && (
               <TooltipBubble
-                tip={tooltip}
+                message={tooltipMsg}
                 onClose={dismissTooltip}
                 onAskMe={handleOpenChat}
                 prefersReduced={prefersReduced}
@@ -233,39 +273,44 @@ function AvatarCornerButton() {
             )}
           </AnimatePresence>
 
-          {/* Pulse ring — CSS-driven, no RAF needed */}
-          <div
-            className="absolute inset-0 rounded-full pointer-events-none"
-            aria-hidden="true"
-            style={{
-              animation: prefersReduced ? "none" : "corner-avatar-pulse 2.8s ease-in-out infinite",
-            }}
-          />
+          {/* Avatar container — fixed 64×64, all children fill via absolute inset */}
+          <div className="relative w-16 h-16" style={{ willChange: "transform, opacity" }}>
+            {/* Pulse ring — position: absolute; inset: -4px so it wraps concentrically at 72×72 */}
+            <div
+              className="absolute rounded-full pointer-events-none"
+              aria-hidden="true"
+              style={{
+                inset: "-4px",
+                animation: prefersReduced ? "none" : "corner-avatar-pulse 2.8s ease-in-out infinite",
+                willChange: "box-shadow",
+              }}
+            />
 
-          {/* The avatar button — layoutId shared with chat header */}
-          <motion.button
-            layoutId="aira-avatar"
-            onClick={handleOpenChat}
-            whileHover={prefersReduced ? {} : { scale: 1.08 }}
-            whileTap={prefersReduced ? {} : { scale: 0.94 }}
-            className={cn(
-              "relative w-16 h-16 rounded-full overflow-hidden",
-              "border-2 shadow-xl cursor-pointer select-none",
-              "flex items-center justify-center"
-            )}
-            style={{
-              borderColor: "hsl(188 100% 50% / 0.5)",
-              boxShadow: "0 0 20px hsl(188 100% 50% / 0.28), 0 4px 20px rgba(0,0,0,0.22)",
-              background: "linear-gradient(135deg, hsl(188 100% 50% / 0.18), hsl(239 84% 67%), hsl(278 68% 59%))",
-              animation: prefersReduced ? "none" : "corner-avatar-float 3.8s ease-in-out infinite",
-              willChange: "transform",
-            }}
-            aria-label="Open AI chat assistant"
-            initial={false}
-            transition={{ type: "spring", stiffness: 340, damping: 30 }}
-          >
-            <AvatarFace size={52} />
-          </motion.button>
+            {/* The avatar button — layoutId shared with chat header */}
+            <motion.button
+              layoutId="aira-avatar"
+              onClick={handleOpenChat}
+              whileHover={prefersReduced ? {} : { scale: 1.08 }}
+              whileTap={prefersReduced ? {} : { scale: 0.94 }}
+              className={cn(
+                "absolute inset-0 rounded-full overflow-hidden",
+                "border-2 shadow-xl cursor-pointer select-none",
+                "flex items-center justify-center"
+              )}
+              style={{
+                borderColor: "hsl(188 100% 50% / 0.5)",
+                boxShadow: "0 0 20px hsl(188 100% 50% / 0.28), 0 4px 20px rgba(0,0,0,0.22)",
+                background: "linear-gradient(135deg, hsl(188 100% 50% / 0.18), hsl(239 84% 67%), hsl(278 68% 59%))",
+                animation: prefersReduced ? "none" : "corner-avatar-float 3.8s ease-in-out infinite",
+                willChange: "transform",
+              }}
+              aria-label="Open AI chat assistant"
+              initial={false}
+              transition={{ type: "spring", stiffness: 340, damping: 30 }}
+            >
+              <AvatarFace size={52} />
+            </motion.button>
+          </div>
         </motion.div>
       )}
     </AnimatePresence>
