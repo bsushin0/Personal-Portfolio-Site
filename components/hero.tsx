@@ -1,6 +1,7 @@
 "use client"
 
 import { motion, type Variants } from "framer-motion"
+import { useEffect, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import AiAvatar from "./ai-avatar"
 import { Github, Linkedin, Download, ArrowDown } from "lucide-react"
@@ -36,6 +37,56 @@ const headlineContainer: Variants = {
 
 export default function Hero() {
   const { displayText, cursorVisible } = useTypewriter(ROLES)
+  const avatarWrapperRef = useRef<HTMLDivElement>(null)
+  const tiltRafRef = useRef<number | null>(null)
+  const mousePosRef = useRef({ x: -9999, y: -9999 })
+
+  useEffect(() => {
+    if (window.matchMedia("(pointer: coarse)").matches) return
+
+    const onMouseMove = (e: MouseEvent) => {
+      mousePosRef.current = { x: e.clientX, y: e.clientY }
+    }
+    window.addEventListener("mousemove", onMouseMove)
+
+    const lerp = (a: number, b: number, t: number) => a + (b - a) * t
+    let currentTiltX = 0
+    let currentTiltY = 0
+    let currentShiftX = 0
+    let currentShiftY = 0
+
+    const loop = () => {
+      if (avatarWrapperRef.current) {
+        const rect = avatarWrapperRef.current.getBoundingClientRect()
+        const cx = rect.left + rect.width / 2
+        const cy = rect.top + rect.height / 2
+        const dx = mousePosRef.current.x - cx
+        const dy = mousePosRef.current.y - cy
+        const dist = Math.sqrt(dx * dx + dy * dy)
+        const proximity = Math.max(0, 1 - dist / 380)
+
+        const targetTiltX = -dy * 0.022 * proximity
+        const targetTiltY = dx * 0.022 * proximity
+        const targetShiftX = dx * 0.04 * proximity
+        const targetShiftY = dy * 0.04 * proximity
+
+        currentTiltX = lerp(currentTiltX, targetTiltX, 0.06)
+        currentTiltY = lerp(currentTiltY, targetTiltY, 0.06)
+        currentShiftX = lerp(currentShiftX, targetShiftX, 0.06)
+        currentShiftY = lerp(currentShiftY, targetShiftY, 0.06)
+
+        avatarWrapperRef.current.style.transform = `perspective(900px) rotateX(${currentTiltX}deg) rotateY(${currentTiltY}deg) translate(${currentShiftX}px, ${currentShiftY}px)`
+      }
+      tiltRafRef.current = requestAnimationFrame(loop)
+    }
+
+    tiltRafRef.current = requestAnimationFrame(loop)
+
+    return () => {
+      window.removeEventListener("mousemove", onMouseMove)
+      if (tiltRafRef.current) cancelAnimationFrame(tiltRafRef.current)
+    }
+  }, [])
 
   return (
     <section className="py-20 md:py-36 flex flex-col items-center">
@@ -133,7 +184,11 @@ export default function Hero() {
           variants={item}
           className="order-1 md:order-2 hidden md:flex justify-center"
         >
-          <div className="relative flex items-center justify-center rounded-full p-[2px] aspect-square w-56 sm:w-64 md:w-72 lg:w-80 bg-[conic-gradient(from_0deg,rgba(148,163,184,0.35),rgba(148,163,184,0.05),rgba(148,163,184,0.35))] dark:bg-[conic-gradient(from_0deg,rgba(34,211,238,0.25),rgba(34,211,238,0),rgba(34,211,238,0.25))]">
+          <div
+            ref={avatarWrapperRef}
+            className="relative flex items-center justify-center rounded-full p-[2px] aspect-square w-56 sm:w-64 md:w-72 lg:w-80 bg-[conic-gradient(from_0deg,rgba(148,163,184,0.35),rgba(148,163,184,0.05),rgba(148,163,184,0.35))] dark:bg-[conic-gradient(from_0deg,rgba(34,211,238,0.25),rgba(34,211,238,0),rgba(34,211,238,0.25))]"
+            style={{ willChange: "transform", transformStyle: "preserve-3d" }}
+          >
             <div className="flex items-center justify-center rounded-full aspect-square w-full h-full overflow-hidden border border-transparent dark:border-white/10 transition-all duration-500 filter brightness-100 saturate-100 drop-shadow-[0_10px_20px_rgba(0,0,0,0.08)] dark:brightness-110 dark:contrast-105 dark:drop-shadow-[0_0_15px_rgba(99,102,241,0.4)]">
               <AiAvatar />
             </div>

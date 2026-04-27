@@ -9,6 +9,7 @@ import { Chatbot } from "@/components/chatbot"
 import { VisitTracker } from "@/components/visit-tracker"
 import AmbientBackground from "@/components/ambient-background"
 import CursorSystem from "@/components/cursor-system"
+import FloatingOrbs from "@/components/floating-orbs"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -58,6 +59,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
           <AmbientBackground />
+          <FloatingOrbs />
           <CursorSystem />
           <VisitTracker />
           {children}

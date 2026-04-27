@@ -337,6 +337,16 @@ body {
   animation: avatar-ripple 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;
 }
 
+/* Avatar idle float — gentle breathing oscillation, CSS-driven so no RAF setState */
+@keyframes avatar-idle-float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-7px); }
+}
+
+.avatar-idle-float {
+  animation: avatar-idle-float 4s ease-in-out infinite;
+}
+
 /* Smooth scrolling */
 html {
   scroll-behavior: smooth;
