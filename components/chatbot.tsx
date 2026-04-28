@@ -267,19 +267,6 @@ function AvatarCornerButton() {
 
       {/* Avatar container — fixed 64×64 */}
       <div className="relative w-16 h-16" style={{ willChange: "transform, opacity" }}>
-        {/* Pulse ring — only visible when past hero */}
-        {isPastHero && (
-          <div
-            className="absolute rounded-full pointer-events-none"
-            aria-hidden="true"
-            style={{
-              inset: "-4px",
-              animation: prefersReduced ? "none" : "corner-avatar-pulse 2.8s ease-in-out infinite",
-              willChange: "box-shadow",
-            }}
-          />
-        )}
-
         {/* State 1 (in hero): empty outlined ring placeholder — no layoutId, just visual hint */}
         {!isPastHero && (
           <div
@@ -305,7 +292,7 @@ function AvatarCornerButton() {
             whileHover={prefersReduced ? {} : { scale: 1.08 }}
             whileTap={prefersReduced ? {} : { scale: 0.94 }}
             className={cn(
-              "absolute inset-0 rounded-full overflow-hidden",
+              "absolute inset-0 rounded-full",
               "border-2 shadow-xl cursor-pointer select-none",
               "flex items-center justify-center"
             )}
@@ -320,7 +307,20 @@ function AvatarCornerButton() {
             initial={false}
             transition={{ type: "spring", stiffness: 280, damping: 22 }}
           >
-            <AvatarFace size={52} />
+            {/* Pulse ring lives inside the button so it follows the layoutId animation */}
+            <div
+              className="absolute rounded-full pointer-events-none"
+              aria-hidden="true"
+              style={{
+                inset: "-4px",
+                animation: prefersReduced ? "none" : "corner-avatar-pulse 2.8s ease-in-out infinite",
+                willChange: "box-shadow",
+              }}
+            />
+            {/* Inner clip wrapper keeps AvatarFace contained */}
+            <div className="w-full h-full rounded-full overflow-hidden flex items-center justify-center">
+              <AvatarFace size={52} />
+            </div>
           </motion.button>
         )}
       </div>

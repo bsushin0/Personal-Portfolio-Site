@@ -58,16 +58,15 @@ export default function Hero() {
     offset: ["start start", "end start"],
   })
 
-  // Scale: 1 at scroll=0, shrinks to ~0 at scroll=1
-  // The corner button is 64px; hero avatar is ~288px → ratio ≈ 0.22
-  // We overshoot slightly and let the snap handle the final state
-  const flyingScale = useTransform(scrollYProgress, [0, 0.85], [1, 0])
+  // Scale: hero avatar size (w-72=288px) ÷ corner button (64px) ≈ 4.5
+  // Starts large at hero size, shrinks to 1× (corner button size) by scroll=0.85
+  const flyingScale = useTransform(scrollYProgress, [0, 0.85], [4.5, 1])
 
-  // Opacity of the hero avatar: visible until ~50% scroll, then fades
-  const heroAvatarOpacity = useTransform(scrollYProgress, [0, 0.45, 0.75], [1, 1, 0])
+  // Hero avatar fades out early so the flying clone is the only visible avatar
+  const heroAvatarOpacity = useTransform(scrollYProgress, [0, 0.05, 0.4], [1, 0.8, 0])
 
-  // Flying avatar opacity: appears on first scroll, gone when hero avatar fades
-  const flyingOpacity = useTransform(scrollYProgress, [0, 0.05, 0.75, 0.85], [0, 1, 1, 0])
+  // Flying clone: invisible at rest, fades in at scroll start, fades out as it snaps to corner button
+  const flyingOpacity = useTransform(scrollYProgress, [0, 0.12, 0.72, 0.85], [0, 1, 1, 0])
 
   useEffect(() => {
     if (window.matchMedia("(pointer: coarse)").matches) return
@@ -293,7 +292,7 @@ export default function Hero() {
                 shrinks it back to corner-button size at scroll=1. */}
             <motion.div
               aria-hidden="true"
-              className="fixed pointer-events-none z-40 rounded-full overflow-hidden flex items-center justify-center"
+              className="fixed pointer-events-none z-40 rounded-full overflow-hidden hidden md:flex items-center justify-center"
               style={{
                 bottom: "24px",
                 right: "24px",
