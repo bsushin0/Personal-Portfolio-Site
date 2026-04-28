@@ -150,6 +150,26 @@
     "embedding": []
   },
   {
+    "id": "10-website.md-chunk-0",
+    "text": "# Portfolio Website Technical Details\n\n## Overview\nSushin's personal portfolio site is a modern, AI-powered web application built with Next.js 14 (App Router). It serves as both a professional showcase and a technical demonstration of AI/ML integration skills.\n\n## Tech Stack\n- **Framework:** Next.js 14 with App Router and TypeScript\n- **Styling:** Tailwind CSS + shadcn/ui component library\n- **Animations:** Framer Motion (scroll-driven avatar animation, page transitions)\n- **AI Chat:** Google Gemini API via Vercel AI SDK (`@ai-sdk/google`)\n- **AI Model:** `gemini-3.1-flash-lite` (configurable via `GEMINI_MODEL` env var)\n- **RAG / Knowledge Base:** Custom keyword-based retrieval over pre-computed embeddings stored in `lib/embeddings.json`; source documents in `private/documents/bio/`\n- **Deployment:** Vercel (serverless, edge-ready)\n- **Database:** Neon (serverless Postgres, used for contact form submissions)\n- **Package Manager:** npm\n\n## AI Assistant (Aira)\n- The chat assistant is named **Aira**\n- Powered by **Google Gemini** — specifically the `gemini-3.1-flash-lite` model\n- Uses a Retrieval-Augmented Generation (RAG) approach: user queries are matched via keyword scoring against chunked bio documents, and the top relevant chunks are injected into the system prompt\n- Rate-limited to 10 requests per hour per session (configurable via `CHAT_RATE_LIMIT` env var)\n- Temperature: 0.",
+    "metadata": {
+      "source": "10-website.md",
+      "chunkIndex": 0,
+      "totalChunks": 2
+    },
+    "embedding": []
+  },
+  {
+    "id": "10-website.md-chunk-1",
+    "text": "chunked bio documents, and the top relevant chunks are injected into the system prompt\n- Rate-limited to 10 requests per hour per session (configurable via `CHAT_RATE_LIMIT` env var)\n- Temperature: 0.3 (factual, low-creativity responses)\n- Max output tokens: 600 per response\n- Supports contact info collection (name, email, company, message) and can submit the contact form on a visitor's behalf\n\n## Key Features\n- **Scroll-driven avatar animation:** Hero avatar shrinks and travels to a corner chat button as the user scrolls\n- **AI chat panel:** Floating chat interface powered by Gemini with RAG over Sushin's bio documents\n- **Contact form:** Integrated with Neon database for storing inquiries\n- **Dark/light mode:** System-aware theme with manual toggle\n- **Responsive design:** Mobile-first, works across all screen sizes\n- **Security:** Rate limiting, input validation, environment variable gating for API keys\n\n## Version & Maintenance\n- Current version tracked in `package.",
+    "metadata": {
+      "source": "10-website.md",
+      "chunkIndex": 1,
+      "totalChunks": 2
+    },
+    "embedding": []
+  },
+  {
     "id": "README.md-chunk-0",
     "text": "# Curated Bios\n\nThis folder contains structured markdown documents used to represent Sushin Bandha’s background and story in a retrieval-friendly format.\n\n## Contents\n- 01-profile.md — High-level profile and focus areas\n- 02-experience.md — Roles and impact bullets\n- 03-projects.md — Highlight projects and technologies\n- 04-skills.md — Skills grouped by category\n- 05-certifications.md — Verified certifications\n- 06-education.md — Institutions, programs, highlights\n- 07-hobbies-interests.md — Personal interests (optional)\n- 08-goals.md — Near-term and long-term goals\n- 09-contact.md — Contact fallback guidance\n\n## Usage\n- Keep entries concise, outcome-focused, and verifiable.\n- After edits, regenerate embeddings to refresh chatbot context.\n- Avoid sensitive or speculative content; prefer authentic, concrete facts.",
     "metadata": {
