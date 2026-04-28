@@ -126,7 +126,10 @@ export default function Hero() {
   const scaleRatioRef = useRef(1) // hero avatar width / corner button width
 
   // Measure the hero avatar's position relative to the corner button.
-  // This must run after paint so getBoundingClientRect is accurate.
+  // Delayed by 950ms so the measurement runs after all entrance animations have
+  // settled (entrance animations take ~700–800ms total). Measuring during the
+  // animation would capture a stale y-offset from the item variant's initial
+  // { y: 20 } state, producing wrong traveler coordinates.
   useEffect(() => {
     const measure = () => {
       if (!avatarWrapperRef.current) return
@@ -145,10 +148,14 @@ export default function Hero() {
       scaleRatioRef.current = rect.width / CORNER_SIZE
     }
 
-    // Measure after the first paint and whenever the window resizes
-    measure()
+    // Delay initial measurement until entrance animations have finished (~700–800ms),
+    // then re-measure on every resize for responsive accuracy.
+    const initialMeasureTimer = setTimeout(measure, 950)
     window.addEventListener("resize", measure)
-    return () => window.removeEventListener("resize", measure)
+    return () => {
+      clearTimeout(initialMeasureTimer)
+      window.removeEventListener("resize", measure)
+    }
   }, [])
 
   // Drive the traveler transform from scrollYProgress
@@ -421,43 +428,45 @@ export default function Hero() {
                 </div>
               </div>
             </motion.div>
-
-            {/*
-              Scroll Traveler — fixed overlay that physically travels from the hero avatar
-              position down to the corner button position as the user scrolls.
-
-              Anchored at corner position (bottom: 24px, right: 24px, 64×64).
-              At scroll < 0.01: opacity 0, invisible.
-              At scroll = 0.01: opacity snaps to 1, visually overlapping the hero avatar
-                (which simultaneously snaps to opacity 0) — seamless swap.
-              Scroll 0.01 → 0.80: travels from hero position to corner via translate+scale.
-              Scroll 0.80 → 0.92: fades out as corner button fades in.
-
-              Only shown on md+ screens. pointer-events-none, aria-hidden — decorative.
-            */}
-            <motion.div
-              aria-hidden="true"
-              className="fixed pointer-events-none z-40 rounded-full overflow-hidden hidden md:block"
-              style={{
-                bottom: `${CORNER_BOTTOM}px`,
-                right: `${CORNER_RIGHT}px`,
-                width: `${CORNER_SIZE}px`,
-                height: `${CORNER_SIZE}px`,
-                x: travelerX,
-                y: travelerY,
-                scale: travelerScale,
-                opacity: travelerOpacity,
-                transformOrigin: "center center",
-                willChange: "transform, opacity",
-                background: "linear-gradient(135deg, hsl(188 100% 50% / 0.18), hsl(239 84% 67%), hsl(278 68% 59%))",
-                border: "2px solid hsl(188 100% 50% / 0.5)",
-                boxShadow: "0 0 20px hsl(188 100% 50% / 0.28), 0 4px 20px rgba(0,0,0,0.22)",
-              }}
-            >
-              <AvatarFaceSVG size={CORNER_SIZE} idPrefix="hero-traveler" />
-            </motion.div>
           </div>
         </motion.div>
+      </motion.div>
+
+      {/*
+        Scroll Traveler — rendered outside the animated grid/item subtree so it is
+        never affected by ancestor motion.div entrance transforms (y: 20 offset).
+        Fixed overlay that physically travels from the hero avatar position down to
+        the corner button position as the user scrolls.
+
+        Anchored at corner position (bottom: 24px, right: 24px, 64×64).
+        At scroll < 0.01: opacity 0, invisible.
+        At scroll = 0.01: opacity snaps to 1, visually overlapping the hero avatar
+          (which simultaneously snaps to opacity 0) — seamless swap.
+        Scroll 0.01 → 0.80: travels from hero position to corner via translate+scale.
+        Scroll 0.80 → 0.92: fades out as corner button fades in.
+
+        Only shown on md+ screens. pointer-events-none, aria-hidden — decorative.
+      */}
+      <motion.div
+        aria-hidden="true"
+        className="fixed pointer-events-none z-40 rounded-full overflow-hidden hidden md:block"
+        style={{
+          bottom: `${CORNER_BOTTOM}px`,
+          right: `${CORNER_RIGHT}px`,
+          width: `${CORNER_SIZE}px`,
+          height: `${CORNER_SIZE}px`,
+          x: travelerX,
+          y: travelerY,
+          scale: travelerScale,
+          opacity: travelerOpacity,
+          transformOrigin: "center center",
+          willChange: "transform, opacity",
+          background: "linear-gradient(135deg, hsl(188 100% 50% / 0.18), hsl(239 84% 67%), hsl(278 68% 59%))",
+          border: "2px solid hsl(188 100% 50% / 0.5)",
+          boxShadow: "0 0 20px hsl(188 100% 50% / 0.28), 0 4px 20px rgba(0,0,0,0.22)",
+        }}
+      >
+        <AvatarFaceSVG size={CORNER_SIZE} idPrefix="hero-traveler" />
       </motion.div>
 
       <motion.div
