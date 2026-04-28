@@ -16,12 +16,174 @@ import { useTypewriter } from "@/hooks/use-typewriter"
 import { blurUpVariants } from "@/lib/motion-variants"
 import { useChatContext } from "@/context/chat-context"
 
-// ── Shared avatar face SVG — same design used in traveler, corner button, and chat header ──
+// ── Shared avatar face SVG — animated React component ──────────────────────────
 // viewBox: 0 0 60 60, renders a gradient face with two eyes and a smile.
 // idPrefix must be unique per rendered instance to prevent SVG gradient ID collisions.
-export function AvatarFaceSVG({ size = 60, idPrefix = "afs" }: { size?: number; idPrefix?: string }) {
+//
+// mode="full"     — all animations: blink, gaze drift, hover/click reactions,
+//                   ambient glow pulse, occasional mouth widen. Used for hero + corner button.
+// mode="traveler" — blink only (no gaze drift or hover reactions). Used for the
+//                   scroll traveler which is already in motion.
+// mode="static"   — no animations. Used for small chat message avatars.
+export function AvatarFaceSVG({
+  size = 60,
+  idPrefix = "afs",
+  mode = "full",
+}: {
+  size?: number
+  idPrefix?: string
+  mode?: "full" | "traveler" | "static"
+}) {
   const faceId = `${idPrefix}-face`
-  const eyeId = `${idPrefix}-eye`
+  const eyeId  = `${idPrefix}-eye`
+
+  // ── Animation state ────────────────────────────────────────────────────────
+  const [isBlinking,   setIsBlinking]   = useState(false)
+  const [gazeX,        setGazeX]        = useState(0)      // px offset for pupils
+  const [gazeY,        setGazeY]        = useState(0)
+  const [isHovered,    setIsHovered]    = useState(false)
+  const [isClicked,    setIsClicked]    = useState(false)
+  const [wideMouth,    setWideMouth]    = useState(false)
+  const [eyebrowRaise, setEyebrowRaise] = useState(false)  // slight eye-up shift
+  const blinkTimerRef  = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const gazeTimerRef   = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const mouthTimerRef  = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const browTimerRef   = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  // ── Blink loop — runs for "full" and "traveler" ────────────────────────────
+  useEffect(() => {
+    if (mode === "static") return
+
+    const scheduleBlink = () => {
+      // Random interval 3–6 s
+      const delay = 3000 + Math.random() * 3000
+      blinkTimerRef.current = setTimeout(() => {
+        // Execute one blink: close 60ms, open 60ms
+        setIsBlinking(true)
+        setTimeout(() => {
+          setIsBlinking(false)
+          // ~20% chance of a double-blink
+          if (Math.random() < 0.2) {
+            setTimeout(() => {
+              setIsBlinking(true)
+              setTimeout(() => {
+                setIsBlinking(false)
+                scheduleBlink()
+              }, 60)
+            }, 180)
+          } else {
+            scheduleBlink()
+          }
+        }, 120)
+      }, delay)
+    }
+
+    scheduleBlink()
+    return () => {
+      if (blinkTimerRef.current) clearTimeout(blinkTimerRef.current)
+    }
+  }, [mode])
+
+  // ── Gaze drift — full mode only ────────────────────────────────────────────
+  useEffect(() => {
+    if (mode !== "full") return
+
+    const scheduleGaze = () => {
+      const delay = 4000 + Math.random() * 4000
+      gazeTimerRef.current = setTimeout(() => {
+        // Drift to a random ±2.5 px offset
+        const nx = (Math.random() - 0.5) * 5
+        const ny = (Math.random() - 0.5) * 4
+        setGazeX(nx)
+        setGazeY(ny)
+        // Return to center after 1.2–2s
+        setTimeout(() => {
+          setGazeX(0)
+          setGazeY(0)
+          scheduleGaze()
+        }, 1200 + Math.random() * 800)
+      }, delay)
+    }
+
+    scheduleGaze()
+    return () => {
+      if (gazeTimerRef.current) clearTimeout(gazeTimerRef.current)
+    }
+  }, [mode])
+
+  // ── Ambient mouth widen — full mode only ──────────────────────────────────
+  useEffect(() => {
+    if (mode !== "full") return
+
+    const scheduleMouth = () => {
+      const delay = 8000 + Math.random() * 7000
+      mouthTimerRef.current = setTimeout(() => {
+        setWideMouth(true)
+        setTimeout(() => {
+          setWideMouth(false)
+          scheduleMouth()
+        }, 2000 + Math.random() * 1000)
+      }, delay)
+    }
+
+    scheduleMouth()
+    return () => {
+      if (mouthTimerRef.current) clearTimeout(mouthTimerRef.current)
+    }
+  }, [mode])
+
+  // ── Ambient eyebrow-raise (eye upshift) — full mode only ──────────────────
+  useEffect(() => {
+    if (mode !== "full") return
+
+    const scheduleBrow = () => {
+      const delay = 10000 + Math.random() * 8000
+      browTimerRef.current = setTimeout(() => {
+        setEyebrowRaise(true)
+        setTimeout(() => {
+          setEyebrowRaise(false)
+          scheduleBrow()
+        }, 1500 + Math.random() * 500)
+      }, delay)
+    }
+
+    scheduleBrow()
+    return () => {
+      if (browTimerRef.current) clearTimeout(browTimerRef.current)
+    }
+  }, [mode])
+
+  // ── Click reaction ─────────────────────────────────────────────────────────
+  const handleClick = () => {
+    if (mode !== "full") return
+    setIsClicked(true)
+    setTimeout(() => setIsClicked(false), 400)
+  }
+
+  // ── Derived visual state ───────────────────────────────────────────────────
+  // Click: eyes squint (scaleY ~0.25) + wider mouth
+  // Hover: eyes slightly larger (scaleY 1.15), pupils shift up 0.5px
+  // Blink: eye ellipses scaleY → 0.08
+  const eyeScaleY = isClicked ? 0.25
+                  : isBlinking ? 0.08
+                  : isHovered  ? 1.15
+                  : 1
+
+  // Pupil Y: hover shifts up slightly, click squints so shift down relative; eyebrow raise shifts up
+  const pupilExtraY = isHovered && !isBlinking && !isClicked ? -0.5
+                    : eyebrowRaise && !isBlinking && !isClicked ? -1.2
+                    : 0
+
+  // Mouth path: normal vs wide smile vs click-happy
+  const mouthPath = isClicked
+    ? "M 20 36 Q 30 45 40 36"   // wider happy squint mouth
+    : wideMouth
+      ? "M 21 37 Q 30 44.5 39 37" // slightly wider ambient smile
+      : "M 22 37 Q 30 43 38 37"   // default
+
+  // Eye transition: fast for blink/click, slow for hover/ambient
+  const eyeTransitionDuration = (isBlinking || isClicked) ? "0.06s" : "0.3s"
+
   return (
     <svg
       width={size}
@@ -30,6 +192,10 @@ export function AvatarFaceSVG({ size = 60, idPrefix = "afs" }: { size?: number; 
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden="true"
+      onMouseEnter={mode === "full" ? () => setIsHovered(true)  : undefined}
+      onMouseLeave={mode === "full" ? () => setIsHovered(false) : undefined}
+      onClick={mode === "full" ? handleClick : undefined}
+      style={{ cursor: mode === "full" ? "default" : undefined }}
     >
       <defs>
         <radialGradient id={faceId} cx="50%" cy="50%" r="50%">
@@ -42,17 +208,78 @@ export function AvatarFaceSVG({ size = 60, idPrefix = "afs" }: { size?: number; 
           <stop offset="100%" stopColor="hsl(188 100% 50% / 0.5)" />
         </radialGradient>
       </defs>
-      <circle cx="30" cy="30" r="28" fill={`url(#${faceId})`} />
+
+      {/* Face circle — ambient glow pulse via CSS animation class */}
+      <circle
+        cx="30"
+        cy="30"
+        r="28"
+        fill={`url(#${faceId})`}
+        className={mode !== "static" ? "avatar-face-glow-pulse" : undefined}
+      />
+
+      {/* Highlight blob */}
       <circle cx="22" cy="22" r="12" fill="rgba(255,255,255,0.12)" />
-      <ellipse cx="21" cy="27" rx="6" ry="6.5" fill={`url(#${eyeId})`} />
-      <circle cx="21" cy="27" r="3.5" fill="#0f172a" />
-      <circle cx="19.5" cy="25.5" r="1.4" fill="white" opacity="0.9" />
-      <circle cx="20" cy="26" r="0.7" fill="hsl(188 100% 70%)" opacity="0.8" />
-      <ellipse cx="39" cy="27" rx="6" ry="6.5" fill={`url(#${eyeId})`} />
-      <circle cx="39" cy="27" r="3.5" fill="#0f172a" />
-      <circle cx="37.5" cy="25.5" r="1.4" fill="white" opacity="0.9" />
-      <circle cx="38" cy="26" r="0.7" fill="hsl(188 100% 70%)" opacity="0.8" />
-      <path d="M 22 37 Q 30 43 38 37" stroke="hsl(239 84% 85%)" strokeWidth="2.2" fill="none" strokeLinecap="round" />
+
+      {/* Left eye — scaleY transitions for blink/hover/click */}
+      <g
+        style={{
+          transformBox: "fill-box",
+          transformOrigin: "21px 27px",
+          transform: `scaleY(${eyeScaleY})`,
+          transition: `transform ${eyeTransitionDuration} ease-in-out`,
+        }}
+      >
+        <ellipse cx="21" cy="27" rx="6" ry="6.5" fill={`url(#${eyeId})`} />
+      </g>
+
+      {/* Left pupil group — gaze drift + hover/eyebrow upshift */}
+      <g
+        style={{
+          transform: `translate(${gazeX}px, ${gazeY + pupilExtraY}px)`,
+          transition: (isBlinking || isClicked) ? "none" : "transform 0.8s ease-in-out",
+          opacity: isBlinking ? 0 : 1,
+        }}
+      >
+        <circle cx="21" cy="27" r="3.5" fill="#0f172a" />
+        <circle cx="19.5" cy="25.5" r="1.4" fill="white" opacity="0.9" />
+        <circle cx="20" cy="26" r="0.7" fill="hsl(188 100% 70%)" opacity="0.8" />
+      </g>
+
+      {/* Right eye */}
+      <g
+        style={{
+          transformBox: "fill-box",
+          transformOrigin: "39px 27px",
+          transform: `scaleY(${eyeScaleY})`,
+          transition: `transform ${eyeTransitionDuration} ease-in-out`,
+        }}
+      >
+        <ellipse cx="39" cy="27" rx="6" ry="6.5" fill={`url(#${eyeId})`} />
+      </g>
+
+      {/* Right pupil group */}
+      <g
+        style={{
+          transform: `translate(${gazeX}px, ${gazeY + pupilExtraY}px)`,
+          transition: (isBlinking || isClicked) ? "none" : "transform 0.8s ease-in-out",
+          opacity: isBlinking ? 0 : 1,
+        }}
+      >
+        <circle cx="39" cy="27" r="3.5" fill="#0f172a" />
+        <circle cx="37.5" cy="25.5" r="1.4" fill="white" opacity="0.9" />
+        <circle cx="38" cy="26" r="0.7" fill="hsl(188 100% 70%)" opacity="0.8" />
+      </g>
+
+      {/* Mouth — transitions between states */}
+      <path
+        d={mouthPath}
+        stroke="hsl(239 84% 85%)"
+        strokeWidth="2.2"
+        fill="none"
+        strokeLinecap="round"
+        style={{ transition: "d 0.35s ease-in-out" }}
+      />
     </svg>
   )
 }
@@ -466,7 +693,7 @@ export default function Hero() {
           boxShadow: "0 0 20px hsl(188 100% 50% / 0.28), 0 4px 20px rgba(0,0,0,0.22)",
         }}
       >
-        <AvatarFaceSVG size={CORNER_SIZE} idPrefix="hero-traveler" />
+        <AvatarFaceSVG size={CORNER_SIZE} idPrefix="hero-traveler" mode="traveler" />
       </motion.div>
 
       <motion.div
