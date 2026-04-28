@@ -250,12 +250,15 @@ function AvatarCornerButton() {
     openChat();
   }, [dismissTooltip, openChat]);
 
+  // Don't render anything when the hero avatar is still visible — the scroll
+  // traveler in hero.tsx is the visual. Only mount once isPastHero flips true.
+  if (!isPastHero) return null;
+
   return (
-    // Always mounted so the placeholder ring is visible in hero (State 1) and transitions to filled (State 2)
     <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end">
-      {/* Tooltip speech bubble — only shown when past hero */}
+      {/* Tooltip speech bubble */}
       <AnimatePresence mode="wait">
-        {tooltipMsg && isPastHero && (
+        {tooltipMsg && (
           <TooltipBubble
             message={tooltipMsg}
             onClose={dismissTooltip}
@@ -267,62 +270,49 @@ function AvatarCornerButton() {
 
       {/* Avatar container — fixed 64×64 */}
       <div className="relative w-16 h-16" style={{ willChange: "transform, opacity" }}>
-        {/* State 1 (in hero): empty outlined ring placeholder — no layoutId, just visual hint */}
-        {!isPastHero && (
+        {/*
+          Corner avatar button with layoutId="aira-avatar".
+          - Mounts with a gentle fade-in (the scroll traveler has already carried the
+            visual to this position, so no spring-from-hero needed).
+          - layoutId is retained so it still morphs into the chat panel header on open.
+        */}
+        <motion.button
+          layoutId="aira-avatar"
+          onClick={handleOpenChat}
+          initial={{ opacity: 0, scale: 0.85 }}
+          animate={{ opacity: 1, scale: 1 }}
+          whileHover={prefersReduced ? {} : { scale: 1.08 }}
+          whileTap={prefersReduced ? {} : { scale: 0.94 }}
+          className={cn(
+            "absolute inset-0 rounded-full",
+            "border-2 shadow-xl cursor-pointer select-none",
+            "flex items-center justify-center"
+          )}
+          style={{
+            borderColor: "hsl(188 100% 50% / 0.5)",
+            boxShadow: "0 0 20px hsl(188 100% 50% / 0.28), 0 4px 20px rgba(0,0,0,0.22)",
+            background: "linear-gradient(135deg, hsl(188 100% 50% / 0.18), hsl(239 84% 67%), hsl(278 68% 59%))",
+            animation: prefersReduced ? "none" : "corner-avatar-float 3.8s ease-in-out infinite",
+            willChange: "transform",
+          }}
+          aria-label="Open AI chat assistant"
+          transition={{ type: "spring", stiffness: 300, damping: 28 }}
+        >
+          {/* Pulse ring lives inside the button so it follows the layoutId animation */}
           <div
-            className="absolute inset-0 rounded-full"
+            className="absolute rounded-full pointer-events-none"
             aria-hidden="true"
             style={{
-              border: "2px solid hsl(188 100% 50% / 0.40)",
-              background: "transparent",
+              inset: "-4px",
+              animation: prefersReduced ? "none" : "corner-avatar-pulse 2.8s ease-in-out infinite",
+              willChange: "box-shadow",
             }}
-          >
-            {/* Ghost silhouette at 12% opacity — hints at what will land here */}
-            <div className="absolute inset-0 rounded-full overflow-hidden opacity-[0.12]">
-              <AvatarFace size={64} />
-            </div>
+          />
+          {/* Inner clip wrapper keeps AvatarFace contained */}
+          <div className="w-full h-full rounded-full overflow-hidden flex items-center justify-center">
+            <AvatarFace size={52} />
           </div>
-        )}
-
-        {/* State 2/3 (past hero): filled avatar button with layoutId — springs in from hero */}
-        {isPastHero && (
-          <motion.button
-            layoutId="aira-avatar"
-            onClick={handleOpenChat}
-            whileHover={prefersReduced ? {} : { scale: 1.08 }}
-            whileTap={prefersReduced ? {} : { scale: 0.94 }}
-            className={cn(
-              "absolute inset-0 rounded-full",
-              "border-2 shadow-xl cursor-pointer select-none",
-              "flex items-center justify-center"
-            )}
-            style={{
-              borderColor: "hsl(188 100% 50% / 0.5)",
-              boxShadow: "0 0 20px hsl(188 100% 50% / 0.28), 0 4px 20px rgba(0,0,0,0.22)",
-              background: "linear-gradient(135deg, hsl(188 100% 50% / 0.18), hsl(239 84% 67%), hsl(278 68% 59%))",
-              animation: prefersReduced ? "none" : "corner-avatar-float 3.8s ease-in-out infinite",
-              willChange: "transform",
-            }}
-            aria-label="Open AI chat assistant"
-            initial={false}
-            transition={{ type: "spring", stiffness: 280, damping: 22 }}
-          >
-            {/* Pulse ring lives inside the button so it follows the layoutId animation */}
-            <div
-              className="absolute rounded-full pointer-events-none"
-              aria-hidden="true"
-              style={{
-                inset: "-4px",
-                animation: prefersReduced ? "none" : "corner-avatar-pulse 2.8s ease-in-out infinite",
-                willChange: "box-shadow",
-              }}
-            />
-            {/* Inner clip wrapper keeps AvatarFace contained */}
-            <div className="w-full h-full rounded-full overflow-hidden flex items-center justify-center">
-              <AvatarFace size={52} />
-            </div>
-          </motion.button>
-        )}
+        </motion.button>
       </div>
     </div>
   );

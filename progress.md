@@ -15,6 +15,18 @@ All active goals and work logs are recorded here by Mira and her team.
 
 -->
 
+## [2026-04-28] mira — v3.12.8
+- Task: Unify hero avatar and scroll-driven shrinking animation into one seamless continuous object
+- Architecture: Replaced discrete Framer Motion layoutId hero→corner morph with a scroll-driven fixed overlay "ScrollTraveler". The traveler is anchored at the corner button DOM position, but at scroll=0 applies a translateX/Y + scale transform to visually sit exactly over the hero avatar. As scrollYProgress advances to 0.85, both transform components interpolate to identity, landing the traveler precisely at the corner. The corner button then fades in (traveler fades out), completing the handoff.
+- Key changes:
+  - components/hero.tsx — removed old simplified-SVG flying clone; removed layoutId from hero avatar wrapper; added scroll traveler (fixed motion.div using useMotionValue + useMotionValueEvent, driven by scrollYProgress); added offsetXRef/offsetYRef/scaleRatioRef measured from avatarWrapperRef.getBoundingClientRect() on mount/resize; ease-in-out quad easing on all three interpolated values; traveler renders AvatarFace SVG (consistent with corner button), fades in at scroll 0.01→0.12, holds, fades out 0.72→0.85; removed useTransform flyingScale/flyingOpacity; kept heroAvatarOpacity fade (0→0.35)
+  - components/chatbot.tsx — AvatarCornerButton returns null when !isPastHero (traveler owns that visual); removed ghost ring placeholder (State 1); corner button mounts with opacity/scale fade-in (not spring from hero) since traveler has already delivered the visual; retained layoutId="aira-avatar" for corner-button → chat-panel-header morph
+  - package.json — 3.12.7 → 3.12.8
+- Files modified: components/hero.tsx, components/chatbot.tsx, package.json
+- Files created: none
+- Status: COMPLETE
+- Next: NONE
+
 ## [2026-04-27] mira — v3.12.2
 - Task: Hero → button scroll transition with shared layout animation (AiRa avatar morphs from hero to corner button on scroll)
 - Files modified:

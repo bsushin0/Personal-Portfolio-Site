@@ -1,6 +1,14 @@
 "use client"
 
-import { motion, type Variants, AnimatePresence, useScroll, useTransform } from "framer-motion"
+import {
+  motion,
+  type Variants,
+  AnimatePresence,
+  useScroll,
+  useTransform,
+  useMotionValueEvent,
+  useMotionValue,
+} from "framer-motion"
 import { useEffect, useRef, useState } from "react"
 import { Button } from "@/components/ui/button"
 import AiAvatar from "./ai-avatar"
@@ -39,6 +47,11 @@ const headlineContainer: Variants = {
 const INTRO_MESSAGE =
   "Hey, I'm AiRa — Bandha's AI assistant. Scroll down to explore, or ask me anything."
 
+// Corner button dimensions and position (matches chatbot.tsx AvatarCornerButton)
+const CORNER_SIZE = 64
+const CORNER_BOTTOM = 24
+const CORNER_RIGHT = 24
+
 export default function Hero() {
   const { displayText, cursorVisible } = useTypewriter(ROLES)
   const { isPastHero, openChat } = useChatContext()
@@ -51,23 +64,89 @@ export default function Hero() {
   const introTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const introDismissTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  // ── Scroll-progress-driven avatar travel animation ──────────────────────────
-  // scrollYProgress goes 0→1 as the hero section scrolls out of view
+  // Scroll-progress-driven scroll traveler ─────────────────────────────────────
+  // scrollYProgress: 0 at "hero top at viewport top", 1 at "hero bottom at viewport top"
   const { scrollYProgress } = useScroll({
     target: heroSectionRef,
     offset: ["start start", "end start"],
   })
 
-  // Scale: hero avatar size (w-72=288px) ÷ corner button (64px) ≈ 4.5
-  // Starts large at hero size, shrinks to 1× (corner button size) by scroll=0.85
-  const flyingScale = useTransform(scrollYProgress, [0, 0.85], [4.5, 1])
+  // Motion values for the scroll traveler transform — computed from scrollYProgress
+  // We use useMotionValue + useMotionValueEvent so we can incorporate the measured
+  // hero avatar position (a runtime value not available to useTransform's input array).
+  const travelerX = useMotionValue(0)
+  const travelerY = useMotionValue(0)
+  const travelerScale = useMotionValue(1)
+  const travelerOpacity = useMotionValue(0)
 
-  // Hero avatar fades out early so the flying clone is the only visible avatar
-  const heroAvatarOpacity = useTransform(scrollYProgress, [0, 0.05, 0.4], [1, 0.8, 0])
+  // Store measured offsets in refs so they're available in the scroll callback
+  // without triggering re-renders.
+  const offsetXRef = useRef(0)   // px hero avatar center is to the left of corner center
+  const offsetYRef = useRef(0)   // px hero avatar center is above corner center
+  const scaleRatioRef = useRef(1) // hero avatar width / corner button width
 
-  // Flying clone: invisible at rest, fades in at scroll start, fades out as it snaps to corner button
-  const flyingOpacity = useTransform(scrollYProgress, [0, 0.12, 0.72, 0.85], [0, 1, 1, 0])
+  // Measure the hero avatar's position relative to the corner button.
+  // This must run after paint so getBoundingClientRect is accurate.
+  useEffect(() => {
+    const measure = () => {
+      if (!avatarWrapperRef.current) return
+      const rect = avatarWrapperRef.current.getBoundingClientRect()
 
+      // Hero avatar center (viewport-relative)
+      const heroCX = rect.left + rect.width / 2
+      const heroCY = rect.top + rect.height / 2
+
+      // Corner button center (viewport-relative, fixed)
+      const cornerCX = window.innerWidth - CORNER_RIGHT - CORNER_SIZE / 2
+      const cornerCY = window.innerHeight - CORNER_BOTTOM - CORNER_SIZE / 2
+
+      offsetXRef.current = heroCX - cornerCX   // positive = hero is left of corner
+      offsetYRef.current = heroCY - cornerCY   // positive = hero is above corner (negative value)
+      scaleRatioRef.current = rect.width / CORNER_SIZE
+    }
+
+    // Measure after the first paint and whenever the window resizes
+    measure()
+    window.addEventListener("resize", measure)
+    return () => window.removeEventListener("resize", measure)
+  }, [])
+
+  // Drive the traveler transform from scrollYProgress
+  useMotionValueEvent(scrollYProgress, "change", (latest) => {
+    // Scroll animation range: 0 → 0.85
+    const progress = Math.max(0, Math.min(1, latest / 0.85))
+    const eased = progress < 0.5
+      ? 2 * progress * progress
+      : 1 - Math.pow(-2 * progress + 2, 2) / 2 // ease-in-out quad
+
+    // Position: interpolate from hero center offset → 0 (at corner)
+    travelerX.set(offsetXRef.current * (1 - eased))
+    travelerY.set(offsetYRef.current * (1 - eased))
+
+    // Scale: interpolate from hero size → 1× (corner button size)
+    travelerScale.set(scaleRatioRef.current + (1 - scaleRatioRef.current) * eased)
+
+    // Opacity:
+    //   - Fade IN quickly at scroll start (0 → 0.12 = fully visible)
+    //   - Hold through most of the travel
+    //   - Fade OUT as it snaps to corner (0.72 → 0.85)
+    if (latest < 0.01) {
+      travelerOpacity.set(0)
+    } else if (latest < 0.12) {
+      travelerOpacity.set((latest - 0.01) / 0.11)
+    } else if (latest < 0.72) {
+      travelerOpacity.set(1)
+    } else if (latest < 0.85) {
+      travelerOpacity.set(1 - (latest - 0.72) / 0.13)
+    } else {
+      travelerOpacity.set(0)
+    }
+  })
+
+  // Hero avatar opacity — fades out as the traveler becomes the dominant element
+  const heroAvatarOpacity = useTransform(scrollYProgress, [0, 0.05, 0.35], [1, 0.85, 0])
+
+  // ── Mouse tilt on hero avatar ────────────────────────────────────────────────
   useEffect(() => {
     if (window.matchMedia("(pointer: coarse)").matches) return
 
@@ -267,13 +346,13 @@ export default function Hero() {
               )}
             </AnimatePresence>
 
-            {/* Shared layout avatar — layoutId="aira-avatar" morphs to corner button on scroll */}
-            {/* Fix: rounded-full + overflow-hidden on the layoutId wrapper eliminates the square outline */}
+            {/*
+              Hero avatar — static, always in-document flow.
+              Fades out as scroll begins (the scroll traveler takes over visually).
+              No layoutId here — the traveler handles the continuous motion.
+            */}
             <motion.div
-              layoutId="aira-avatar"
-              transition={{ type: "spring", stiffness: 280, damping: 22 }}
-              className="rounded-full overflow-hidden"
-              style={{ willChange: "transform", opacity: heroAvatarOpacity }}
+              style={{ opacity: heroAvatarOpacity, willChange: "opacity" }}
             >
               <div
                 ref={avatarWrapperRef}
@@ -286,60 +365,73 @@ export default function Hero() {
               </div>
             </motion.div>
 
-            {/* Flying avatar clone — scroll-progress-driven, fixed position, travels to corner */}
-            {/* Positioned at the corner button location (bottom-6 right-6 = 24px) at 64px base size.
-                Scale transform grows it outward from bottom-right toward hero size at scroll=0,
-                shrinks it back to corner-button size at scroll=1. */}
-            <motion.div
-              aria-hidden="true"
-              className="fixed pointer-events-none z-40 rounded-full overflow-hidden hidden md:flex items-center justify-center"
-              style={{
-                bottom: "24px",
-                right: "24px",
-                width: "64px",
-                height: "64px",
-                transformOrigin: "bottom right",
-                scale: flyingScale,
-                opacity: flyingOpacity,
-                willChange: "transform, opacity",
-                background: "linear-gradient(135deg, hsl(188 100% 50% / 0.18), hsl(239 84% 67%), hsl(278 68% 59%))",
-                border: "2px solid hsl(188 100% 50% / 0.5)",
-                boxShadow: "0 0 20px hsl(188 100% 50% / 0.28), 0 4px 20px rgba(0,0,0,0.22)",
-              }}
-            >
-              {/* AvatarFace SVG — same as the corner button at 52px, scales via parent transform */}
-              <svg
-                width={52}
-                height={52}
-                viewBox="0 0 60 60"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
+            {/*
+              Scroll Traveler — fixed overlay that physically travels from the hero avatar
+              position down to the corner button position as the user scrolls.
+
+              Strategy: the element is permanently anchored at the corner position in DOM
+              space (bottom: 24px, right: 24px, 64×64). At scroll=0 it is translated and
+              scaled outward to visually overlay the hero avatar. As scroll progresses to
+              0.85, translation and scale interpolate back to identity, landing exactly at
+              the corner. The corner button then mounts and this element fades out.
+
+              Only shown on md+ screens (matching corner button visibility).
+              pointer-events-none and aria-hidden — purely decorative.
+            */}
+            {!isPastHero && (
+              <motion.div
                 aria-hidden="true"
+                className="fixed pointer-events-none z-40 rounded-full overflow-hidden hidden md:block"
+                style={{
+                  bottom: `${CORNER_BOTTOM}px`,
+                  right: `${CORNER_RIGHT}px`,
+                  width: `${CORNER_SIZE}px`,
+                  height: `${CORNER_SIZE}px`,
+                  x: travelerX,
+                  y: travelerY,
+                  scale: travelerScale,
+                  opacity: travelerOpacity,
+                  transformOrigin: "center center",
+                  willChange: "transform, opacity",
+                  background: "linear-gradient(135deg, hsl(188 100% 50% / 0.18), hsl(239 84% 67%), hsl(278 68% 59%))",
+                  border: "2px solid hsl(188 100% 50% / 0.5)",
+                  boxShadow: "0 0 20px hsl(188 100% 50% / 0.28), 0 4px 20px rgba(0,0,0,0.22)",
+                }}
               >
-                <defs>
-                  <radialGradient id="hero-fly-face" cx="50%" cy="50%" r="50%">
-                    <stop offset="0%" stopColor="hsl(188 100% 50%)" />
-                    <stop offset="50%" stopColor="hsl(239 84% 67%)" />
-                    <stop offset="100%" stopColor="hsl(278 68% 59%)" />
-                  </radialGradient>
-                  <radialGradient id="hero-fly-eye" cx="50%" cy="35%" r="60%">
-                    <stop offset="0%" stopColor="rgba(255,255,255,0.9)" />
-                    <stop offset="100%" stopColor="hsl(188 100% 50% / 0.5)" />
-                  </radialGradient>
-                </defs>
-                <circle cx="30" cy="30" r="28" fill="url(#hero-fly-face)" />
-                <circle cx="22" cy="22" r="12" fill="rgba(255,255,255,0.12)" />
-                <ellipse cx="21" cy="27" rx="6" ry="6.5" fill="url(#hero-fly-eye)" />
-                <circle cx="21" cy="27" r="3.5" fill="#0f172a" />
-                <circle cx="19.5" cy="25.5" r="1.4" fill="white" opacity="0.9" />
-                <circle cx="20" cy="26" r="0.7" fill="hsl(188 100% 70%)" opacity="0.8" />
-                <ellipse cx="39" cy="27" rx="6" ry="6.5" fill="url(#hero-fly-eye)" />
-                <circle cx="39" cy="27" r="3.5" fill="#0f172a" />
-                <circle cx="37.5" cy="25.5" r="1.4" fill="white" opacity="0.9" />
-                <circle cx="38" cy="26" r="0.7" fill="hsl(188 100% 70%)" opacity="0.8" />
-                <path d="M 22 37 Q 30 43 38 37" stroke="hsl(239 84% 85%)" strokeWidth="2.2" fill="none" strokeLinecap="round" />
-              </svg>
-            </motion.div>
+                {/* Full AiAvatar face SVG — same design as AvatarFace in chatbot.tsx */}
+                <svg
+                  width={CORNER_SIZE}
+                  height={CORNER_SIZE}
+                  viewBox="0 0 60 60"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  aria-hidden="true"
+                >
+                  <defs>
+                    <radialGradient id="traveler-face" cx="50%" cy="50%" r="50%">
+                      <stop offset="0%" stopColor="hsl(188 100% 50%)" />
+                      <stop offset="50%" stopColor="hsl(239 84% 67%)" />
+                      <stop offset="100%" stopColor="hsl(278 68% 59%)" />
+                    </radialGradient>
+                    <radialGradient id="traveler-eye" cx="50%" cy="35%" r="60%">
+                      <stop offset="0%" stopColor="rgba(255,255,255,0.9)" />
+                      <stop offset="100%" stopColor="hsl(188 100% 50% / 0.5)" />
+                    </radialGradient>
+                  </defs>
+                  <circle cx="30" cy="30" r="28" fill="url(#traveler-face)" />
+                  <circle cx="22" cy="22" r="12" fill="rgba(255,255,255,0.12)" />
+                  <ellipse cx="21" cy="27" rx="6" ry="6.5" fill="url(#traveler-eye)" />
+                  <circle cx="21" cy="27" r="3.5" fill="#0f172a" />
+                  <circle cx="19.5" cy="25.5" r="1.4" fill="white" opacity="0.9" />
+                  <circle cx="20" cy="26" r="0.7" fill="hsl(188 100% 70%)" opacity="0.8" />
+                  <ellipse cx="39" cy="27" rx="6" ry="6.5" fill="url(#traveler-eye)" />
+                  <circle cx="39" cy="27" r="3.5" fill="#0f172a" />
+                  <circle cx="37.5" cy="25.5" r="1.4" fill="white" opacity="0.9" />
+                  <circle cx="38" cy="26" r="0.7" fill="hsl(188 100% 70%)" opacity="0.8" />
+                  <path d="M 22 37 Q 30 43 38 37" stroke="hsl(239 84% 85%)" strokeWidth="2.2" fill="none" strokeLinecap="round" />
+                </svg>
+              </motion.div>
+            )}
           </div>
         </motion.div>
       </motion.div>
