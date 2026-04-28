@@ -11,11 +11,51 @@ import {
 } from "framer-motion"
 import { useEffect, useRef, useState } from "react"
 import { Button } from "@/components/ui/button"
-import AiAvatar from "./ai-avatar"
 import { Github, Linkedin, Download, ArrowDown, X } from "lucide-react"
 import { useTypewriter } from "@/hooks/use-typewriter"
 import { blurUpVariants } from "@/lib/motion-variants"
 import { useChatContext } from "@/context/chat-context"
+
+// ── Shared avatar face SVG — same design used in traveler, corner button, and chat header ──
+// viewBox: 0 0 60 60, renders a gradient face with two eyes and a smile.
+// idPrefix must be unique per rendered instance to prevent SVG gradient ID collisions.
+export function AvatarFaceSVG({ size = 60, idPrefix = "afs" }: { size?: number; idPrefix?: string }) {
+  const faceId = `${idPrefix}-face`
+  const eyeId = `${idPrefix}-eye`
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 60 60"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      <defs>
+        <radialGradient id={faceId} cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="hsl(188 100% 50%)" />
+          <stop offset="50%" stopColor="hsl(239 84% 67%)" />
+          <stop offset="100%" stopColor="hsl(278 68% 59%)" />
+        </radialGradient>
+        <radialGradient id={eyeId} cx="50%" cy="35%" r="60%">
+          <stop offset="0%" stopColor="rgba(255,255,255,0.9)" />
+          <stop offset="100%" stopColor="hsl(188 100% 50% / 0.5)" />
+        </radialGradient>
+      </defs>
+      <circle cx="30" cy="30" r="28" fill={`url(#${faceId})`} />
+      <circle cx="22" cy="22" r="12" fill="rgba(255,255,255,0.12)" />
+      <ellipse cx="21" cy="27" rx="6" ry="6.5" fill={`url(#${eyeId})`} />
+      <circle cx="21" cy="27" r="3.5" fill="#0f172a" />
+      <circle cx="19.5" cy="25.5" r="1.4" fill="white" opacity="0.9" />
+      <circle cx="20" cy="26" r="0.7" fill="hsl(188 100% 70%)" opacity="0.8" />
+      <ellipse cx="39" cy="27" rx="6" ry="6.5" fill={`url(#${eyeId})`} />
+      <circle cx="39" cy="27" r="3.5" fill="#0f172a" />
+      <circle cx="37.5" cy="25.5" r="1.4" fill="white" opacity="0.9" />
+      <circle cx="38" cy="26" r="0.7" fill="hsl(188 100% 70%)" opacity="0.8" />
+      <path d="M 22 37 Q 30 43 38 37" stroke="hsl(239 84% 85%)" strokeWidth="2.2" fill="none" strokeLinecap="round" />
+    </svg>
+  )
+}
 
 const ROLES = [
   "AI Engineer",
@@ -54,7 +94,7 @@ const CORNER_RIGHT = 24
 
 export default function Hero() {
   const { displayText, cursorVisible } = useTypewriter(ROLES)
-  const { isPastHero, openChat } = useChatContext()
+  const { isPastHero, openChat, setIsCornerReady } = useChatContext()
   const avatarWrapperRef = useRef<HTMLDivElement>(null)
   const heroSectionRef = useRef<HTMLElement>(null)
   const tiltRafRef = useRef<number | null>(null)
@@ -113,38 +153,46 @@ export default function Hero() {
 
   // Drive the traveler transform from scrollYProgress
   useMotionValueEvent(scrollYProgress, "change", (latest) => {
-    // Scroll animation range: 0 → 0.85
-    const progress = Math.max(0, Math.min(1, latest / 0.85))
-    const eased = progress < 0.5
-      ? 2 * progress * progress
-      : 1 - Math.pow(-2 * progress + 2, 2) / 2 // ease-in-out quad
+    // ── Position + scale ───────────────────────────────────────────────────
+    // Travel range: scroll 0.01 → 0.80. Beyond 0.80 the traveler is at corner.
+    const travelProgress = Math.max(0, Math.min(1, (latest - 0.01) / (0.80 - 0.01)))
+    const eased = travelProgress < 0.5
+      ? 2 * travelProgress * travelProgress
+      : 1 - Math.pow(-2 * travelProgress + 2, 2) / 2 // ease-in-out quad
 
-    // Position: interpolate from hero center offset → 0 (at corner)
     travelerX.set(offsetXRef.current * (1 - eased))
     travelerY.set(offsetYRef.current * (1 - eased))
-
-    // Scale: interpolate from hero size → 1× (corner button size)
     travelerScale.set(scaleRatioRef.current + (1 - scaleRatioRef.current) * eased)
 
-    // Opacity:
-    //   - Fade IN quickly at scroll start (0 → 0.12 = fully visible)
-    //   - Hold through most of the travel
-    //   - Fade OUT as it snaps to corner (0.72 → 0.85)
+    // ── Traveler opacity ───────────────────────────────────────────────────
+    // Scroll < 0.01  → 0 (invisible, mounted face shows)
+    // Scroll >= 0.01 → 1 (instant snap, seamlessly overlaps mounted face)
+    // Hold at 1 through 0.80
+    // Scroll 0.80 → 0.92 → fade out as corner button takes over
+    // Scroll >= 0.92 → 0
     if (latest < 0.01) {
       travelerOpacity.set(0)
-    } else if (latest < 0.12) {
-      travelerOpacity.set((latest - 0.01) / 0.11)
-    } else if (latest < 0.72) {
+    } else if (latest < 0.80) {
       travelerOpacity.set(1)
-    } else if (latest < 0.85) {
-      travelerOpacity.set(1 - (latest - 0.72) / 0.13)
+    } else if (latest < 0.92) {
+      travelerOpacity.set(1 - (latest - 0.80) / (0.92 - 0.80))
     } else {
       travelerOpacity.set(0)
     }
+
+    // ── Corner-ready gate ──────────────────────────────────────────────────
+    // Signal context: corner button should appear once traveler has fully
+    // arrived (~0.90 scroll). Retract signal when scrolling back up below 0.85.
+    if (latest >= 0.90) {
+      setIsCornerReady(true)
+    } else if (latest < 0.85) {
+      setIsCornerReady(false)
+    }
   })
 
-  // Hero avatar opacity — fades out as the traveler becomes the dominant element
-  const heroAvatarOpacity = useTransform(scrollYProgress, [0, 0.05, 0.35], [1, 0.85, 0])
+  // Hero avatar opacity — visible at scroll=0, gone at scroll >= 0.01
+  // Uses a very tight transition so the swap with the traveler is seamless.
+  const heroAvatarOpacity = useTransform(scrollYProgress, [0, 0.005, 0.01], [1, 0.5, 0])
 
   // ── Mouse tilt on hero avatar ────────────────────────────────────────────────
   useEffect(() => {
@@ -348,19 +396,28 @@ export default function Hero() {
 
             {/*
               Hero avatar — static, always in-document flow.
-              Fades out as scroll begins (the scroll traveler takes over visually).
-              No layoutId here — the traveler handles the continuous motion.
+              Uses the same AvatarFaceSVG design as the scroll traveler and corner button.
+              Instantly hidden (opacity → 0) at scroll >= 0.01 so the traveler can
+              seamlessly take over without any visual jump. The traveler starts at
+              opacity 0, snaps to opacity 1 at scroll 0.01, and is positioned exactly
+              on top of this element at that moment, making the swap imperceptible.
             */}
             <motion.div
               style={{ opacity: heroAvatarOpacity, willChange: "opacity" }}
             >
               <div
                 ref={avatarWrapperRef}
-                className="relative flex items-center justify-center rounded-full p-[2px] aspect-square w-56 sm:w-64 md:w-72 lg:w-80 bg-[conic-gradient(from_0deg,rgba(148,163,184,0.35),rgba(148,163,184,0.05),rgba(148,163,184,0.35))] dark:bg-[conic-gradient(from_0deg,rgba(34,211,238,0.25),rgba(34,211,238,0),rgba(34,211,238,0.25))]"
-                style={{ willChange: "transform", transformStyle: "preserve-3d" }}
+                className="relative flex items-center justify-center rounded-full p-[2px] aspect-square w-56 sm:w-64 md:w-72 lg:w-80"
+                style={{
+                  background: "linear-gradient(135deg, hsl(188 100% 50% / 0.18), hsl(239 84% 67%), hsl(278 68% 59%))",
+                  border: "2px solid hsl(188 100% 50% / 0.5)",
+                  boxShadow: "0 0 20px hsl(188 100% 50% / 0.28), 0 4px 20px rgba(0,0,0,0.22)",
+                  willChange: "transform",
+                  transformStyle: "preserve-3d",
+                }}
               >
-                <div className="flex items-center justify-center rounded-full aspect-square w-full h-full overflow-hidden border border-transparent dark:border-white/10 transition-all duration-500 filter brightness-100 saturate-100 drop-shadow-[0_10px_20px_rgba(0,0,0,0.08)] dark:brightness-110 dark:contrast-105 dark:drop-shadow-[0_0_15px_rgba(99,102,241,0.4)]">
-                  <AiAvatar />
+                <div className="flex items-center justify-center rounded-full aspect-square w-full h-full overflow-hidden">
+                  <AvatarFaceSVG size={280} idPrefix="hero-static" />
                 </div>
               </div>
             </motion.div>
@@ -369,69 +426,36 @@ export default function Hero() {
               Scroll Traveler — fixed overlay that physically travels from the hero avatar
               position down to the corner button position as the user scrolls.
 
-              Strategy: the element is permanently anchored at the corner position in DOM
-              space (bottom: 24px, right: 24px, 64×64). At scroll=0 it is translated and
-              scaled outward to visually overlay the hero avatar. As scroll progresses to
-              0.85, translation and scale interpolate back to identity, landing exactly at
-              the corner. The corner button then mounts and this element fades out.
+              Anchored at corner position (bottom: 24px, right: 24px, 64×64).
+              At scroll < 0.01: opacity 0, invisible.
+              At scroll = 0.01: opacity snaps to 1, visually overlapping the hero avatar
+                (which simultaneously snaps to opacity 0) — seamless swap.
+              Scroll 0.01 → 0.80: travels from hero position to corner via translate+scale.
+              Scroll 0.80 → 0.92: fades out as corner button fades in.
 
-              Only shown on md+ screens (matching corner button visibility).
-              pointer-events-none and aria-hidden — purely decorative.
+              Only shown on md+ screens. pointer-events-none, aria-hidden — decorative.
             */}
-            {!isPastHero && (
-              <motion.div
-                aria-hidden="true"
-                className="fixed pointer-events-none z-40 rounded-full overflow-hidden hidden md:block"
-                style={{
-                  bottom: `${CORNER_BOTTOM}px`,
-                  right: `${CORNER_RIGHT}px`,
-                  width: `${CORNER_SIZE}px`,
-                  height: `${CORNER_SIZE}px`,
-                  x: travelerX,
-                  y: travelerY,
-                  scale: travelerScale,
-                  opacity: travelerOpacity,
-                  transformOrigin: "center center",
-                  willChange: "transform, opacity",
-                  background: "linear-gradient(135deg, hsl(188 100% 50% / 0.18), hsl(239 84% 67%), hsl(278 68% 59%))",
-                  border: "2px solid hsl(188 100% 50% / 0.5)",
-                  boxShadow: "0 0 20px hsl(188 100% 50% / 0.28), 0 4px 20px rgba(0,0,0,0.22)",
-                }}
-              >
-                {/* Full AiAvatar face SVG — same design as AvatarFace in chatbot.tsx */}
-                <svg
-                  width={CORNER_SIZE}
-                  height={CORNER_SIZE}
-                  viewBox="0 0 60 60"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                  aria-hidden="true"
-                >
-                  <defs>
-                    <radialGradient id="traveler-face" cx="50%" cy="50%" r="50%">
-                      <stop offset="0%" stopColor="hsl(188 100% 50%)" />
-                      <stop offset="50%" stopColor="hsl(239 84% 67%)" />
-                      <stop offset="100%" stopColor="hsl(278 68% 59%)" />
-                    </radialGradient>
-                    <radialGradient id="traveler-eye" cx="50%" cy="35%" r="60%">
-                      <stop offset="0%" stopColor="rgba(255,255,255,0.9)" />
-                      <stop offset="100%" stopColor="hsl(188 100% 50% / 0.5)" />
-                    </radialGradient>
-                  </defs>
-                  <circle cx="30" cy="30" r="28" fill="url(#traveler-face)" />
-                  <circle cx="22" cy="22" r="12" fill="rgba(255,255,255,0.12)" />
-                  <ellipse cx="21" cy="27" rx="6" ry="6.5" fill="url(#traveler-eye)" />
-                  <circle cx="21" cy="27" r="3.5" fill="#0f172a" />
-                  <circle cx="19.5" cy="25.5" r="1.4" fill="white" opacity="0.9" />
-                  <circle cx="20" cy="26" r="0.7" fill="hsl(188 100% 70%)" opacity="0.8" />
-                  <ellipse cx="39" cy="27" rx="6" ry="6.5" fill="url(#traveler-eye)" />
-                  <circle cx="39" cy="27" r="3.5" fill="#0f172a" />
-                  <circle cx="37.5" cy="25.5" r="1.4" fill="white" opacity="0.9" />
-                  <circle cx="38" cy="26" r="0.7" fill="hsl(188 100% 70%)" opacity="0.8" />
-                  <path d="M 22 37 Q 30 43 38 37" stroke="hsl(239 84% 85%)" strokeWidth="2.2" fill="none" strokeLinecap="round" />
-                </svg>
-              </motion.div>
-            )}
+            <motion.div
+              aria-hidden="true"
+              className="fixed pointer-events-none z-40 rounded-full overflow-hidden hidden md:block"
+              style={{
+                bottom: `${CORNER_BOTTOM}px`,
+                right: `${CORNER_RIGHT}px`,
+                width: `${CORNER_SIZE}px`,
+                height: `${CORNER_SIZE}px`,
+                x: travelerX,
+                y: travelerY,
+                scale: travelerScale,
+                opacity: travelerOpacity,
+                transformOrigin: "center center",
+                willChange: "transform, opacity",
+                background: "linear-gradient(135deg, hsl(188 100% 50% / 0.18), hsl(239 84% 67%), hsl(278 68% 59%))",
+                border: "2px solid hsl(188 100% 50% / 0.5)",
+                boxShadow: "0 0 20px hsl(188 100% 50% / 0.28), 0 4px 20px rgba(0,0,0,0.22)",
+              }}
+            >
+              <AvatarFaceSVG size={CORNER_SIZE} idPrefix="hero-traveler" />
+            </motion.div>
           </div>
         </motion.div>
       </motion.div>

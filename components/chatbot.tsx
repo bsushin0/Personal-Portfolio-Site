@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, useId } from 'react';
 import { X, Send, Loader2, AlertCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
@@ -78,7 +78,12 @@ function pickTooltip(sectionId: string): string {
 }
 
 // ── Mini avatar face SVG ──────────────────────────────────────────────────────
+// useId ensures each rendered instance gets unique gradient IDs, preventing
+// cross-instance gradient bleed when multiple AvatarFace elements are in the DOM.
 function AvatarFace({ size = 32 }: { size?: number }) {
+  const uid = useId();
+  const faceId = `cf-face-${uid}`;
+  const eyeId = `cf-eye-${uid}`;
   return (
     <svg
       width={size}
@@ -89,23 +94,23 @@ function AvatarFace({ size = 32 }: { size?: number }) {
       aria-hidden="true"
     >
       <defs>
-        <radialGradient id="cf-face" cx="50%" cy="50%" r="50%">
+        <radialGradient id={faceId} cx="50%" cy="50%" r="50%">
           <stop offset="0%" stopColor="hsl(188 100% 50%)" />
           <stop offset="50%" stopColor="hsl(239 84% 67%)" />
           <stop offset="100%" stopColor="hsl(278 68% 59%)" />
         </radialGradient>
-        <radialGradient id="cf-eye" cx="50%" cy="35%" r="60%">
+        <radialGradient id={eyeId} cx="50%" cy="35%" r="60%">
           <stop offset="0%" stopColor="rgba(255,255,255,0.9)" />
           <stop offset="100%" stopColor="hsl(188 100% 50% / 0.5)" />
         </radialGradient>
       </defs>
-      <circle cx="30" cy="30" r="28" fill="url(#cf-face)" />
+      <circle cx="30" cy="30" r="28" fill={`url(#${faceId})`} />
       <circle cx="22" cy="22" r="12" fill="rgba(255,255,255,0.12)" />
-      <ellipse cx="21" cy="27" rx="6" ry="6.5" fill="url(#cf-eye)" />
+      <ellipse cx="21" cy="27" rx="6" ry="6.5" fill={`url(#${eyeId})`} />
       <circle cx="21" cy="27" r="3.5" fill="#0f172a" />
       <circle cx="19.5" cy="25.5" r="1.4" fill="white" opacity="0.9" />
       <circle cx="20" cy="26" r="0.7" fill="hsl(188 100% 70%)" opacity="0.8" />
-      <ellipse cx="39" cy="27" rx="6" ry="6.5" fill="url(#cf-eye)" />
+      <ellipse cx="39" cy="27" rx="6" ry="6.5" fill={`url(#${eyeId})`} />
       <circle cx="39" cy="27" r="3.5" fill="#0f172a" />
       <circle cx="37.5" cy="25.5" r="1.4" fill="white" opacity="0.9" />
       <circle cx="38" cy="26" r="0.7" fill="hsl(188 100% 70%)" opacity="0.8" />
@@ -167,7 +172,7 @@ function TooltipBubble({ message, onClose, onAskMe, prefersReduced }: TooltipBub
 
 // ── Unified corner avatar — chat trigger + section guide ──────────────────────
 function AvatarCornerButton() {
-  const { openChat, isPastHero, setIsPastHero } = useChatContext();
+  const { openChat, isPastHero, setIsPastHero, isCornerReady } = useChatContext();
   const [tooltipMsg, setTooltipMsg] = useState<string | null>(null);
   const [prefersReduced, setPrefersReduced] = useState(false);
 
@@ -250,9 +255,10 @@ function AvatarCornerButton() {
     openChat();
   }, [dismissTooltip, openChat]);
 
-  // Don't render anything when the hero avatar is still visible — the scroll
-  // traveler in hero.tsx is the visual. Only mount once isPastHero flips true.
-  if (!isPastHero) return null;
+  // Don't render anything until the scroll traveler has arrived at the corner
+  // position (~90–95% scroll). isCornerReady is set by hero.tsx scroll handler.
+  // isPastHero still drives the section tooltip observers above.
+  if (!isCornerReady) return null;
 
   return (
     <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end">
