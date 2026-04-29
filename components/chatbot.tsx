@@ -433,7 +433,7 @@ function AvatarCornerButton() {
   if (!isCornerReady) return null;
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end">
+    <div className="fixed bottom-6 right-6 z-[70] flex flex-col items-end">
       {/* Tooltip speech bubble */}
       <AnimatePresence mode="wait">
         {tooltipMsg && (
@@ -569,7 +569,7 @@ export function Chatbot() {
             exit={{ opacity: 0, scale: 0.93, y: 12 }}
             transition={{ type: "spring", stiffness: 320, damping: 28 }}
             className={cn(
-              "fixed z-50",
+              "fixed z-[70]",
               "md:bottom-6 md:right-6",
               "bottom-0 right-0 left-0 md:left-auto",
               "md:w-[400px]",
