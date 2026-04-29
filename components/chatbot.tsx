@@ -211,7 +211,6 @@ function AvatarFace({ size = 32, mode = "static" }: { size?: number; mode?: "ful
 
   // Shared g-element style factories
   const eyeGroupStyle = (cx: number, cy: number): CSSProperties => ({
-    transformBox: "fill-box",
     transformOrigin: `${cx}px ${cy}px`,
     transform: `scaleY(${eyeScaleY})`,
     transition: `transform ${eyeTransitionDuration} ease-in-out`,
@@ -219,7 +218,7 @@ function AvatarFace({ size = 32, mode = "static" }: { size?: number; mode?: "ful
 
   const pupilGroupStyle: CSSProperties = {
     transform: `translate(${gazeX}px, ${gazeY + pupilExtraY}px)`,
-    transition: (isBlinking || isClicked) ? "none" : "transform 0.8s ease-in-out",
+    transition: (isBlinking || isClicked) ? "opacity 0.06s ease-in-out" : "transform 0.8s ease-in-out, opacity 0.06s ease-in-out",
     opacity: isBlinking ? 0 : 1,
   };
 
@@ -280,14 +279,13 @@ function AvatarFace({ size = 32, mode = "static" }: { size?: number; mode?: "ful
         <circle cx="38" cy="26" r="0.7" fill="hsl(188 100% 70%)" opacity="0.8" />
       </g>
 
-      {/* Mouth */}
+      {/* Mouth — snaps between states (CSS d-property animation not cross-browser) */}
       <path
         d={mode === "full" ? mouthPath : "M 22 37 Q 30 43 38 37"}
         stroke="hsl(239 84% 85%)"
         strokeWidth="2.2"
         fill="none"
         strokeLinecap="round"
-        style={mode === "full" ? { transition: "d 0.35s ease-in-out" } : undefined}
       />
     </svg>
   );

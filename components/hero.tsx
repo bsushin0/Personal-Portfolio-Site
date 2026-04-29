@@ -29,10 +29,12 @@ export function AvatarFaceSVG({
   size = 60,
   idPrefix = "afs",
   mode = "full",
+  disableHoverState = false,
 }: {
   size?: number
   idPrefix?: string
   mode?: "full" | "traveler" | "static"
+  disableHoverState?: boolean
 }) {
   const faceId = `${idPrefix}-face`
   const eyeId  = `${idPrefix}-eye`
@@ -192,8 +194,8 @@ export function AvatarFaceSVG({
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden="true"
-      onMouseEnter={mode === "full" ? () => setIsHovered(true)  : undefined}
-      onMouseLeave={mode === "full" ? () => setIsHovered(false) : undefined}
+      onMouseEnter={(mode === "full" && !disableHoverState) ? () => setIsHovered(true)  : undefined}
+      onMouseLeave={(mode === "full" && !disableHoverState) ? () => setIsHovered(false) : undefined}
       onClick={mode === "full" ? handleClick : undefined}
       style={{ cursor: mode === "full" ? "default" : undefined }}
     >
@@ -215,7 +217,7 @@ export function AvatarFaceSVG({
         cy="30"
         r="28"
         fill={`url(#${faceId})`}
-        className={mode !== "static" ? "avatar-face-glow-pulse" : undefined}
+        className={mode === "full" ? "avatar-face-glow-pulse" : undefined}
       />
 
       {/* Highlight blob */}
@@ -224,7 +226,6 @@ export function AvatarFaceSVG({
       {/* Left eye — scaleY transitions for blink/hover/click */}
       <g
         style={{
-          transformBox: "fill-box",
           transformOrigin: "21px 27px",
           transform: `scaleY(${eyeScaleY})`,
           transition: `transform ${eyeTransitionDuration} ease-in-out`,
@@ -237,7 +238,7 @@ export function AvatarFaceSVG({
       <g
         style={{
           transform: `translate(${gazeX}px, ${gazeY + pupilExtraY}px)`,
-          transition: (isBlinking || isClicked) ? "none" : "transform 0.8s ease-in-out",
+          transition: (isBlinking || isClicked) ? "opacity 0.06s ease-in-out" : "transform 0.8s ease-in-out, opacity 0.06s ease-in-out",
           opacity: isBlinking ? 0 : 1,
         }}
       >
@@ -249,7 +250,6 @@ export function AvatarFaceSVG({
       {/* Right eye */}
       <g
         style={{
-          transformBox: "fill-box",
           transformOrigin: "39px 27px",
           transform: `scaleY(${eyeScaleY})`,
           transition: `transform ${eyeTransitionDuration} ease-in-out`,
@@ -262,7 +262,7 @@ export function AvatarFaceSVG({
       <g
         style={{
           transform: `translate(${gazeX}px, ${gazeY + pupilExtraY}px)`,
-          transition: (isBlinking || isClicked) ? "none" : "transform 0.8s ease-in-out",
+          transition: (isBlinking || isClicked) ? "opacity 0.06s ease-in-out" : "transform 0.8s ease-in-out, opacity 0.06s ease-in-out",
           opacity: isBlinking ? 0 : 1,
         }}
       >
@@ -271,14 +271,13 @@ export function AvatarFaceSVG({
         <circle cx="38" cy="26" r="0.7" fill="hsl(188 100% 70%)" opacity="0.8" />
       </g>
 
-      {/* Mouth — transitions between states */}
+      {/* Mouth — snaps between states (CSS d-property animation not cross-browser) */}
       <path
         d={mouthPath}
         stroke="hsl(239 84% 85%)"
         strokeWidth="2.2"
         fill="none"
         strokeLinecap="round"
-        style={{ transition: "d 0.35s ease-in-out" }}
       />
     </svg>
   )
@@ -651,7 +650,7 @@ export default function Hero() {
                 }}
               >
                 <div className="flex items-center justify-center rounded-full aspect-square w-full h-full overflow-hidden">
-                  <AvatarFaceSVG size={280} idPrefix="hero-static" />
+                  <AvatarFaceSVG size={280} idPrefix="hero-static" disableHoverState={true} />
                 </div>
               </div>
             </motion.div>
