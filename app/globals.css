@@ -321,6 +321,59 @@ body {
   animation: pulse-glow 2.5s ease-in-out infinite;
 }
 
+/* Avatar click ripple */
+@keyframes avatar-ripple {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+}
+
+.animate-avatar-ripple {
+  animation: avatar-ripple 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+}
+
+/* Avatar idle float — gentle breathing oscillation, CSS-driven so no RAF setState */
+@keyframes avatar-idle-float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-7px); }
+}
+
+.avatar-idle-float {
+  animation: avatar-idle-float 4s ease-in-out infinite;
+}
+
+/* Corner avatar float & pulse animations */
+@keyframes corner-avatar-float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-6px); }
+}
+
+@keyframes corner-avatar-pulse {
+  0%   { box-shadow: 0 0 0 0   hsl(188 100% 50% / 0.35); }
+  60%  { box-shadow: 0 0 0 16px hsl(188 100% 50% / 0);   }
+  100% { box-shadow: 0 0 0 0   hsl(188 100% 50% / 0);    }
+}
+
+/* Avatar face ambient glow pulse — very slow breathing scale on the face circle.
+   CSS transform only (no SVG filter), runs at ~3s period. Applied via class
+   .avatar-face-glow-pulse on the SVG <circle> element. */
+@keyframes avatar-face-glow-pulse {
+  0%, 100% { transform: scale(1.000); opacity: 1; }
+  50%       { transform: scale(1.028); opacity: 0.93; }
+}
+
+.avatar-face-glow-pulse {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: avatar-face-glow-pulse 3.2s ease-in-out infinite;
+  will-change: transform;
+}
+
 /* Smooth scrolling */
 html {
   scroll-behavior: smooth;

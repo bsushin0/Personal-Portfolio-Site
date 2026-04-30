@@ -14,7 +14,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Navbar />
-      <main className="container mx-auto px-4 py-12 md:py-16">
+      <main className="container mx-auto px-4 pt-0 pb-12 md:pb-16">
         <Hero />
         <About />
         <Interests />

@@ -47,13 +47,22 @@ export default function Interests() {
         variants={containerVariants}
       >
         {interests.map((item) => (
-          <motion.div key={item.title} variants={cardVariants}>
-            <Card className="glass-effect-sm border-glow card-interactive h-full">
+          <motion.div
+            key={item.title}
+            variants={cardVariants}
+            whileHover={{
+              y: -6,
+              scale: 1.03,
+              transition: { duration: 0.25, ease: [0.23, 1, 0.32, 1] },
+            }}
+            className="group"
+          >
+            <Card className="glass-effect-sm border border-indigo-500/20 hover:border-indigo-500/50 hover:shadow-[0_0_24px_rgba(99,102,241,0.18)] transition-all duration-300 h-full">
               <CardHeader className="flex flex-row items-center gap-4">
-                <div className="flex items-center justify-center w-12 h-12 rounded-full bg-indigo-500/10 text-indigo-500 border border-indigo-500/20">
+                <div className="flex items-center justify-center w-12 h-12 rounded-full bg-indigo-500/10 group-hover:bg-indigo-500/20 text-indigo-500 border border-indigo-500/20 group-hover:border-indigo-500/50 group-hover:shadow-[0_0_12px_rgba(99,102,241,0.30)] transition-all duration-300 group-hover:scale-110 shrink-0">
                   {item.icon}
                 </div>
-                <CardTitle className="text-lg text-foreground">{item.title}</CardTitle>
+                <CardTitle className="text-lg text-foreground group-hover:text-indigo-400 transition-colors duration-300">{item.title}</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-foreground/60">{item.description}</p>

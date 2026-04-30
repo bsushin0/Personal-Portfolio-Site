@@ -45,8 +45,8 @@ export default function AiAvatar() {
   const mousePendingRef = useRef<{ x: number; y: number } | null>(null)
   const dragRafRef = useRef<number | null>(null)
   const dragPendingRef = useRef<{ x: number; y: number } | null>(null)
-
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
+  // Raw mouse position stored as a ref — avoids React re-renders on every mousemove
+  const mousePosRef = useRef({ x: 0, y: 0 })
   const [expression, setExpression] = useState<ExpressionState>({
     energy: 0.8,
     surprise: 0,
@@ -57,42 +57,24 @@ export default function AiAvatar() {
     mouthOpen: 0,
     eyeScale: 1,
   })
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
   const [isHovering, setIsHovering] = useState(false)
   const [isDragging, setIsDragging] = useState(false)
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 })
   const [particles, setParticles] = useState<Particle[]>([])
   const [isKeyboardInteracting, setIsKeyboardInteracting] = useState(false)
   const [focusEnergy, setFocusEnergy] = useState(0)
+  const [rippleActive, setRippleActive] = useState(false)
+  const [isProximate, setIsProximate] = useState(false)
+  const [isIdle, setIsIdle] = useState(false)
+  const idleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   // Placeholder particle generator to prevent runtime errors in production
   const createParticles = useCallback(() => {
     // Particle visuals are currently disabled; keep no-op to avoid reference errors
   }, [])
 
-  // Optimized animation loop with requestAnimationFrame
-  useEffect(() => {
-    let startTime = Date.now()
-    
-    const animate = () => {
-      const elapsed = Date.now() - startTime
-      
-      // Smooth bounce animation
-      setExpression((prev: ExpressionState) => ({
-        ...prev,
-        bounce: Math.sin(elapsed / 300) * 0.3,
-      }))
-
-      animationFrameRef.current = requestAnimationFrame(animate)
-    }
-
-    animationFrameRef.current = requestAnimationFrame(animate)
-
-    return () => {
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current)
-      }
-    }
-  }, [])
+  // Bounce is now driven purely by CSS animation — no RAF setState loop needed.
 
   // Blink animation
   useEffect(() => {
@@ -113,9 +95,12 @@ export default function AiAvatar() {
     }
   }, [])
 
-  // Mouse tracking — throttled via requestAnimationFrame
+  // Mouse tracking — raw position stored in ref, eye DOM updates via RAF loop
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
+      mousePosRef.current = { x: e.clientX, y: e.clientY }
+      // Also keep mousePosition state updated, but only once per ~4 frames
+      // for proximity/idle detection (cheap: no DOM thrash, just threshold check)
       mousePendingRef.current = { x: e.clientX, y: e.clientY }
       if (mouseRafRef.current === null) {
         mouseRafRef.current = requestAnimationFrame(() => {
@@ -143,6 +128,33 @@ export default function AiAvatar() {
       window.removeEventListener("mouseenter", handleMouseEnter)
       window.removeEventListener("mouseleave", handleMouseLeave)
     }
+  }, [])
+
+  // Eye tracking RAF loop — direct DOM manipulation, zero React re-renders
+  useEffect(() => {
+    let rafId: number
+
+    const loop = () => {
+      if (avatarRef.current && leftPupilRef.current && rightPupilRef.current) {
+        const rect = avatarRef.current.getBoundingClientRect()
+        const cx = rect.left + rect.width / 2
+        const cy = rect.top + rect.height / 2
+        const dx = mousePosRef.current.x - cx
+        const dy = mousePosRef.current.y - cy
+        const dist = Math.sqrt(dx * dx + dy * dy)
+        const angle = Math.atan2(dy, dx)
+        const clampedDist = Math.min(dist, 500)
+        const maxEyeMovement = 12 * (clampedDist / 500)
+        const eyeX = Math.cos(angle) * maxEyeMovement
+        const eyeY = Math.sin(angle) * maxEyeMovement
+        leftPupilRef.current.style.transform = `translate(${eyeX}px, ${eyeY}px)`
+        rightPupilRef.current.style.transform = `translate(${eyeX}px, ${eyeY}px)`
+      }
+      rafId = requestAnimationFrame(loop)
+    }
+
+    rafId = requestAnimationFrame(loop)
+    return () => cancelAnimationFrame(rafId)
   }, [])
 
   // Keyboard interaction - detect when user is typing/focused
@@ -253,23 +265,17 @@ export default function AiAvatar() {
     }
   }, [createParticles])
 
-  // Eye tracking and emotion
+  // Expression state updates based on mouse position (throttled by RAF via mousePosition state)
+  // Eye DOM mutations are handled separately by the RAF loop above — no redundancy here
   useEffect(() => {
-    if (!avatarRef.current || !leftPupilRef.current || !rightPupilRef.current)
-      return
-
+    if (!avatarRef.current) return
     const avatarRect = avatarRef.current.getBoundingClientRect()
-    const avatarCenterX = avatarRect.left + avatarRect.width / 2
-    const avatarCenterY = avatarRect.top + avatarRect.height / 2
-
-    const dx = mousePosition.x - avatarCenterX
-    const dy = mousePosition.y - avatarCenterY
+    const dx = mousePosition.x - (avatarRect.left + avatarRect.width / 2)
+    const dy = mousePosition.y - (avatarRect.top + avatarRect.height / 2)
     const distance = Math.sqrt(dx * dx + dy * dy)
     const angle = Math.atan2(dy, dx)
 
-    // Always high energy! Track looking direction
     let lookingAt: ExpressionState["lookingAt"] = "center"
-
     if (distance < 500) {
       const angleDeg = (angle * 180) / Math.PI
       if (angleDeg > -45 && angleDeg < 45) lookingAt = "right"
@@ -283,19 +289,36 @@ export default function AiAvatar() {
       lookingAt,
       energy: Math.min(1, 0.8 + (distance < 400 ? 0.2 : 0)),
     }))
-
-    // Eye movement
-    const maxEyeMovement = 12
-    const eyeX = Math.cos(angle) * maxEyeMovement
-    const eyeY = Math.sin(angle) * maxEyeMovement
-
-    if (leftPupilRef.current) leftPupilRef.current.style.transform = `translate(${eyeX}px, ${eyeY}px)`
-    if (rightPupilRef.current) rightPupilRef.current.style.transform = `translate(${eyeX}px, ${eyeY}px)`
   }, [mousePosition])
 
-  // Click handler - big celebration
+  // Proximity detection — activates when cursor is within 200px
+  useEffect(() => {
+    if (!avatarRef.current) return
+    const rect = avatarRef.current.getBoundingClientRect()
+    const cx = rect.left + rect.width / 2
+    const cy = rect.top + rect.height / 2
+    const dx = mousePosition.x - cx
+    const dy = mousePosition.y - cy
+    const dist = Math.sqrt(dx * dx + dy * dy)
+    setIsProximate(dist < 200)
+  }, [mousePosition])
+
+  // Idle detection — 4s without any mouse movement near avatar
+  useEffect(() => {
+    if (idleTimerRef.current) clearTimeout(idleTimerRef.current)
+    setIsIdle(false)
+    idleTimerRef.current = setTimeout(() => setIsIdle(true), 4000)
+    return () => {
+      if (idleTimerRef.current) clearTimeout(idleTimerRef.current)
+    }
+  }, [mousePosition])
+
+  // Click handler - ripple + expression
   const handleClick = () => {
     setExpression((prev: ExpressionState) => ({ ...prev, surprise: 1, energy: 1 }))
+    setRippleActive(false)
+    requestAnimationFrame(() => setRippleActive(true))
+    setTimeout(() => setRippleActive(false), 650)
     createParticles()
     createParticles()
     setTimeout(() => {
@@ -411,22 +434,43 @@ export default function AiAvatar() {
         ref={avatarRef}
         onMouseDown={handleMouseDown}
         onClick={handleClick}
-        className={`relative cursor-pointer transition-transform duration-150 select-none ${
+        className={`relative cursor-pointer select-none avatar-idle-float ${
           isDragging ? "scale-105" : "scale-100"
         }`}
         style={{
-          transform: `translate(${dragOffset.x}px, ${dragOffset.y + expression.bounce * 5}px) ${
+          transform: `translate(${dragOffset.x}px, ${dragOffset.y}px) ${
             isDragging ? "scale(1.08)" : "scale(1)"
           }`,
+          transition: isDragging ? "none" : "transform 300ms cubic-bezier(0.23,1,0.32,1)",
         }}
       >
+        {/* Ripple on click */}
+        {rippleActive && (
+          <div
+            className="absolute inset-0 rounded-full border-2 border-primary/60 pointer-events-none animate-avatar-ripple"
+            aria-hidden="true"
+          />
+        )}
+
+        {/* Proximity halo — appears when cursor is within 200px */}
+        <div
+          className="absolute inset-0 rounded-full pointer-events-none transition-all duration-400"
+          style={{
+            boxShadow: isProximate
+              ? `0 0 50px hsl(239 84% 67% / 0.40), 0 0 100px hsl(188 100% 50% / 0.20), 0 0 160px hsl(278 68% 59% / 0.12)`
+              : "none",
+          }}
+          aria-hidden="true"
+        />
+
         {/* Enhanced Aura/Energy glow with multiple layers */}
         <div
           className={`absolute inset-0 rounded-full blur-3xl transition-all duration-150 pointer-events-none`}
           style={{
             /* --ai-glow: 188 100% 50% (cyan) | --ai-secondary: 278 68% 59% (purple) */
-            background: `radial-gradient(circle, hsl(188 100% 50% / ${0.5 + expression.energy * 0.3}), hsl(278 68% 59% / 0.25), transparent)`,
-            transform: `scale(${1.1 + expression.energy * 0.15})`,
+            background: `radial-gradient(circle, hsl(188 100% 50% / ${(isIdle ? 0.3 : 0.5) + expression.energy * 0.3}), hsl(278 68% 59% / 0.25), transparent)`,
+            transform: `scale(${(isProximate ? 1.2 : isIdle ? 1.0 : 1.1) + expression.energy * 0.15})`,
+            transition: "transform 800ms cubic-bezier(0.23,1,0.32,1)",
           }}
         />
 

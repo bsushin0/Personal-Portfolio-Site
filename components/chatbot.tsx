@@ -1,15 +1,505 @@
 "use client";
 
-import { useState, useEffect, useRef } from 'react';
-import { X, Send, Loader2, Sparkles, AlertCircle } from 'lucide-react';
+import { useState, useEffect, useRef, useCallback, useId, type CSSProperties } from 'react';
+import { X, Send, Loader2, AlertCircle } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
+import { useChatContext } from '@/context/chat-context';
 
+// ── Section tooltip pools — randomized, no consecutive repeat ─────────────────
+type SectionTooltipPool = string[];
+
+const SECTION_POOLS: Record<string, SectionTooltipPool> = {
+  about: [
+    "Ask me more about this",
+    "Want to know what drives me?",
+    "There's a story behind each of these",
+    "I'm happy to go deeper on any of this",
+  ],
+  interests: [
+    "Ask me more about this",
+    "Want to know what drives me?",
+    "There's a story behind each of these",
+    "I'm happy to go deeper on any of this",
+  ],
+  experience: [
+    "Want to know more about this experience?",
+    "Ask me about my time here",
+    "I can walk you through what I actually did",
+    "There's more behind this role — ask me",
+  ],
+  projects: [
+    "Want me to walk you through Project AiRa?",
+    "Ask me anything about these projects",
+    "Curious what tech stack I used here?",
+    "I built these — ask me how",
+  ],
+  education: [
+    "Want to know more about my academic path?",
+    "Ask me about my coursework",
+    "There's more to this than grades — ask me",
+  ],
+  skills: [
+    "Curious how I use any of these?",
+    "Ask me about any of these skills",
+    "Some of these have interesting stories behind them",
+    "Want to know which ones I use most?",
+  ],
+  certifications: [
+    "Ask me about any of these certs",
+    "Want to know why I got into this?",
+    "Some of these changed how I think about AI",
+    "Ask me which ones I'd recommend",
+  ],
+  contact: [
+    "Ask me anything",
+    "I'm happy to answer any questions",
+    "Let's talk — ask me something",
+  ],
+};
+
+// Per-section last-used index tracking (persists across section re-entries in session)
+const lastUsedIndex: Record<string, number> = {};
+
+function pickTooltip(sectionId: string): string {
+  const pool = SECTION_POOLS[sectionId];
+  if (!pool || pool.length === 0) return "Ask me anything";
+  if (pool.length === 1) return pool[0];
+
+  let idx: number;
+  do {
+    idx = Math.floor(Math.random() * pool.length);
+  } while (idx === lastUsedIndex[sectionId]);
+
+  lastUsedIndex[sectionId] = idx;
+  return pool[idx];
+}
+
+// ── Mini avatar face SVG ──────────────────────────────────────────────────────
+// useId ensures each rendered instance gets unique gradient IDs, preventing
+// cross-instance gradient bleed when multiple AvatarFace elements are in the DOM.
+//
+// mode="full"   — blink, gaze drift, hover/click reactions, ambient effects.
+//                 Used for corner button and chat header.
+// mode="static" — no animations. Used for small message-row avatars.
+function AvatarFace({ size = 32, mode = "static" }: { size?: number; mode?: "full" | "static" }) {
+  const uid = useId();
+  const faceId = `cf-face-${uid}`;
+  const eyeId  = `cf-eye-${uid}`;
+
+  // ── Animation state ────────────────────────────────────────────────────────
+  const [isBlinking,   setIsBlinking]   = useState(false);
+  const [gazeX,        setGazeX]        = useState(0);
+  const [gazeY,        setGazeY]        = useState(0);
+  const [isHovered,    setIsHovered]    = useState(false);
+  const [isClicked,    setIsClicked]    = useState(false);
+  const [wideMouth,    setWideMouth]    = useState(false);
+  const [eyebrowRaise, setEyebrowRaise] = useState(false);
+  const blinkTimerRef  = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const gazeTimerRef   = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const mouthTimerRef  = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const browTimerRef   = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // ── Blink loop ─────────────────────────────────────────────────────────────
+  useEffect(() => {
+    if (mode !== "full") return;
+
+    const scheduleBlink = () => {
+      const delay = 3000 + Math.random() * 3000;
+      blinkTimerRef.current = setTimeout(() => {
+        setIsBlinking(true);
+        setTimeout(() => {
+          setIsBlinking(false);
+          if (Math.random() < 0.2) {
+            setTimeout(() => {
+              setIsBlinking(true);
+              setTimeout(() => {
+                setIsBlinking(false);
+                scheduleBlink();
+              }, 60);
+            }, 180);
+          } else {
+            scheduleBlink();
+          }
+        }, 120);
+      }, delay);
+    };
+
+    scheduleBlink();
+    return () => { if (blinkTimerRef.current) clearTimeout(blinkTimerRef.current); };
+  }, [mode]);
+
+  // ── Gaze drift ─────────────────────────────────────────────────────────────
+  useEffect(() => {
+    if (mode !== "full") return;
+
+    const scheduleGaze = () => {
+      const delay = 4000 + Math.random() * 4000;
+      gazeTimerRef.current = setTimeout(() => {
+        setGazeX((Math.random() - 0.5) * 5);
+        setGazeY((Math.random() - 0.5) * 4);
+        setTimeout(() => {
+          setGazeX(0);
+          setGazeY(0);
+          scheduleGaze();
+        }, 1200 + Math.random() * 800);
+      }, delay);
+    };
+
+    scheduleGaze();
+    return () => { if (gazeTimerRef.current) clearTimeout(gazeTimerRef.current); };
+  }, [mode]);
+
+  // ── Ambient mouth widen ────────────────────────────────────────────────────
+  useEffect(() => {
+    if (mode !== "full") return;
+
+    const scheduleMouth = () => {
+      const delay = 8000 + Math.random() * 7000;
+      mouthTimerRef.current = setTimeout(() => {
+        setWideMouth(true);
+        setTimeout(() => {
+          setWideMouth(false);
+          scheduleMouth();
+        }, 2000 + Math.random() * 1000);
+      }, delay);
+    };
+
+    scheduleMouth();
+    return () => { if (mouthTimerRef.current) clearTimeout(mouthTimerRef.current); };
+  }, [mode]);
+
+  // ── Ambient eyebrow raise ──────────────────────────────────────────────────
+  useEffect(() => {
+    if (mode !== "full") return;
+
+    const scheduleBrow = () => {
+      const delay = 10000 + Math.random() * 8000;
+      browTimerRef.current = setTimeout(() => {
+        setEyebrowRaise(true);
+        setTimeout(() => {
+          setEyebrowRaise(false);
+          scheduleBrow();
+        }, 1500 + Math.random() * 500);
+      }, delay);
+    };
+
+    scheduleBrow();
+    return () => { if (browTimerRef.current) clearTimeout(browTimerRef.current); };
+  }, [mode]);
+
+  // ── Click reaction ─────────────────────────────────────────────────────────
+  const handleClick = () => {
+    if (mode !== "full") return;
+    setIsClicked(true);
+    setTimeout(() => setIsClicked(false), 400);
+  };
+
+  // ── Derived visual values ──────────────────────────────────────────────────
+  const eyeScaleY = isClicked ? 0.25 : isBlinking ? 0.08 : isHovered ? 1.15 : 1;
+  const pupilExtraY = (isHovered && !isBlinking && !isClicked) ? -0.5
+                    : (eyebrowRaise && !isBlinking && !isClicked) ? -1.2
+                    : 0;
+  const mouthPath = isClicked
+    ? "M 20 36 Q 30 45 40 36"
+    : wideMouth
+      ? "M 21 37 Q 30 44.5 39 37"
+      : "M 22 37 Q 30 43 38 37";
+  const eyeTransitionDuration = (isBlinking || isClicked) ? "0.06s" : "0.3s";
+
+  // Shared g-element style factories
+  const eyeGroupStyle = (cx: number, cy: number): CSSProperties => ({
+    transformOrigin: `${cx}px ${cy}px`,
+    transform: `scaleY(${eyeScaleY})`,
+    transition: `transform ${eyeTransitionDuration} ease-in-out`,
+  });
+
+  const pupilGroupStyle: CSSProperties = {
+    transform: `translate(${gazeX}px, ${gazeY + pupilExtraY}px)`,
+    transition: (isBlinking || isClicked) ? "opacity 0.06s ease-in-out" : "transform 0.8s ease-in-out, opacity 0.06s ease-in-out",
+    opacity: isBlinking ? 0 : 1,
+  };
+
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 60 60"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+      onMouseEnter={mode === "full" ? () => setIsHovered(true)  : undefined}
+      onMouseLeave={mode === "full" ? () => setIsHovered(false) : undefined}
+      onClick={mode === "full" ? handleClick : undefined}
+    >
+      <defs>
+        <radialGradient id={faceId} cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="hsl(188 100% 50%)" />
+          <stop offset="50%" stopColor="hsl(239 84% 67%)" />
+          <stop offset="100%" stopColor="hsl(278 68% 59%)" />
+        </radialGradient>
+        <radialGradient id={eyeId} cx="50%" cy="35%" r="60%">
+          <stop offset="0%" stopColor="rgba(255,255,255,0.9)" />
+          <stop offset="100%" stopColor="hsl(188 100% 50% / 0.5)" />
+        </radialGradient>
+      </defs>
+
+      {/* Face circle — ambient glow pulse via CSS for full mode */}
+      <circle
+        cx="30"
+        cy="30"
+        r="28"
+        fill={`url(#${faceId})`}
+        className={mode === "full" ? "avatar-face-glow-pulse" : undefined}
+      />
+
+      <circle cx="22" cy="22" r="12" fill="rgba(255,255,255,0.12)" />
+
+      {/* Left eye */}
+      <g style={mode === "full" ? eyeGroupStyle(21, 27) : undefined}>
+        <ellipse cx="21" cy="27" rx="6" ry="6.5" fill={`url(#${eyeId})`} />
+      </g>
+      {/* Left pupil */}
+      <g style={mode === "full" ? pupilGroupStyle : undefined}>
+        <circle cx="21" cy="27" r="3.5" fill="#0f172a" />
+        <circle cx="19.5" cy="25.5" r="1.4" fill="white" opacity="0.9" />
+        <circle cx="20" cy="26" r="0.7" fill="hsl(188 100% 70%)" opacity="0.8" />
+      </g>
+
+      {/* Right eye */}
+      <g style={mode === "full" ? eyeGroupStyle(39, 27) : undefined}>
+        <ellipse cx="39" cy="27" rx="6" ry="6.5" fill={`url(#${eyeId})`} />
+      </g>
+      {/* Right pupil */}
+      <g style={mode === "full" ? pupilGroupStyle : undefined}>
+        <circle cx="39" cy="27" r="3.5" fill="#0f172a" />
+        <circle cx="37.5" cy="25.5" r="1.4" fill="white" opacity="0.9" />
+        <circle cx="38" cy="26" r="0.7" fill="hsl(188 100% 70%)" opacity="0.8" />
+      </g>
+
+      {/* Mouth — snaps between states (CSS d-property animation not cross-browser) */}
+      <path
+        d={mode === "full" ? mouthPath : "M 22 37 Q 30 43 38 37"}
+        stroke="hsl(239 84% 85%)"
+        strokeWidth="2.2"
+        fill="none"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+// ── Speech bubble tooltip ─────────────────────────────────────────────────────
+interface TooltipBubbleProps {
+  message: string;
+  onClose: () => void;
+  onAskMe: () => void;
+  prefersReduced: boolean;
+}
+
+function TooltipBubble({ message, onClose, onAskMe, prefersReduced }: TooltipBubbleProps) {
+  return (
+    <motion.div
+      key="avatar-tooltip"
+      initial={prefersReduced ? { opacity: 0 } : { opacity: 0, y: 8, scale: 0.92 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={prefersReduced ? { opacity: 0 } : { opacity: 0, y: 8, scale: 0.92 }}
+      transition={{ duration: 0.18, ease: [0.23, 1, 0.32, 1] }}
+      className="absolute bottom-full mb-3 right-0 w-max max-w-[220px]"
+      style={{ willChange: "transform, opacity" }}
+    >
+      <div className="glass-effect border border-border-subtle rounded-2xl px-3.5 py-3 shadow-xl">
+        {/* Close button */}
+        <button
+          onClick={(e) => { e.stopPropagation(); onClose(); }}
+          className="absolute top-2 right-2 text-foreground/40 hover:text-foreground/70 transition-colors"
+          aria-label="Dismiss"
+        >
+          <X className="w-3 h-3" />
+        </button>
+
+        <button
+          onClick={onAskMe}
+          className="text-xs font-medium text-primary hover:text-primary/80 transition-colors flex items-center gap-1 group pr-4"
+        >
+          {message}
+          <span className="opacity-0 group-hover:opacity-100 transition-opacity">→</span>
+        </button>
+      </div>
+
+      {/* Bubble tail pointing down-right */}
+      <div
+        className="absolute right-6 -bottom-[6px] w-0 h-0"
+        style={{
+          borderLeft: "6px solid transparent",
+          borderRight: "6px solid transparent",
+          borderTop: "6px solid hsl(var(--border-subtle))",
+        }}
+      />
+    </motion.div>
+  );
+}
+
+// ── Unified corner avatar — chat trigger + section guide ──────────────────────
+function AvatarCornerButton() {
+  const { openChat, isPastHero, setIsPastHero, isCornerReady } = useChatContext();
+  const [tooltipMsg, setTooltipMsg] = useState<string | null>(null);
+  const [prefersReduced, setPrefersReduced] = useState(false);
+
+  // Refs — avoid triggering re-renders on every observer callback
+  const tooltipTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const lastSectionRef = useRef<string>("");
+  const isAnimatingRef = useRef(false); // gate: debounce rapid section crossings
+
+  // Detect reduced motion once on mount
+  useEffect(() => {
+    setPrefersReduced(window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  }, []);
+
+  // Hero intersection — threshold 0.50: avatar only returns to hero when 50% of hero is visible
+  useEffect(() => {
+    const heroEl = document.querySelector<HTMLElement>("section:first-of-type");
+    if (!heroEl) return;
+
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        // Scrolling down: fire as soon as hero begins to leave (intersectionRatio < 0.5)
+        // Scrolling up: only snap back once hero is at least 50% visible again
+        if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
+          setIsPastHero(false);
+        } else if (!entry.isIntersecting) {
+          setIsPastHero(true);
+        }
+      },
+      { threshold: [0, 0.5] }
+    );
+    obs.observe(heroEl);
+    return () => obs.disconnect();
+  }, [setIsPastHero]);
+
+  // Show tooltip — ref gate ensures no cascade of re-renders
+  const showTooltip = useCallback((msg: string) => {
+    if (tooltipTimerRef.current) clearTimeout(tooltipTimerRef.current);
+    setTooltipMsg(msg);
+    tooltipTimerRef.current = setTimeout(() => setTooltipMsg(null), 4500);
+  }, []);
+
+  const dismissTooltip = useCallback(() => {
+    if (tooltipTimerRef.current) clearTimeout(tooltipTimerRef.current);
+    setTooltipMsg(null);
+  }, []);
+
+  // Section observers — fire tooltip only once per section, debounced via isAnimatingRef
+  useEffect(() => {
+    if (!isPastHero) return;
+    const observers: IntersectionObserver[] = [];
+
+    Object.keys(SECTION_POOLS).forEach((id) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+
+      const obs = new IntersectionObserver(
+        ([entry]) => {
+          if (!entry.isIntersecting) return;
+          if (lastSectionRef.current === id) return; // same section, skip
+          if (isAnimatingRef.current) return; // debounce rapid crossings
+
+          isAnimatingRef.current = true;
+          lastSectionRef.current = id;
+          showTooltip(pickTooltip(id));
+
+          // Unlock after 600ms — prevents firing for every micro-crossing during fast scroll
+          setTimeout(() => { isAnimatingRef.current = false; }, 600);
+        },
+        { threshold: 0.35 }
+      );
+      obs.observe(el);
+      observers.push(obs);
+    });
+
+    return () => observers.forEach((o) => o.disconnect());
+  }, [isPastHero, showTooltip]);
+
+  const handleOpenChat = useCallback(() => {
+    dismissTooltip();
+    openChat();
+  }, [dismissTooltip, openChat]);
+
+  // Don't render anything until the scroll traveler has arrived at the corner
+  // position (~90–95% scroll). isCornerReady is set by hero.tsx scroll handler.
+  // isPastHero still drives the section tooltip observers above.
+  if (!isCornerReady) return null;
+
+  return (
+    <div className="fixed bottom-6 right-6 z-[70] flex flex-col items-end">
+      {/* Tooltip speech bubble */}
+      <AnimatePresence mode="wait">
+        {tooltipMsg && (
+          <TooltipBubble
+            message={tooltipMsg}
+            onClose={dismissTooltip}
+            onAskMe={handleOpenChat}
+            prefersReduced={prefersReduced}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Avatar container — fixed 64×64 */}
+      <div className="relative w-16 h-16" style={{ willChange: "transform, opacity" }}>
+        {/*
+          Corner avatar button with layoutId="aira-avatar".
+          - Mounts with a gentle fade-in (the scroll traveler has already carried the
+            visual to this position, so no spring-from-hero needed).
+          - layoutId is retained so it still morphs into the chat panel header on open.
+        */}
+        <motion.button
+          layoutId="aira-avatar"
+          onClick={handleOpenChat}
+          initial={{ opacity: 0, scale: 0.85 }}
+          animate={{ opacity: 1, scale: 1 }}
+          whileHover={prefersReduced ? {} : { scale: 1.08 }}
+          whileTap={prefersReduced ? {} : { scale: 0.94 }}
+          className={cn(
+            "absolute inset-0 rounded-full",
+            "border-2 shadow-xl cursor-pointer select-none",
+            "flex items-center justify-center"
+          )}
+          style={{
+            borderColor: "hsl(188 100% 50% / 0.5)",
+            boxShadow: "0 0 20px hsl(188 100% 50% / 0.28), 0 4px 20px rgba(0,0,0,0.22)",
+            background: "linear-gradient(135deg, hsl(188 100% 50% / 0.18), hsl(239 84% 67%), hsl(278 68% 59%))",
+            animation: prefersReduced ? "none" : "corner-avatar-float 3.8s ease-in-out infinite",
+            willChange: "transform",
+          }}
+          aria-label="Open AI chat assistant"
+          transition={{ type: "spring", stiffness: 300, damping: 28 }}
+        >
+          {/* Pulse ring lives inside the button so it follows the layoutId animation */}
+          <div
+            className="absolute rounded-full pointer-events-none"
+            aria-hidden="true"
+            style={{
+              inset: "-4px",
+              animation: prefersReduced ? "none" : "corner-avatar-pulse 2.8s ease-in-out infinite",
+              willChange: "box-shadow",
+            }}
+          />
+          {/* Inner clip wrapper keeps AvatarFace contained */}
+          <div className="w-full h-full rounded-full overflow-hidden flex items-center justify-center">
+            <AvatarFace size={52} mode="full" />
+          </div>
+        </motion.button>
+      </div>
+    </div>
+  );
+}
+
+// ── Main chatbot component ────────────────────────────────────────────────────
 export function Chatbot() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [isMinimized, setIsMinimized] = useState(false);
-  const [messages, setMessages] = useState<Array<{id: string; role: 'user' | 'assistant'; content: string}>>([
+  const { isOpen, openChat, closeChat } = useChatContext();
+  const [messages, setMessages] = useState<Array<{ id: string; role: 'user' | 'assistant'; content: string }>>([
     {
       id: 'welcome',
       role: 'assistant',
@@ -21,12 +511,18 @@ export function Chatbot() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Auto-scroll to bottom when new messages arrive
+  // Auto-scroll to bottom on new messages
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  // Handle form submission
+  // Focus input when chat opens
+  useEffect(() => {
+    if (isOpen) {
+      setTimeout(() => inputRef.current?.focus(), 350);
+    }
+  }, [isOpen]);
+
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!input.trim() || isLoading) return;
@@ -54,162 +550,178 @@ export function Chatbot() {
       setMessages(prev => [...prev, { id: (Date.now() + 1).toString(), role: 'assistant', content: 'Sorry, I encountered an error. Please try again.' }]);
     } finally {
       setIsLoading(false);
-      // Refocus input field after response with slight delay to ensure render completion
-      setTimeout(() => {
-        inputRef.current?.focus();
-      }, 100);
+      setTimeout(() => inputRef.current?.focus(), 100);
     }
   };
 
   return (
     <>
-      {/* Floating Chat Button */}
-      {!isOpen && (
-        <button
-          onClick={() => setIsOpen(true)}
-          className={cn(
-            "fixed bottom-6 right-6 z-50",
-            "w-16 h-16 rounded-full",
-            "bg-gradient-to-br from-indigo-500 to-indigo-600",
-            "dark:from-indigo-500 dark:to-indigo-700",
-            "shadow-lg shadow-indigo-500/30 dark:shadow-indigo-500/30",
-            "hover:shadow-xl hover:shadow-indigo-500/40 dark:hover:shadow-indigo-500/40",
-            "hover:scale-110 active:scale-95",
-            "transition-all duration-300",
-            "flex items-center justify-center",
-            "animate-pulse-glow"
-          )}
-          aria-label="Open chat"
-        >
-          <Sparkles className="w-7 h-7 text-white" />
-        </button>
-      )}
+      {/* Corner avatar — always mounted; hidden when chat is open (layoutId morphs into header) */}
+      {!isOpen && <AvatarCornerButton />}
 
       {/* Chat Panel */}
-      {isOpen && (
-        <div
-          className={cn(
-            "fixed z-50 transition-all duration-300",
-            "md:bottom-6 md:right-6",
-            "bottom-0 right-0 left-0 md:left-auto",
-            "md:w-[400px] md:h-[600px]",
-            "w-full h-full md:h-[600px]",
-            "flex flex-col",
-            "glass-effect backdrop-blur-xl",
-            "border border-border-subtle",
-            "md:rounded-2xl rounded-none",
-            "shadow-2xl shadow-black/10 dark:shadow-black/40",
-            "overflow-hidden"
-          )}
-        >
-          {/* Header */}
-          <div className="flex items-center justify-between p-4 border-b border-stone-300 dark:border-slate-800 bg-background/70">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-indigo-600 dark:from-indigo-500 dark:to-indigo-700 flex items-center justify-center">
-                <Sparkles className="w-5 h-5 text-white" />
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            key="chat-panel"
+            initial={{ opacity: 0, scale: 0.93, y: 12 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.93, y: 12 }}
+            transition={{ type: "spring", stiffness: 320, damping: 28 }}
+            className={cn(
+              "fixed z-[70]",
+              "md:bottom-6 md:right-6",
+              "bottom-0 right-0 left-0 md:left-auto",
+              "md:w-[400px]",
+              "w-full h-full md:h-[600px]",
+              "flex flex-col",
+              "glass-effect backdrop-blur-xl",
+              "border border-border-subtle",
+              "md:rounded-2xl rounded-none",
+              "shadow-2xl shadow-black/10 dark:shadow-black/40",
+              "overflow-hidden"
+            )}
+          >
+            {/* Header — avatar morphs from corner button into here */}
+            <div className="flex items-center justify-between p-4 border-b border-stone-300 dark:border-slate-800 bg-background/70">
+              <div className="flex items-center gap-3">
+                {/* Avatar — layoutId shared with corner button */}
+                <motion.div
+                  layoutId="aira-avatar"
+                  className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0"
+                  style={{
+                    background: "linear-gradient(135deg, hsl(188 100% 50% / 0.2), hsl(239 84% 67%), hsl(278 68% 59%))",
+                    border: "1.5px solid hsl(188 100% 50% / 0.4)",
+                    willChange: "transform",
+                  }}
+                  transition={{ type: "spring", stiffness: 340, damping: 30 }}
+                >
+                  <AvatarFace size={40} mode="full" />
+                </motion.div>
+                <div>
+                  <h3 className="font-semibold text-foreground">
+                    Sushin&apos;s AI Assistant
+                  </h3>
+                  <p className="text-xs text-foreground/60">
+                    Powered by Gemini
+                  </p>
+                </div>
               </div>
-              <div>
-                <h3 className="font-semibold text-foreground">
-                  Sushin&apos;s AI Assistant
-                </h3>
-                <p className="text-xs text-foreground/60">
-                  Powered by Gemini
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={closeChat}
+                className="hover:bg-surface-hover/70"
+              >
+                <X className="w-5 h-5" />
+              </Button>
+            </div>
+
+            {/* Learning Notice */}
+            <div className="px-4 py-2 border-b border-warning-border/40 bg-warning/10">
+              <div className="flex items-start gap-2 text-warning-foreground">
+                <AlertCircle className="w-4 h-4 mt-0.5 text-warning" />
+                <p className="text-xs">
+                  This AI assistant was developed in-house. It is still learning and may make mistakes.
                 </p>
               </div>
             </div>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setIsOpen(false)}
-              className="hover:bg-surface-hover/70"
-            >
-              <X className="w-5 h-5" />
-            </Button>
-          </div>
 
-          {/* Learning Notice */}
-          <div className="px-4 py-2 border-b border-warning-border/40 bg-warning/10">
-            <div className="flex items-start gap-2 text-warning-foreground">
-              <AlertCircle className="w-4 h-4 mt-0.5 text-warning" />
-              <p className="text-xs">
-                This AI assistant was developed in-house. It is still learning and may make mistakes.
-              </p>
-            </div>
-          </div>
-
-          {/* Messages Area */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4">
-            {messages.map((message) => (
-              <div
-                key={message.id}
-                className={cn(
-                  "flex",
-                  message.role === 'user' ? 'justify-end' : 'justify-start'
-                )}
-              >
+            {/* Messages Area */}
+            <div className="flex-1 overflow-y-auto p-4 space-y-4">
+              {messages.map((message) => (
                 <div
+                  key={message.id}
                   className={cn(
-                    "max-w-[80%] rounded-2xl px-4 py-3",
-                    "break-words whitespace-pre-wrap",
-                    message.role === 'user'
-                      ? "bg-indigo-500 dark:bg-indigo-600 text-white"
-                      : "glass-effect border border-border-subtle text-foreground"
+                    "flex items-end gap-2",
+                    message.role === 'user' ? 'justify-end' : 'justify-start'
                   )}
                 >
-                  <p className="text-sm leading-relaxed">{message.content}</p>
+                  {/* Avatar icon next to assistant messages */}
+                  {message.role === 'assistant' && (
+                    <div
+                      className="w-7 h-7 rounded-full overflow-hidden flex-shrink-0 mb-0.5"
+                      style={{
+                        background: "linear-gradient(135deg, hsl(188 100% 50%), hsl(278 68% 59%))",
+                        border: "1px solid hsl(188 100% 50% / 0.35)",
+                      }}
+                    >
+                      <AvatarFace size={28} />
+                    </div>
+                  )}
+                  <div
+                    className={cn(
+                      "max-w-[75%] rounded-2xl px-4 py-3",
+                      "break-words whitespace-pre-wrap",
+                      message.role === 'user'
+                        ? "bg-indigo-500 dark:bg-indigo-600 text-white"
+                        : "glass-effect border border-border-subtle text-foreground"
+                    )}
+                  >
+                    <p className="text-sm leading-relaxed">{message.content}</p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
 
-            {isLoading && (
-              <div className="flex justify-start">
-                <div className="glass-effect border border-border-subtle rounded-2xl px-4 py-3">
-                  <Loader2 className="w-5 h-5 animate-spin text-indigo-500 dark:text-indigo-400" />
+              {isLoading && (
+                <div className="flex items-end gap-2 justify-start">
+                  <div
+                    className="w-7 h-7 rounded-full overflow-hidden flex-shrink-0 mb-0.5"
+                    style={{
+                      background: "linear-gradient(135deg, hsl(188 100% 50%), hsl(278 68% 59%))",
+                      border: "1px solid hsl(188 100% 50% / 0.35)",
+                    }}
+                  >
+                    <AvatarFace size={28} />
+                  </div>
+                  <div className="glass-effect border border-border-subtle rounded-2xl px-4 py-3">
+                    <Loader2 className="w-5 h-5 animate-spin text-indigo-500 dark:text-indigo-400" />
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            <div ref={messagesEndRef} />
-          </div>
+              <div ref={messagesEndRef} />
+            </div>
 
-          {/* Input Area */}
-          <div className="p-4 border-t border-stone-300 dark:border-slate-800 bg-background/70">
-            <form onSubmit={onSubmit} className="flex gap-2">
-              <Input
-                ref={inputRef}
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder="Ask about Sushin&apos;s experience..."
-                disabled={isLoading}
-                className={cn(
-                  "flex-1 bg-surface-input/70",
-                  "border-border-subtle",
-                  "focus:border-indigo-500 dark:focus:border-indigo-400",
-                  "placeholder:text-foreground/40"
-                )}
-              />
-              <Button
-                type="submit"
-                disabled={isLoading || !input.trim()}
-                className={cn(
-                  "bg-indigo-500 dark:bg-indigo-600",
-                  "hover:bg-indigo-600 dark:hover:bg-indigo-700",
-                  "transition-all duration-300"
-                )}
-              >
-                {isLoading ? (
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                ) : (
-                  <Send className="w-5 h-5" />
-                )}
-              </Button>
-            </form>
-            <p className="text-xs text-foreground/50 mt-2 text-center">
-              Powered by Google Gemini • Developed In-House
-            </p>
-          </div>
-        </div>
-      )}
+            {/* Input Area */}
+            <div className="p-4 border-t border-stone-300 dark:border-slate-800 bg-background/70">
+              <form onSubmit={onSubmit} className="flex gap-2">
+                <Input
+                  ref={inputRef}
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  placeholder="Ask about Sushin's experience..."
+                  disabled={isLoading}
+                  className={cn(
+                    "flex-1 bg-surface-input/70",
+                    "border-border-subtle",
+                    "focus:border-indigo-500 dark:focus:border-indigo-400",
+                    "placeholder:text-foreground/40"
+                  )}
+                />
+                <Button
+                  type="submit"
+                  disabled={isLoading || !input.trim()}
+                  className={cn(
+                    "bg-indigo-500 dark:bg-indigo-600",
+                    "hover:bg-indigo-600 dark:hover:bg-indigo-700",
+                    "transition-all duration-300"
+                  )}
+                >
+                  {isLoading ? (
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                  ) : (
+                    <Send className="w-5 h-5" />
+                  )}
+                </Button>
+              </form>
+              <p className="text-xs text-foreground/50 mt-2 text-center">
+                Powered by Google Gemini &bull; Developed In-House
+              </p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 }
