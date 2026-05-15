@@ -82,6 +82,21 @@ const courseDetails: Record<string, CourseDetail> = {
     narrative:
       "We studied how humans perceive, attend, remember, and reason — with particular emphasis on cognitive biases, mental models, and the limits of working memory. The connection to AI and HCI is direct: understanding how people form mental models of systems informed how I design the chatbot's response style (concise, fact-anchored) and the portfolio's interaction patterns. The research methodology component — understanding what experimental results actually mean — is also directly applicable to evaluating ML papers.",
   },
+  "Great Issues in Computer Science": {
+    institution: "Purdue University",
+    narrative:
+      "A seminar-style course examining the societal, ethical, and philosophical dimensions of computing — privacy, surveillance, algorithmic bias, digital rights, and the future of work in an AI-driven economy. We read primary sources from CS, philosophy, and policy, then wrote argumentative papers defending positions on contentious issues. It sharpened my ability to reason through tradeoffs in AI deployment beyond technical metrics, and the writing discipline it demanded carries into how I communicate about AI products.",
+  },
+  "Science Writing & Presentation": {
+    institution: "Purdue University",
+    narrative:
+      "Taught me to translate complex technical material for non-specialist audiences — writing research summaries, preparing and delivering presentations, and structuring arguments for clarity rather than completeness. The course emphasized that effective scientific communication requires understanding what your audience needs to know, not everything you know. I apply this constantly: in the portfolio's writing, in how the chatbot explains technical concepts, and in how I pitch AI features to non-technical stakeholders.",
+  },
+  "Philosophy of Science": {
+    institution: "Purdue University",
+    narrative:
+      "A rigorous examination of what scientific knowledge is, how it's produced, and what makes theories good or bad — covering falsificationism, paradigm shifts, the demarcation problem, and underdetermination. Directly relevant to AI: understanding what it means for a model to 'learn,' whether AI outputs constitute knowledge, and how to evaluate competing approaches with epistemic humility. This course reinforces why I care about calibrated uncertainty in AI systems rather than overconfident predictions.",
+  },
 
   // ── Anthropic Academy courses ───────────────────────────────────────────────
   "Claude 101": {
@@ -150,6 +165,9 @@ const coreCourses = [
   "Linear Algebra",
   "Ethics of Data Science",
   "Cognitive Psychology",
+  "Great Issues in Computer Science",
+  "Science Writing & Presentation",
+  "Philosophy of Science",
 ]
 
 const anthropicCourses = [
@@ -179,7 +197,7 @@ const highlights = [
   {
     icon: <TrendingUp className="h-5 w-5" />,
     label: "Upward GPA Trend",
-    detail: "Improved from 2.66 (Fall 2023) to 3.28 (Spring 2025) — consistent semester-over-semester growth",
+    detail: "Improved from 2.66 (Fall 2023) to 3.01 overall (as of Spring 2026) — consistent growth each academic year",
   },
   {
     icon: <BookOpen className="h-5 w-5" />,
@@ -322,7 +340,7 @@ export default function Education() {
               </div>
               <div className="flex flex-wrap gap-2 md:flex-col md:items-end">
                 <Badge className="bg-indigo-500/10 text-indigo-600 dark:text-indigo-300 border border-indigo-500/20 w-fit">
-                  GPA: 2.94 / 4.00
+                  GPA: 3.01 / 4.00
                 </Badge>
                 <Badge variant="outline" className="border-border-subtle/80 text-foreground/60 w-fit">
                   Good Academic Standing
@@ -405,7 +423,7 @@ export default function Education() {
                   ))}
                 </motion.div>
                 <p className="text-xs text-foreground/40 mt-4">
-                  Also completed: Multivariate Calculus, Intro to Statistics, Philosophy of Science, Cognitive Psychology,
+                  Also completed: Multivariate Calculus, Intro to Statistics, History of Modern Philosophy (A),
                   and ongoing Aviation coursework (AT 43300 Supervised Aviation Experience).
                 </p>
               </div>
