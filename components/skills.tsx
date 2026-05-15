@@ -12,7 +12,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog"
-import { Code, Lock, Cog, Brain, Cloud, Users } from "lucide-react"
+import { Code, Lock, Cog, Brain, Cloud, Users, Heart } from "lucide-react"
 import {
   headingVariants,
   cardVariants,
@@ -251,6 +251,34 @@ const skillDetails: Record<string, SkillDetail> = {
     narrative: "Resend is the email delivery layer behind the portfolio contact form. I integrated it via their Node.js SDK in a serverless API route — the form POST hits the edge function, which validates the payload and dispatches a formatted transactional email to my inbox. Simple, reliable, no self-hosted infrastructure.",
     appliedAt: ["Personal Portfolio — Contact form email delivery"],
   },
+  "Patient Assessment": {
+    narrative: "Patient assessment is the structured clinical process I run at the start of every transport — chief complaint, history, physical exam, vital signs — that establishes the baseline I monitor throughout. It's a systematic data-gathering protocol under time pressure, and getting it right determines every clinical decision that follows. The discipline of complete, unrushed assessment even when the environment is chaotic directly parallels how I approach debugging: don't skip steps because you think you know the answer.",
+    appliedAt: ["OnTime Transport — Inter-facility EMT transport", "IU Health — Arnett Hospital ER rotation", "TEAS — Pre-hospital EMS field ride-along"],
+  },
+  "NREMT Protocols": {
+    narrative: "NREMT protocols are the evidence-based clinical standards that govern every EMT action — from scene safety and primary survey to medication administration windows and transport decision thresholds. Certification required demonstrating competency in all protocol areas across written, practical, and computer-adaptive exam components. Active NREMT certification means staying current with protocol updates and maintaining BLS skills through continued practice.",
+    appliedAt: ["OnTime Transport — Active NREMT-certified practice", "IU Health — Hospital ER clinical rotation", "TEAS — Pre-hospital field ride-along"],
+  },
+  "Patient Care Reporting (PCR)": {
+    narrative: "PCRs are the HIPAA-compliant clinical record of each patient encounter — vitals at first contact and throughout transport, interventions, patient history, and clinical status at handoff. Writing accurate, complete PCRs under time pressure is a documentation discipline with real consequences: the receiving facility relies on the PCR to understand the patient's condition and what happened in transit. I approach PCR writing the same way I approach commit messages: complete, accurate, and written for the next person who needs to understand what happened.",
+    appliedAt: ["OnTime Transport — HIPAA-compliant PCR documentation for every transport"],
+  },
+  "Vitals Monitoring": {
+    narrative: "Continuous vitals monitoring during transport — SpO2, pulse, blood pressure, respiratory rate, mental status — is how I detect change in patient condition before it becomes an emergency. The key is establishing a good baseline during assessment and then tracking trends, not just point-in-time values. A SpO2 dropping from 98% to 92% over 20 minutes means something different than a patient who presents at 92%. It's pattern recognition under uncertainty, which is a skill that transfers directly to monitoring ML model performance in production.",
+    appliedAt: ["OnTime Transport — Continuous vitals monitoring during inter-facility transports"],
+  },
+  "Inter-Facility Transport": {
+    narrative: "Inter-facility transport is the coordination of medically supervised patient movement between healthcare facilities — from skilled nursing facilities to hospitals, from ERs to specialty centers. Each transport involves pre-transport coordination with sending and receiving facilities, patient packaging and loading, in-transport monitoring, and a structured clinical handoff. The logistics are more complex than they appear: matching acuity level to transport capability, managing time-sensitive medications, and communicating clearly across facility systems.",
+    appliedAt: ["OnTime Transport — Active inter-facility and non-emergency medical transport"],
+  },
+  "Pre-Hospital EMS": {
+    narrative: "Pre-hospital emergency medicine is EMT work in the least controlled environment possible — responding to calls with unknown scene conditions, adapting assessment and interventions to whatever you encounter, and making transport decisions without access to labs or imaging. The TEAS field ride-along and NREMT training prepared me for systematic scene management under uncertainty. The mental model — scene safety, primary survey, interventions, transport — is protocol-driven by design because improvisation in emergency medicine is dangerous.",
+    appliedAt: ["TEAS — Tippecanoe Emergency Ambulance Service field ride-along", "NREMT training and certification"],
+  },
+  "BLS": {
+    narrative: "Basic Life Support is the clinical foundation of EMT practice — CPR, AED use, airway management, hemorrhage control, and the rapid assessment skills required to recognize and respond to life threats. I maintain active BLS certification through the American Heart Association as a required component of NREMT credentials. BLS isn't just a certification; it's the floor of clinical competence that every patient contact builds on.",
+    appliedAt: ["OnTime Transport — Active BLS practice", "NREMT certification maintenance", "American Heart Association AHA certification"],
+  },
 }
 
 const skillCategories: SkillCategory[] = [
@@ -289,6 +317,12 @@ const skillCategories: SkillCategory[] = [
     title: "Product & Leadership",
     icon: <Users className="h-5 w-5" />,
     skills: ["Product Management", "Technical Leadership", "Stakeholder Management", "Cross-functional Collaboration", "AI Ethics", "Analytical Problem-Solving", "Strategic Communication"],
+  },
+  {
+    id: 7,
+    title: "Medical & EMS",
+    icon: <Heart className="h-5 w-5" />,
+    skills: ["Patient Assessment", "NREMT Protocols", "BLS", "Vitals Monitoring", "Patient Care Reporting (PCR)", "Inter-Facility Transport", "Pre-Hospital EMS"],
   },
 ]
 
