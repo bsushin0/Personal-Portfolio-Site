@@ -20,7 +20,7 @@ export default function About() {
     {
       icon: <Shield className="h-6 w-6" />,
       title: "Security & Clinical",
-      description: "NREMT-certified EMT with 56+ hours of clinical field experience (hospital ER + pre-hospital EMS). Hands-on IAM product ownership at a Fortune 500 utility. Student patroller with Purdue University Police Department.",
+      description: "NREMT-certified EMT actively practicing inter-facility transport at OnTime Transport, with 56+ hours of clinical field experience across hospital ER and pre-hospital EMS. Hands-on IAM product ownership at a Fortune 500 utility. Assistant Team Lead with Purdue University Police Department.",
     },
     {
       icon: <Users className="h-6 w-6" />,
@@ -41,8 +41,8 @@ export default function About() {
         <h2 className="text-3xl md:text-4xl font-bold text-foreground tracking-tight mb-4">About Me</h2>
         <p className="text-foreground/60 max-w-3xl mx-auto text-lg leading-relaxed">
           I&apos;m an Artificial Intelligence student at Purdue University (B.S. AI, class of 2027),
-          pursuing a private pilot license on the side, and a newly NREMT-certified EMT with 56+ hours of clinical
-          field experience — because I genuinely believe the best builders understand the systems and people they serve. My academic trajectory reflects that: I
+          pursuing a private pilot license on the side, and an NREMT-certified EMT actively practicing inter-facility
+          transport — because I genuinely believe the best builders understand the systems and people they serve. My academic trajectory reflects that: I
           entered Purdue with 27 AP credits, joined The Data Mine corporate partners program to work on real industry
           data problems, and completed the CERIAS cybersecurity seminar.
         </p>
