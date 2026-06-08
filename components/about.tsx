@@ -20,7 +20,7 @@ export default function About() {
     {
       icon: <Shield className="h-6 w-6" />,
       title: "Security & Clinical",
-      description: "NREMT-certified EMT actively practicing inter-facility transport at OnTime Transport, with 56+ hours of clinical field experience across hospital ER and pre-hospital EMS. Hands-on IAM product ownership at a Fortune 500 utility. Assistant Team Lead with Purdue University Police Department.",
+      description: "NREMT-certified EMT actively practicing inter-facility transport at OnTime Transport, with 24+ hours of clinical field experience across hospital ER and pre-hospital EMS. Hands-on IAM product ownership at a Fortune 500 utility. Assistant Team Lead with Purdue University Police Department.",
     },
     {
       icon: <Users className="h-6 w-6" />,

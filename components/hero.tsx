@@ -287,6 +287,7 @@ const ROLES = [
   "AI Engineer",
   "ML Practitioner",
   "Product Thinker",
+  "NREMT EMT",
   "Purdue Builder",
   "Systems Designer",
 ]
