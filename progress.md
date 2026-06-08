@@ -15,6 +15,12 @@ All active goals and work logs are recorded here by Mira and her team.
 
 -->
 
+## [2026-06-08] mira — v3.12.19
+- Task: Add ANTHROPIC_API_KEY to .env.local to enable Pre-Flight AI Briefer API route
+- Files modified: .env.local (appended ANTHROPIC_API_KEY)
+- Status: COMPLETE
+- Next: Run `pnpm install` (SDK upgrade 0.24→0.102), run cleanup `git rm -r --cached` for junk files, then push to Main-Dev
+
 ## [2026-06-08] mira — v3.12.18
 - Task: Integrate Pre-Flight AI Briefer directly into portfolio as live demo page at /projects/preflight-briefer
 - Files created: types/aviation.ts, lib/aviation-api.ts, lib/briefing-prompt.ts, app/api/brief/route.ts, components/briefer-wx-card.tsx, components/briefer-output.tsx, components/briefer-sigmet-strip.tsx, app/projects/preflight-briefer/page.tsx, app/projects/preflight-briefer/client.tsx
