@@ -30,6 +30,17 @@ export const projects: Project[] = [
     status: "not-available",
   },
   {
+    id: 4,
+    title: "Pre-Flight AI Briefer",
+    description:
+      "AI-powered aviation weather briefing tool built for student pilots. Fetches live METAR, TAF, SIGMET, and AIRMET data from the FAA and streams a structured plain-English pre-flight briefing via Claude AI. Features a CFI-grade prompt with go/no-go assessment, ceiling & visibility analysis, and en-route hazard detection.",
+    tags: ["Next.js 15", "TypeScript", "Claude AI", "FAA APIs", "Streaming", "Aviation"],
+    image: "/project-banners/preflight-briefer.svg",
+    githubUrl: "https://github.com/bsushin0/Preflight-AI-Briefer",
+    liveUrl: "/projects/preflight-briefer",
+    status: "available",
+  },
+  {
     id: 3,
     title: "Personal Portfolio Site",
     description:

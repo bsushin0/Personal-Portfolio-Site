@@ -1,0 +1,3 @@
+- [Framer Motion animation pattern](project_framer_motion.md) — Variants typing requirement, whileInView conventions, stagger delays, Hero exclusion
+- [Canonical section order](project_section_order.md) — Hero→About→Interests→Experience→Projects→Education→Skills→Certifications→Contact (v3.0.0)
+- [CSS variable design token system](project_design_tokens.md) — globals.css is single source of truth; all new semantic tokens and their Tailwind class equivalents (v3.3.0)

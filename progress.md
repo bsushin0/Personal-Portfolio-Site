@@ -15,6 +15,13 @@ All active goals and work logs are recorded here by Mira and her team.
 
 -->
 
+## [2026-06-08] mira — v3.12.18
+- Task: Integrate Pre-Flight AI Briefer directly into portfolio as live demo page at /projects/preflight-briefer
+- Files created: types/aviation.ts, lib/aviation-api.ts, lib/briefing-prompt.ts, app/api/brief/route.ts, components/briefer-wx-card.tsx, components/briefer-output.tsx, components/briefer-sigmet-strip.tsx, app/projects/preflight-briefer/page.tsx, app/projects/preflight-briefer/client.tsx
+- Files modified: lib/utils.ts (added isValidICAO + formatTime), lib/projects.ts (liveUrl → /projects/preflight-briefer), package.json (added @anthropic-ai/sdk ^0.24.0, bumped to 3.12.18)
+- Status: COMPLETE
+- Next: Install @anthropic-ai/sdk (pnpm install), push to Main-Dev
+
 ## [2026-06-08] mira — v3.12.17
 - Task: Content accuracy audit — fix clinical rotation dates/hours, update About clinical hours claim, add NREMT EMT to hero roles
 - Changes:
