@@ -15,6 +15,34 @@ All active goals and work logs are recorded here by Mira and her team.
 
 -->
 
+## [2026-06-08] mira — v3.12.17
+- Task: Content accuracy audit — fix clinical rotation dates/hours, update About clinical hours claim, add NREMT EMT to hero roles
+- Changes:
+  - experience.tsx — clinical rotation entries (id:7 IU Health ER, id:9 TEAS EMS): corrected period from Oct-Dec 2026 → Oct-Dec 2025; corrected hours from 28h → 12h in summary, description, and narrative
+  - about.tsx — updated "56+ hours" → "24+ hours" of clinical field experience (2 rotations × 12h = 24h)
+  - hero.tsx — added "NREMT EMT" to ROLES typewriter array
+  - package.json — 3.12.16 → 3.12.17
+- Files modified: components/experience.tsx, components/about.tsx, components/hero.tsx, package.json
+- Status: COMPLETE
+- Next: NONE
+
+## [2026-04-28] mira — v3.12.12
+- Task: Add facial activity and ambient animations to the avatar SVG across all three surfaces (hero static, scroll traveler, corner chat button)
+- Architecture: Converted `AvatarFaceSVG` (hero.tsx) and `AvatarFace` (chatbot.tsx) from plain SVG returns to animated React components. Both accept a `mode` prop (full/traveler/static) that controls which animation layers run. All animations are CSS transform + React state — no SVG filters, no per-frame setState.
+- Animations implemented:
+  - Blink: random every 3–6s, 20% double-blink, 120ms close + open via `scaleY(0.08)` on eye ellipse `<g>` with `transform-box: fill-box`
+  - Gaze drift: pupils translate ±2.5px X, ±2px Y every 4–8s, return over 1.2–2s (0.8s CSS transition)
+  - Hover: `scaleY(1.15)` on eye ellipses + pupil `-0.5px` Y shift
+  - Click: `scaleY(0.25)` happy squint + wider mouth path (`Q 30 45`) for 400ms
+  - Eyebrow raise: pupil `-1.2px` Y shift every 10–18s for 1.5–2s
+  - Mouth widen: path shifts to `Q 30 44.5` every 8–15s for 2–3s
+  - Ambient glow pulse: CSS `@keyframes avatar-face-glow-pulse` (scale 1.0→1.028, 3.2s) on face `<circle>` via `.avatar-face-glow-pulse` class
+- Surface routing: hero static = full, scroll traveler = traveler (blink only), corner button = full, chat header avatar = full, message-row icon avatars = static
+- Files modified: components/hero.tsx, components/chatbot.tsx, app/globals.css, package.json
+- Files created: none
+- Status: COMPLETE
+- Next: NONE
+
 ## [2026-04-28] mira — v3.12.8
 - Task: Unify hero avatar and scroll-driven shrinking animation into one seamless continuous object
 - Architecture: Replaced discrete Framer Motion layoutId hero→corner morph with a scroll-driven fixed overlay "ScrollTraveler". The traveler is anchored at the corner button DOM position, but at scroll=0 applies a translateX/Y + scale transform to visually sit exactly over the hero avatar. As scrollYProgress advances to 0.85, both transform components interpolate to identity, landing the traveler precisely at the corner. The corner button then fades in (traveler fades out), completing the handoff.
