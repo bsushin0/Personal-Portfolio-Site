@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { useChatContext } from '@/context/chat-context';
+import { trackEvent } from '@/lib/analytics';
 
 // ── Section tooltip pools — randomized, no consecutive repeat ─────────────────
 type SectionTooltipPool = string[];
@@ -425,6 +426,7 @@ function AvatarCornerButton() {
   const handleOpenChat = useCallback(() => {
     dismissTooltip();
     openChat();
+    trackEvent('chatbot_open');
   }, [dismissTooltip, openChat]);
 
   // Don't render anything until the scroll traveler has arrived at the corner

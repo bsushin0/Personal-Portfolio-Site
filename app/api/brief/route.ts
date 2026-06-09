@@ -1,10 +1,13 @@
 import Anthropic from "@anthropic-ai/sdk"
 import { fetchMETAR, fetchTAF, fetchSIGMETs, fetchAIRMETs } from "@/lib/aviation-api"
 import { buildBriefingPrompt, SYSTEM_PROMPT } from "@/lib/briefing-prompt"
+import { logLLMCall } from "@/lib/braintrust"
 import type { BriefingRequest, WeatherBundle } from "@/types/aviation"
 
 export const runtime = "nodejs"
 export const maxDuration = 60
+
+const MODEL = "claude-sonnet-4-5"
 
 export async function POST(req: Request) {
   const body = (await req.json()) as BriefingRequest
@@ -39,8 +42,10 @@ export async function POST(req: Request) {
   const weatherContext = buildBriefingPrompt(body, wx)
   const client = new Anthropic()
 
+  const startTime = Date.now()
+
   const stream = client.messages.stream({
-    model: "claude-sonnet-4-5",
+    model: MODEL,
     max_tokens: 1500,
     system: SYSTEM_PROMPT,
     messages: [
@@ -52,6 +57,7 @@ export async function POST(req: Request) {
   })
 
   const encoder = new TextEncoder()
+  let fullOutput = ""
 
   const readableStream = new ReadableStream({
     async start(controller) {
@@ -59,9 +65,32 @@ export async function POST(req: Request) {
       try {
         for await (const event of stream) {
           if (event.type === "content_block_delta" && event.delta.type === "text_delta") {
+            fullOutput += event.delta.text
             controller.enqueue(encoder.encode(JSON.stringify({ type: "text", text: event.delta.text }) + "\n"))
           }
         }
+
+        // Log completed call to Braintrust (non-blocking)
+        const finalMsg = await stream.finalMessage()
+        logLLMCall({
+          name: "preflight-briefer",
+          input: {
+            departure: dep,
+            destination: dest ?? null,
+            altitude: body.altitude,
+            aircraftType: body.aircraftType,
+            hasSigmets: (sigmets?.length ?? 0) > 0,
+            hasAirmets: (airmets?.length ?? 0) > 0,
+          },
+          output: fullOutput,
+          model: MODEL,
+          metrics: {
+            prompt_tokens: finalMsg.usage?.input_tokens,
+            completion_tokens: finalMsg.usage?.output_tokens,
+            latency_ms: Date.now() - startTime,
+          },
+        })
+
         controller.close()
       } catch (err) {
         controller.error(err)

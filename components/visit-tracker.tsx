@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
+import { trackEvent } from '@/lib/analytics'
 
 export function VisitTracker() {
   useEffect(() => {
@@ -11,7 +12,7 @@ export function VisitTracker() {
         const pageUrl = typeof window !== 'undefined' ? window.location.href : undefined
         const referrer = typeof document !== 'undefined' ? document.referrer : undefined
 
-        // Call the visit logging endpoint
+        // Call the visit logging endpoint (Neon — IP + geo + UA)
         const response = await fetch('/api/log-visit', {
           method: 'POST',
           headers: {
@@ -33,6 +34,12 @@ export function VisitTracker() {
         // Silently fail - don't impact user experience
         console.warn('Visit tracking error:', error)
       }
+
+      // Also log a page_view event to MongoDB analytics (fine-grained interaction tracking)
+      trackEvent('page_view', {
+        path: typeof window !== 'undefined' ? window.location.pathname : undefined,
+        referrer: typeof document !== 'undefined' ? document.referrer || undefined : undefined,
+      })
     }
 
     // Track visit after a small delay to not block page load

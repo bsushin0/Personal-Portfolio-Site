@@ -1,3 +1,22 @@
+/**
+ * Neon PostgreSQL client (serverless)
+ *
+ * Connection: DATABASE_URL env var (Neon Atlas free tier, pooled)
+ * Falls back to DATABASE_URL_UNPOOLED for Vercel serverless compatibility.
+ *
+ * Tables:
+ *   - visit_logs          → page-level visitor data (IP, geo, UA, browser, device, page URL)
+ *   - contact_submissions → contact form entries (name, email, subject, message + geo/UA)
+ *
+ * Used by:
+ *   - /api/log-visit     → INSERT visit_logs
+ *   - /api/contact       → INSERT contact_submissions
+ *   - /api/admin/view-visits → SELECT visit_logs (admin dashboard)
+ *   - /api/admin/cleanup-logs → DELETE old visit_logs
+ *
+ * Note: Fine-grained interaction events (clicks, briefer uses, chatbot opens) are tracked
+ * separately in MongoDB via lib/mongo-analytics.ts + /api/events.
+ */
 import { neon } from '@neondatabase/serverless';
 
 // Initialize Neon client with the DATABASE_URL

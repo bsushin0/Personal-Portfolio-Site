@@ -4,6 +4,7 @@ import { useState, useCallback } from "react"
 import Link from "next/link"
 import { Plane, RefreshCw, ArrowLeft, Github, Wind, Eye, Thermometer, Gauge, Cloud, AlertTriangle, Info, Loader2 } from "lucide-react"
 import { cn, isValidICAO } from "@/lib/utils"
+import { trackEvent } from "@/lib/analytics"
 import {
   getFlightCategory,
   flightCategoryBg,
@@ -199,6 +200,14 @@ export function PreflightBrieferClient() {
       altitude: altitude ? parseInt(altitude) : undefined,
       aircraftType: aircraftType || undefined,
     }
+
+    // Track briefer usage in MongoDB analytics
+    trackEvent("briefer_use", {
+      departure: dep,
+      destination: dest || null,
+      hasAltitude: !!altitude,
+      hasAircraftType: !!aircraftType,
+    })
 
     try {
       const res = await fetch("/api/brief", {

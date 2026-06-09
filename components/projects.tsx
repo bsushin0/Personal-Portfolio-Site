@@ -9,6 +9,7 @@ import { Github, ArrowUpRight, Lock } from "lucide-react"
 import { projects } from "@/lib/projects"
 import { headingVariants, staggerContainerSlow as containerVariants } from "@/lib/motion-variants"
 import TiltCard from "@/components/tilt-card"
+import { trackEvent } from "@/lib/analytics"
 
 const cardVariants: Variants = {
   hidden: { opacity: 0, y: 28 },
@@ -107,7 +108,7 @@ export default function Projects() {
                       size="sm"
                       className="text-primary hover:text-primary/90 hover:bg-surface-hover/70 px-0 h-8"
                     >
-                      <a href={featured.githubUrl} target="_blank" rel="noopener noreferrer">
+                      <a href={featured.githubUrl} target="_blank" rel="noopener noreferrer" onClick={() => trackEvent("project_click", { projectId: featured.id, projectTitle: featured.title, action: "github" })}>
                         <Github className="mr-1.5 h-3.5 w-3.5" />
                         View Code
                       </a>
@@ -120,7 +121,7 @@ export default function Projects() {
                       size="sm"
                       className="text-primary hover:text-primary/90 hover:bg-surface-hover/70 px-0 h-8"
                     >
-                      <a href={featured.liveUrl} target="_blank" rel="noopener noreferrer">
+                      <a href={featured.liveUrl} target="_blank" rel="noopener noreferrer" onClick={() => trackEvent("project_click", { projectId: featured.id, projectTitle: featured.title, action: "live" })}>
                         <ArrowUpRight className="mr-1.5 h-3.5 w-3.5" />
                         Live Demo
                       </a>
@@ -206,7 +207,7 @@ export default function Projects() {
                         size="sm"
                         className="text-primary hover:text-primary/90 hover:bg-surface-hover/70 px-0 h-8"
                       >
-                        <a href={project.githubUrl} target="_blank" rel="noopener noreferrer">
+                        <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" onClick={() => trackEvent("project_click", { projectId: project.id, projectTitle: project.title, action: "github" })}>
                           <Github className="mr-1.5 h-3.5 w-3.5" />
                           View Code
                         </a>
@@ -219,7 +220,7 @@ export default function Projects() {
                         size="sm"
                         className="text-primary hover:text-primary/90 hover:bg-surface-hover/70 px-0 h-8"
                       >
-                        <a href={project.liveUrl} target="_blank" rel="noopener noreferrer">
+                        <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" onClick={() => trackEvent("project_click", { projectId: project.id, projectTitle: project.title, action: "live" })}>
                           <ArrowUpRight className="mr-1.5 h-3.5 w-3.5" />
                           Live Demo
                         </a>

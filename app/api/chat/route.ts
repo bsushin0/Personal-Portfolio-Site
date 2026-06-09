@@ -2,6 +2,7 @@ import { google } from '@ai-sdk/google';
 import { generateText } from 'ai';
 import { NextRequest, NextResponse } from 'next/server';
 import { formatContextForLLM } from '@/lib/vector-search';
+import { logLLMCall } from '@/lib/braintrust';
 import type { EmbeddingChunk } from '@/lib/vector-search';
 
 type ChatMessage = { role: 'user' | 'assistant' | 'system'; content: string }
@@ -155,12 +156,31 @@ export async function POST(req: NextRequest) {
     }
 
     // Generate response with strict context adherence
+    const chatModel = process.env.GEMINI_MODEL || 'gemini-3.1-flash-lite';
+    const startTime = Date.now();
+
     const { text: responseText } = await generateText({
-      model: google(process.env.GEMINI_MODEL || 'gemini-3.1-flash-lite'),
-      messages: messages.slice(-5) as ChatMessage[], // Keep roecent conversation history
+      model: google(chatModel),
+      messages: messages.slice(-5) as ChatMessage[], // Keep recent conversation history
       system: SYSTEM_PROMPT + `\n\n${contextInstruction}`,
       temperature: 0.3, // Lower temperature for more factual, less creative responses
       maxOutputTokens: 600,
+    });
+
+    // Log to Braintrust (non-blocking)
+    logLLMCall({
+      name: 'aira-chat',
+      input: {
+        query: userQuery,
+        contextChunks: relevantChunks.length,
+        topSimilarity: relevantChunks[0]?.similarity ?? 0,
+        hasContext: hasRelevantContext,
+      },
+      output: responseText,
+      model: chatModel,
+      metrics: {
+        latency_ms: Date.now() - startTime,
+      },
     });
 
     return NextResponse.json(
