@@ -38,6 +38,15 @@ export interface Band {
   summary: string
 }
 
+/**
+ * Provisional — Dawn Org has not told us what they call these ranges yet, so
+ * both the names and the cut-offs are ours and are expected to change.
+ *
+ * The middle band is deliberately the widest. Answering Medium to all
+ * twenty-one dimensions scores 52.5, and that is the ordinary middle of the
+ * instrument rather than a warning sign; a narrower band would push it into
+ * Elevated and overstate what the participant actually reported.
+ */
 export const BANDS: Band[] = [
   {
     id: "settled",
@@ -49,14 +58,14 @@ export const BANDS: Band[] = [
   {
     id: "manageable",
     label: "Manageable",
-    max: 50,
+    max: 55,
     summary:
       "You are managing in this area, but a meaningful share of your effort is being absorbed before it does any good. Small, targeted work now tends to prevent larger difficulty later.",
   },
   {
     id: "elevated",
     label: "Elevated",
-    max: 75,
+    max: 80,
     summary:
       "Several dimensions are sitting well out from the God Line at once, and your reserves are being spent faster than they are replaced. This is the range where structured support makes the clearest difference.",
   },

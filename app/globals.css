@@ -234,3 +234,62 @@ html {
     transition-duration: 0.01ms !important;
   }
 }
+
+/*
+ * Trait explainer — the animated stand-in for the counsellor clips.
+ * One 6s cycle, split into three 2s phases, one per answer. The mark and the
+ * captions share that clock: the captions run a single keyframe offset by
+ * negative delays so phase 1 lands at 2s and phase 2 at 4s.
+ */
+@keyframes kbt-explainer-mark {
+  0%,
+  22% {
+    transform: translateX(0);
+  }
+  30%,
+  52% {
+    transform: translateX(var(--kbt-p1));
+  }
+  60%,
+  90% {
+    transform: translateX(var(--kbt-p2));
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes kbt-explainer-fade {
+  0%,
+  28% {
+    opacity: 1;
+  }
+  34%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.kbt-explainer-mark {
+  animation: kbt-explainer-mark 6s ease-in-out infinite;
+}
+
+.kbt-explainer-caption {
+  animation: kbt-explainer-fade 6s linear infinite;
+}
+
+/*
+ * Without motion the cycle cannot carry meaning, so the captions stop
+ * overlapping and become a plain list, and the mark rests on the God Line.
+ * These have to win against the blanket reduced-motion rule above.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .kbt-explainer-caption {
+    grid-row: auto !important;
+    opacity: 1 !important;
+  }
+
+  .kbt-explainer-caption + .kbt-explainer-caption {
+    margin-top: 0.5rem;
+  }
+}

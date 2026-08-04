@@ -7,7 +7,6 @@ import {
   ArrowRight,
   Check,
   HelpCircle,
-  Play,
   Printer,
   RotateCcw,
 } from "lucide-react"
@@ -25,8 +24,10 @@ import {
   type KbtResult,
   type TraitResult,
 } from "@/lib/kbt/scoring"
+import { TEST_PRICE } from "@/lib/kbt/pricing"
 import { MeterBar, ThermalGauge } from "./thermal-gauge"
 import { KbtSheet, type SheetParticipant } from "./kbt-sheet"
+import { TraitExplainer } from "./trait-explainer"
 import { cn } from "@/lib/utils"
 
 type Stage = "intro" | "domain" | "questions" | "results"
@@ -323,24 +324,40 @@ function DomainStage({
         and take the test on another one afterwards.
       </p>
 
-      <div className="mt-10 space-y-3">
+      <div className="mt-8 rounded-xl border border-border bg-secondary/50 p-5">
+        <p className="text-sm font-semibold">
+          Each reading costs {TEST_PRICE}, for one area of life.
+        </p>
+        <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
+          Payment is not switched on during this trial. Pick an area and you go
+          straight through to the questions — nothing is charged.
+        </p>
+      </div>
+
+      <div className="mt-6 space-y-3">
         {DOMAINS.map((d) => (
           <button
             key={d.id}
             type="button"
             onClick={() => onChoose(d)}
-            className="group flex w-full items-start gap-4 rounded-xl border border-border bg-card p-5 text-left transition-all hover:border-primary hover:bg-primary/[0.04]"
+            className="group block w-full rounded-xl border border-border bg-card p-5 text-left transition-all hover:border-primary hover:bg-primary/[0.04]"
           >
-            <span className="min-w-0 flex-1">
-              <span className="block text-lg font-semibold">{d.label}</span>
-              <span className="mt-0.5 block text-sm font-medium text-muted-foreground">
-                {d.blurb}
-              </span>
-              <span className="mt-2 block text-sm leading-relaxed text-muted-foreground">
-                {d.covers}
+            <span className="flex items-baseline justify-between gap-4">
+              <span className="text-lg font-semibold">{d.label}</span>
+              <span className="shrink-0 rounded-full bg-secondary px-2.5 py-1 text-xs font-semibold tabular-nums text-secondary-foreground">
+                {TEST_PRICE}
               </span>
             </span>
-            <ArrowRight className="mt-1 h-5 w-5 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
+            <span className="mt-0.5 block text-sm font-medium text-muted-foreground">
+              {d.blurb}
+            </span>
+            <span className="mt-2 block text-sm leading-relaxed text-muted-foreground">
+              {d.covers}
+            </span>
+            <span className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-primary">
+              Take test
+              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+            </span>
           </button>
         ))}
       </div>
@@ -483,7 +500,7 @@ function QuestionCard({
 
 /**
  * Renders the client's explainer video when `videoUrl` is set on the trait,
- * and a labelled placeholder until then.
+ * and the animated explainer until then.
  */
 function VideoSlot({ trait }: { trait: Trait }) {
   if (trait.videoUrl) {
@@ -500,21 +517,7 @@ function VideoSlot({ trait }: { trait: Trait }) {
     )
   }
 
-  return (
-    <div className="flex items-center gap-4 rounded-lg border border-dashed border-border-strong bg-card px-4 py-4">
-      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
-        <Play className="ml-0.5 h-4 w-4 fill-current" />
-      </span>
-      <span>
-        <span className="block text-sm font-semibold">
-          Explainer video — {trait.label}
-        </span>
-        <span className="mt-0.5 block text-xs text-muted-foreground">
-          A short clip from a Dawn Org counsellor will sit here.
-        </span>
-      </span>
-    </div>
-  )
+  return <TraitExplainer trait={trait} />
 }
 
 /* ------------------------------------------------------------------ */

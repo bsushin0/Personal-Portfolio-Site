@@ -4,6 +4,7 @@ import { SiteHeader } from "@/components/dawn/site-header"
 import { SiteFooter } from "@/components/dawn/site-footer"
 import { DRIVER_TRAITS, RESOURCE_TRAITS } from "@/lib/kbt/questions"
 import { DOMAINS } from "@/lib/kbt/domains"
+import { TEST_PRICE } from "@/lib/kbt/pricing"
 
 const STEPS = [
   {
@@ -39,6 +40,10 @@ const FAQ = [
   {
     q: "What is the effectiveness figure?",
     a: "Stress and effectiveness move one-for-one against each other. If your reading in an area is 40, then roughly 60% of what you put into that area actually reaches it — the rest is absorbed by the strain before it does any good. It is usually the number people find hardest to argue with.",
+  },
+  {
+    q: "What does it cost?",
+    a: `${TEST_PRICE} for one reading, covering one area of life. If you want to read a second area, that is a separate reading. Payment is not switched on during this trial, so nothing is charged — you go straight through to the questions.`,
   },
   {
     q: "Is this a medical diagnosis?",
@@ -89,7 +94,7 @@ export default function HomePage() {
                   href="/test"
                   className="group inline-flex items-center justify-center gap-2 rounded-full bg-primary px-7 py-3.5 text-base font-semibold text-primary-foreground shadow-lg shadow-primary/20 transition-transform hover:scale-[1.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                 >
-                  Begin the test
+                  Take the test · {TEST_PRICE}
                   <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
                 </Link>
                 <Link
@@ -101,8 +106,8 @@ export default function HomePage() {
               </div>
 
               <p className="mt-6 text-sm text-muted-foreground">
-                Free during trial · About 10 minutes · Nothing leaves your
-                device
+                {TEST_PRICE} per area of life · About 10 minutes · Nothing
+                leaves your device
               </p>
             </div>
           </div>
@@ -340,7 +345,7 @@ export default function HomePage() {
               href="/test"
               className="mt-10 inline-flex items-center gap-2 rounded-full bg-accent px-8 py-4 text-base font-semibold text-accent-foreground shadow-lg transition-transform hover:scale-[1.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-primary"
             >
-              Begin the test
+              Take the test · {TEST_PRICE}
               <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
