@@ -2,52 +2,37 @@ import type React from "react"
 import type { Metadata, Viewport } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
-import { ThemeProvider } from "@/components/theme-provider"
-import { SpeedInsights } from "@vercel/speed-insights/next"
-import { Analytics } from "@vercel/analytics/next"
-import { Chatbot } from "@/components/chatbot"
-import { VisitTracker } from "@/components/visit-tracker"
-import AmbientBackground from "@/components/ambient-background"
-import CursorSystem from "@/components/cursor-system"
-import FloatingOrbs from "@/components/floating-orbs"
-import { ChatProvider } from "@/context/chat-context"
-import { LayoutGroup } from "framer-motion"
 
-const inter = Inter({ subsets: ["latin"] })
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter" })
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,
   userScalable: true,
+  themeColor: "#22308a",
 }
 
-const siteUrl = "https://www.sushinbandha.com"
-const siteTitle = "Sushin Bandha - AI Engineer & Product Manager"
+const siteTitle = "Kernal Behaviour Thermal Test (KBT) — Dawn Org"
 const siteDescription =
-  "Purdue AI student specializing in user-centric products at the intersection of machine learning and business strategy. Explore projects in AI/ML, RAG systems, and software engineering."
+  "A guided self-assessment from Dawn Org. Twenty-one dimensions of mind, rated in about ten minutes, with a clear reading of where your stress is coming from."
 
 export const metadata: Metadata = {
-  title: siteTitle,
+  title: {
+    default: siteTitle,
+    template: "%s — Dawn Org",
+  },
   description: siteDescription,
-  metadataBase: new URL(siteUrl),
   openGraph: {
     type: "website",
-    url: siteUrl,
     title: siteTitle,
     description: siteDescription,
-    siteName: "Sushin Bandha Portfolio",
+    siteName: "Dawn Org",
   },
-  twitter: {
-    card: "summary",
-    title: siteTitle,
-    description: siteDescription,
-    creator: "@sushinbandha",
-  },
-  appleWebApp: {
-    capable: true,
-    statusBarStyle: "black-translucent",
-    title: "Sushin Bandha",
+  robots: {
+    // Trial site — keep it out of search results until the client signs off.
+    index: false,
+    follow: false,
   },
 }
 
@@ -58,22 +43,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>
-        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
-          <ChatProvider>
-            <AmbientBackground />
-            <FloatingOrbs />
-            <CursorSystem />
-            <VisitTracker />
-            <LayoutGroup id="aira-shared">
-              {children}
-              <Chatbot />
-            </LayoutGroup>
-          </ChatProvider>
-        </ThemeProvider>
-        <SpeedInsights />
-        <Analytics />
-      </body>
+      <body className={`${inter.className} min-h-screen`}>{children}</body>
     </html>
   )
 }

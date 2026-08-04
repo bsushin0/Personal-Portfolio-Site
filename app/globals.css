@@ -1,399 +1,198 @@
-@import url('https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-* {
-  @apply transition-colors duration-300;
-}
-
-body {
-  font-family: 'Inter', 'Geist', 'Space Grotesk', sans-serif;
-  letter-spacing: -0.01em;
-}
-
-/* Theme body colors are handled entirely by CSS variable utility below */
-
-@layer utilities {
-  /* Typography Refinement */
-  h1, h2, h3, h4, h5, h6 {
-    @apply tracking-tight;
-  }
-
-  body, p, span, a, button {
-    @apply leading-relaxed;
-  }
-
-  .text-balance {
-    text-wrap: balance;
-  }
-  
-  /* Neural Glow Effects */
-  .glow-neural {
-    @apply shadow-lg shadow-indigo-500/10;
-  }
-  
-  .glow-neural-lg {
-    @apply shadow-lg shadow-indigo-500/15;
-  }
-
-  .glow-cyan {
-    @apply shadow-lg shadow-indigo-500/10;
-  }
-  
-  .glow-cyan-lg {
-    @apply shadow-lg shadow-indigo-500/15;
-  }
-  
-  .glow-indigo {
-    @apply shadow-lg shadow-indigo-500/15;
-  }
-  
-  .glow-indigo-lg {
-    @apply shadow-lg shadow-indigo-500/20;
-  }
-  
-  .glow-purple {
-    @apply shadow-lg shadow-indigo-500/10;
-  }
-  
-  .glow-purple-lg {
-    @apply shadow-lg shadow-indigo-500/15;
-  }
-  
-  /* Glassmorphism Effects */
-  .glass-neural {
-    @apply backdrop-blur-xl border saturate-150;
-    background-color: hsl(var(--background) / 0.70);
-    border-color: hsl(var(--border-subtle) / 0.70);
-  }
-
-  .glass-neural-sm {
-    @apply backdrop-blur-lg border;
-    background-color: hsl(var(--background) / 0.60);
-    border-color: hsl(var(--border-subtle) / 0.60);
-  }
-
-  /* Alias for dark-mode glass — maps to glass-neural */
-  .glass-dark {
-    @apply glass-neural;
-  }
-
-  .glass-lab {
-    @apply backdrop-blur-xl border saturate-150;
-    background-color: hsl(var(--surface-overlay) / 0.70);
-    border-color: hsl(var(--border-subtle) / 0.60);
-  }
-
-  .glass-lab-sm {
-    @apply backdrop-blur-lg shadow-[0_20px_50px_rgba(0,0,0,0.05)];
-    background-color: hsl(var(--surface-overlay) / 0.70);
-  }
-  
-  .glass-effect {
-    @apply glass-lab;
-  }
-
-  .glass-effect-sm {
-    @apply glass-lab-sm;
-  }
-  
-  .dark .glass-effect {
-    @apply glass-neural;
-  }
-  
-  .dark .glass-effect-sm {
-    @apply glass-neural-sm;
-  }
-  
-  /* Border Glow Effects */
-  .border-glow {
-    @apply border transition-all duration-300;
-    border-color: hsl(var(--border-subtle));
-  }
-
-  .border-glow-lg {
-    @apply border transition-all duration-300;
-    border-color: hsl(var(--border-subtle) / 0.80);
-  }
-
-  .border-glow-indigo {
-    @apply border border-indigo-500/30 hover:border-indigo-500/40 transition-all duration-300;
-  }
-
-  .border-glow-indigo-lg {
-    @apply border border-indigo-500/25 hover:border-indigo-500/40 transition-all duration-300;
-  }
-
-  .border-glow-purple {
-    @apply border transition-all duration-300;
-    border-color: hsl(var(--border-subtle));
-  }
-
-  .border-glow-purple-lg {
-    @apply border transition-all duration-300;
-    border-color: hsl(var(--border-subtle) / 0.80);
-  }
-
-  /* Interactive Cards */
-  .card-interactive {
-    @apply hover:scale-[1.02] transition-all duration-300 cursor-pointer;
-  }
-
-  .card-interactive-sm {
-    @apply hover:scale-[1.01] transition-all duration-300;
-  }
-
-  /* Text Gradients */
-  .text-gradient-cyan {
-    @apply bg-clip-text text-transparent;
-    background-image: linear-gradient(to right, hsl(var(--foreground) / 0.70), hsl(var(--primary)));
-  }
-
-  .dark .text-gradient-cyan {
-    background-image: linear-gradient(to right, hsl(var(--muted-foreground)), hsl(var(--primary)));
-  }
-
-  .text-gradient-ai {
-    @apply bg-clip-text text-transparent;
-    background-image: linear-gradient(to right, hsl(var(--foreground) / 0.70), hsl(var(--primary)), hsl(var(--primary) / 0.80));
-  }
-
-  .dark .text-gradient-ai {
-    background-image: linear-gradient(to right, hsl(var(--muted-foreground)), hsl(var(--primary)), hsl(var(--primary) / 0.80));
-  }
-}
+/*
+ * Dawn Org — KBT trial site.
+ * Palette is taken from the printed KBT sheet: deep indigo ink on warm paper,
+ * with a sunrise accent for the "dawn" in Dawn Org.
+ */
 
 @layer base {
   :root {
-    /* Light Theme - Warm Neutral Studio */
-    --background: 34 20% 95%;
-    --foreground: 20 14% 11%;
-    --card: 36 25% 97%;
-    --card-foreground: 20 14% 11%;
-    --popover: 36 25% 97%;
-    --popover-foreground: 20 14% 11%;
-    --primary: 239 84% 67%;
-    --primary-foreground: 36 25% 97%;
-    --secondary: 30 15% 88%;
-    --secondary-foreground: 20 14% 11%;
-    --accent: 239 84% 67%;
-    --accent-foreground: 36 25% 97%;
-    --muted: 30 15% 88%;
-    --muted-foreground: 25 10% 42%;
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 36 25% 97%;
-    --border: 30 12% 82%;
-    --input: 30 12% 82%;
-    --ring: 239 84% 67%;
-    --radius: 0.75rem;
+    --background: 38 44% 98%;
+    --foreground: 233 44% 14%;
 
-    /* Surface variants */
-    --surface-raised: 36 25% 97%;
-    --surface-overlay: 36 20% 94%;
-    --surface-input: 36 30% 99%;
-    --surface-hover: 30 15% 90%;
-    --surface-tag: 30 15% 88%;
+    --card: 0 0% 100%;
+    --card-foreground: 233 44% 14%;
 
-    /* Semantic borders */
-    --border-subtle: 30 10% 80%;
-    --border-strong: 25 12% 70%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 233 44% 14%;
 
-    /* Alert / status */
-    --success: 142 71% 45%;
-    --success-foreground: 142 76% 20%;
-    --success-border: 142 60% 60%;
-    --error: 0 84% 60%;
-    --error-foreground: 0 72% 30%;
-    --error-border: 0 72% 70%;
-    --warning: 38 92% 50%;
-    --warning-foreground: 38 80% 20%;
-    --warning-border: 38 80% 65%;
-    --info: 217 91% 60%;
-    --info-foreground: 217 80% 25%;
+    --primary: 231 58% 32%;
+    --primary-foreground: 38 44% 98%;
 
-    /* AI / accent special */
-    --ai-glow: 188 100% 50%;
-    --ai-secondary: 278 68% 59%;
-    --ai-gradient-from: 188 100% 50%;
-    --ai-gradient-to: 278 68% 59%;
+    --secondary: 232 32% 94%;
+    --secondary-foreground: 231 58% 32%;
 
-    /* Scrollbar */
-    --scrollbar-track: 30 20% 92%;
-    --scrollbar-thumb: 239 84% 67%;
-    --scrollbar-thumb-hover: 239 84% 56%;
+    --muted: 234 24% 95%;
+    --muted-foreground: 232 16% 45%;
+
+    --accent: 28 88% 52%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 72% 48%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 233 24% 88%;
+    --input: 233 24% 88%;
+    --ring: 231 58% 32%;
+
+    --surface-raised: 0 0% 100%;
+    --surface-overlay: 0 0% 100%;
+    --surface-input: 0 0% 100%;
+    --surface-hover: 234 30% 96%;
+    --surface-tag: 232 32% 94%;
+
+    --border-subtle: 233 24% 91%;
+    --border-strong: 233 24% 78%;
+
+    --success: 152 52% 38%;
+    --success-foreground: 0 0% 100%;
+    --success-border: 152 40% 72%;
+
+    --error: 0 72% 48%;
+    --error-foreground: 0 0% 100%;
+    --error-border: 0 60% 78%;
+
+    --warning: 33 90% 46%;
+    --warning-foreground: 0 0% 100%;
+    --warning-border: 33 80% 74%;
+
+    --info: 231 58% 32%;
+    --info-foreground: 0 0% 100%;
+
+    --ai-glow: 231 58% 42%;
+    --ai-secondary: 28 88% 52%;
+
+    --radius: 0.875rem;
+
+    /* Thermal scale — used by the result gauge. */
+    --thermal-settled: 158 55% 40%;
+    --thermal-manageable: 42 90% 48%;
+    --thermal-elevated: 24 88% 52%;
+    --thermal-high: 4 72% 52%;
   }
 
   .dark {
-    /* Dark Theme - Neural Deep */
-    --background: 222 47% 5%;
-    --foreground: 210 40% 96%;
-    --card: 222 47% 11%;
-    --card-foreground: 210 40% 96%;
-    --popover: 222 47% 8%;
-    --popover-foreground: 210 40% 96%;
-    --primary: 239 84% 67%;
-    --primary-foreground: 222 47% 11%;
-    --secondary: 215 28% 17%;
-    --secondary-foreground: 210 40% 96%;
-    --accent: 239 84% 67%;
-    --accent-foreground: 222 47% 11%;
-    --muted: 215 28% 17%;
-    --muted-foreground: 215 20% 65%;
-    --destructive: 0 72% 51%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 215 28% 17%;
-    --input: 215 28% 17%;
-    --ring: 239 84% 67%;
+    --background: 233 42% 9%;
+    --foreground: 40 30% 95%;
 
-    /* Surface variants */
-    --surface-raised: 222 47% 11%;
-    --surface-overlay: 222 47% 8%;
-    --surface-input: 222 40% 12%;
-    --surface-hover: 215 28% 14%;
-    --surface-tag: 215 28% 17%;
+    --card: 233 36% 13%;
+    --card-foreground: 40 30% 95%;
 
-    /* Semantic borders */
-    --border-subtle: 215 25% 20%;
-    --border-strong: 215 22% 28%;
+    --popover: 233 36% 13%;
+    --popover-foreground: 40 30% 95%;
 
-    /* Alert / status */
-    --success: 142 60% 40%;
-    --success-foreground: 142 76% 85%;
-    --success-border: 142 50% 35%;
-    --error: 0 72% 51%;
-    --error-foreground: 0 72% 90%;
-    --error-border: 0 60% 45%;
-    --warning: 38 80% 45%;
-    --warning-foreground: 38 90% 90%;
-    --warning-border: 38 65% 35%;
-    --info: 217 80% 55%;
-    --info-foreground: 217 80% 90%;
+    --primary: 228 72% 72%;
+    --primary-foreground: 233 42% 9%;
 
-    /* AI / accent special */
-    --ai-glow: 188 100% 50%;
-    --ai-secondary: 278 68% 59%;
-    --ai-gradient-from: 188 100% 50%;
-    --ai-gradient-to: 278 68% 59%;
+    --secondary: 233 28% 20%;
+    --secondary-foreground: 40 30% 95%;
 
-    /* Scrollbar */
-    --scrollbar-track: 222 40% 9%;
-    --scrollbar-thumb: 239 84% 67%;
-    --scrollbar-thumb-hover: 239 84% 56%;
+    --muted: 233 28% 18%;
+    --muted-foreground: 232 16% 68%;
+
+    --accent: 28 88% 58%;
+    --accent-foreground: 233 42% 9%;
+
+    --destructive: 0 62% 52%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 233 24% 24%;
+    --input: 233 24% 24%;
+    --ring: 228 72% 72%;
+
+    --surface-raised: 233 36% 13%;
+    --surface-overlay: 233 34% 16%;
+    --surface-input: 233 30% 17%;
+    --surface-hover: 233 30% 19%;
+    --surface-tag: 233 28% 20%;
+
+    --border-subtle: 233 24% 20%;
+    --border-strong: 233 24% 34%;
+
+    --success: 152 46% 52%;
+    --success-border: 152 30% 34%;
+    --error-border: 0 40% 38%;
+    --warning-border: 33 46% 36%;
+    --info: 228 72% 72%;
+    --info-foreground: 233 42% 9%;
+
+    --ai-glow: 228 72% 72%;
   }
-}
 
-@layer base {
   * {
     @apply border-border;
   }
+
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply tracking-tight;
+    text-wrap: balance;
+  }
+
+  ::selection {
+    background-color: hsl(var(--accent) / 0.25);
   }
 }
 
-/* Neural Pulse Animation */
-@keyframes pulse-neural {
-  0%, 100% {
-    box-shadow: 0 0 16px rgba(99, 102, 241, 0.18), 0 0 32px rgba(99, 102, 241, 0.08);
+@layer components {
+  /* Faint wash echoing the watermark on the printed sheet. */
+  .paper-wash {
+    background-image:
+      radial-gradient(
+        ellipse 70% 55% at 50% -10%,
+        hsl(var(--primary) / 0.09),
+        transparent 70%
+      ),
+      radial-gradient(
+        ellipse 50% 40% at 90% 10%,
+        hsl(var(--accent) / 0.08),
+        transparent 65%
+      );
   }
-  50% {
-    box-shadow: 0 0 24px rgba(99, 102, 241, 0.26), 0 0 48px rgba(99, 102, 241, 0.12);
-  }
-}
 
-.animate-pulse-neural {
-  animation: pulse-neural 2s ease-in-out infinite;
-}
-
-/* Pulse Glow Animation (used by chatbot floating button) */
-@keyframes pulse-glow {
-  0%, 100% {
-    box-shadow: 0 0 12px rgba(99, 102, 241, 0.40), 0 0 24px rgba(99, 102, 241, 0.20);
-  }
-  50% {
-    box-shadow: 0 0 20px rgba(99, 102, 241, 0.60), 0 0 40px rgba(99, 102, 241, 0.30);
-  }
-}
-
-.animate-pulse-glow {
-  animation: pulse-glow 2.5s ease-in-out infinite;
-}
-
-/* Avatar click ripple */
-@keyframes avatar-ripple {
-  0% {
-    transform: scale(0.8);
-    opacity: 0.6;
-  }
-  100% {
-    transform: scale(2.2);
-    opacity: 0;
+  .rule-gradient {
+    background: linear-gradient(
+      90deg,
+      transparent,
+      hsl(var(--border-strong)),
+      transparent
+    );
   }
 }
 
-.animate-avatar-ripple {
-  animation: avatar-ripple 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .text-pretty {
+    text-wrap: pretty;
+  }
 }
 
-/* Avatar idle float — gentle breathing oscillation, CSS-driven so no RAF setState */
-@keyframes avatar-idle-float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-7px); }
-}
-
-.avatar-idle-float {
-  animation: avatar-idle-float 4s ease-in-out infinite;
-}
-
-/* Corner avatar float & pulse animations */
-@keyframes corner-avatar-float {
-  0%, 100% { transform: translateY(0px); }
-  50%       { transform: translateY(-6px); }
-}
-
-@keyframes corner-avatar-pulse {
-  0%   { box-shadow: 0 0 0 0   hsl(188 100% 50% / 0.35); }
-  60%  { box-shadow: 0 0 0 16px hsl(188 100% 50% / 0);   }
-  100% { box-shadow: 0 0 0 0   hsl(188 100% 50% / 0);    }
-}
-
-/* Avatar face ambient glow pulse — very slow breathing scale on the face circle.
-   CSS transform only (no SVG filter), runs at ~3s period. Applied via class
-   .avatar-face-glow-pulse on the SVG <circle> element. */
-@keyframes avatar-face-glow-pulse {
-  0%, 100% { transform: scale(1.000); opacity: 1; }
-  50%       { transform: scale(1.028); opacity: 0.93; }
-}
-
-.avatar-face-glow-pulse {
-  transform-box: fill-box;
-  transform-origin: center;
-  animation: avatar-face-glow-pulse 3.2s ease-in-out infinite;
-  will-change: transform;
-}
-
-/* Smooth scrolling */
 html {
   scroll-behavior: smooth;
 }
 
-/* Scrollbar Styling */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 
-::-webkit-scrollbar-track {
-  background: hsl(var(--scrollbar-track));
-}
-
-::-webkit-scrollbar-thumb {
-  background: hsl(var(--scrollbar-thumb));
-  border-radius: 999px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: hsl(var(--scrollbar-thumb-hover));
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
