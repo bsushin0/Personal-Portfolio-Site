@@ -183,6 +183,44 @@ html {
   scroll-behavior: smooth;
 }
 
+/*
+ * Printing a result produces the KBT sheet on its own — the paper artifact
+ * Dawn Org already works from, filled in.
+ */
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 10mm;
+  }
+
+  html,
+  body {
+    background: #fff !important;
+  }
+
+  body * {
+    visibility: hidden;
+  }
+
+  #kbt-sheet,
+  #kbt-sheet * {
+    visibility: visible;
+  }
+
+  #kbt-sheet {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    border-width: 2px;
+    break-inside: avoid;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

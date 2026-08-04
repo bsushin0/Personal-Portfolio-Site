@@ -3,8 +3,9 @@ import { DawnWordmark } from "./logo"
 
 const NAV = [
   { href: "/#what-it-is", label: "What it is" },
-  { href: "/#how-it-works", label: "How it works" },
-  { href: "/#dimensions", label: "The 21 dimensions" },
+  { href: "/#god-line", label: "The God Line" },
+  { href: "/#domains", label: "Areas of life" },
+  { href: "/#dimensions", label: "21 dimensions" },
   { href: "/#faq", label: "FAQ" },
 ]
 

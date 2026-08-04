@@ -1,31 +1,44 @@
 import Link from "next/link"
-import { ArrowRight, ClipboardList, LineChart, Timer } from "lucide-react"
+import { ArrowRight, ClipboardList, Compass, LineChart } from "lucide-react"
 import { SiteHeader } from "@/components/dawn/site-header"
 import { SiteFooter } from "@/components/dawn/site-footer"
 import { DRIVER_TRAITS, RESOURCE_TRAITS } from "@/lib/kbt/questions"
+import { DOMAINS } from "@/lib/kbt/domains"
 
 const STEPS = [
   {
-    icon: ClipboardList,
-    title: "Rate 21 dimensions",
-    body: "One at a time, you mark each dimension Low, Medium, or High. There are no trick questions and no right answers — only your own reading of yourself.",
+    icon: Compass,
+    title: "Pick one area of life",
+    body: "Personal, work, relationships, or society. The test reads one at a time, because the same dimension behaves quite differently at your desk than it does at your dinner table.",
   },
   {
-    icon: Timer,
-    title: "Take about ten minutes",
-    body: "Each dimension comes with plain-language guidance and a short explainer, so you are never left guessing what a word means. Answer at your own pace.",
+    icon: ClipboardList,
+    title: "Rate 21 dimensions",
+    body: "One at a time, you mark each dimension Low, Medium, or High within that area. Plain-language guidance and a short explainer sit behind every question. About ten minutes.",
   },
   {
     icon: LineChart,
-    title: "See where the heat is",
-    body: "You get a thermal reading from 1 to 100, split into the pressures acting on you and the inner resources you have to meet them.",
+    title: "Get your stress level",
+    body: "A reading from 0 to 100, your filled-in KBT sheet, and the figure that matters most — how much of the effort you put into that area is actually reaching it.",
   },
 ]
 
 const FAQ = [
   {
+    q: "Why only one area of life at a time?",
+    a: "Because a single number covering all of life tells you almost nothing. A person can be steady at home and coming apart at work; averaged together, both facts disappear. Taking the test once per area gives you a reading you can actually act on — and you are welcome to take it on another area afterwards.",
+  },
+  {
+    q: "What is the God Line?",
+    a: "It is the line down the centre of the sheet, which people also call the Guru Line or simply the line of wholeness — whatever name fits your own understanding. It marks perfect balance: no strain at all, and every ounce of effort landing where it is aimed. Nobody reaches it. Everyone carries some stress about something, and that gap is the point of the exercise. Your score is simply how far your marks sit from that line.",
+  },
+  {
     q: "What does “thermal” mean here?",
     a: "The test reads your stress the way a thermometer reads temperature — as a level on a scale rather than a yes-or-no verdict. Two people can carry the same pressures and register very differently, and that difference is the useful part.",
+  },
+  {
+    q: "What is the effectiveness figure?",
+    a: "Stress and effectiveness move one-for-one against each other. If your reading in an area is 40, then roughly 60% of what you put into that area actually reaches it — the rest is absorbed by the strain before it does any good. It is usually the number people find hardest to argue with.",
   },
   {
     q: "Is this a medical diagnosis?",
@@ -166,6 +179,76 @@ export default function HomePage() {
           </div>
         </section>
 
+        {/* The God Line */}
+        <section id="god-line" className="scroll-mt-20">
+          <div className="mx-auto max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
+            <div className="grid gap-12 lg:grid-cols-[1fr_1.1fr] lg:gap-20">
+              <GodLineDiagram />
+              <div>
+                <h2 className="text-3xl font-bold sm:text-4xl">
+                  Everything is measured from one line
+                </h2>
+                <div className="mt-6 space-y-5 text-base leading-relaxed text-muted-foreground text-pretty">
+                  <p>
+                    Down the middle of the sheet runs a single line. Some call
+                    it the God Line, some the Guru Line, some simply the line of
+                    wholeness — the name matters less than what sits on it.
+                  </p>
+                  <p>
+                    On that line there is no strain at all, and every ounce of
+                    effort you spend arrives where you aimed it. It is the state
+                    the whole practice points towards, and no living person
+                    occupies it. Everyone is carrying something.
+                  </p>
+                  <p>
+                    Which makes it a useful place to measure from. A mark
+                    resting on the line scores nothing. One step out scores 5,
+                    two steps out scores 10. Add the twenty-one marks, halve the
+                    total, and you have your stress level — a plain statement of
+                    how far from the line you are standing today.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* The four domains */}
+        <section
+          id="domains"
+          className="scroll-mt-20 border-y border-border-subtle bg-card"
+        >
+          <div className="mx-auto max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
+            <div className="max-w-2xl">
+              <h2 className="text-3xl font-bold sm:text-4xl">
+                One area of life at a time
+              </h2>
+              <p className="mt-5 text-base leading-relaxed text-muted-foreground text-pretty">
+                Stress is rarely spread evenly. Most people are steady in some
+                parts of life and stretched thin in others, so the KBT is taken
+                against a single area and read on its own terms.
+              </p>
+            </div>
+
+            <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {DOMAINS.map((d) => (
+                <div
+                  key={d.id}
+                  className="rounded-xl border border-border bg-background p-6"
+                >
+                  <h3 className="text-lg font-semibold">{d.label}</h3>
+                  <p className="mt-1 text-sm font-medium text-primary">
+                    {d.blurb}
+                  </p>
+                  <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                    {d.covers}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
         {/* How it works */}
         <section id="how-it-works" className="scroll-mt-20">
           <div className="mx-auto max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
@@ -266,6 +349,92 @@ export default function HomePage() {
 
       <SiteFooter />
     </>
+  )
+}
+
+/** Miniature of the sheet's centre column, showing distance as score. */
+function GodLineDiagram() {
+  const rows = [
+    { left: 2, right: 0 },
+    { left: 1, right: 1 },
+    { left: 0, right: 2 },
+    { left: 1, right: 0 },
+    { left: 2, right: 1 },
+    { left: 1, right: 2 },
+  ]
+  const step = 34
+  const top = 54
+  const centre = 170
+
+  return (
+    <div className="rounded-2xl border border-border bg-card p-6 sm:p-8">
+      <svg viewBox="0 0 340 300" className="w-full" aria-hidden="true">
+        {/* Distance labels */}
+        {[
+          { x: centre - 2 * step, label: "10" },
+          { x: centre - step, label: "5" },
+          { x: centre, label: "0" },
+          { x: centre + step, label: "5" },
+          { x: centre + 2 * step, label: "10" },
+        ].map((t) => (
+          <text
+            key={t.x}
+            x={t.x}
+            y={30}
+            textAnchor="middle"
+            fontSize="12"
+            fontWeight="700"
+            className="fill-muted-foreground"
+          >
+            {t.label}
+          </text>
+        ))}
+
+        <text
+          x={centre}
+          y={288}
+          textAnchor="middle"
+          fontSize="11"
+          fontWeight="700"
+          letterSpacing="1.2"
+          className="fill-primary"
+        >
+          GOD LINE
+        </text>
+
+        <line
+          x1={centre}
+          y1={40}
+          x2={centre}
+          y2={268}
+          className="stroke-primary"
+          strokeWidth="2.5"
+        />
+
+        {rows.map((r, i) => {
+          const y = top + i * step
+          const lx = centre - r.left * step
+          const rx = centre + r.right * step
+          return (
+            <g key={i}>
+              <line
+                x1={centre - 2 * step}
+                y1={y}
+                x2={centre + 2 * step}
+                y2={y}
+                className="stroke-border-strong"
+                strokeWidth="1"
+              />
+              <circle cx={lx} cy={y} r="6" className="fill-primary" />
+              <circle cx={rx} cy={y} r="6" className="fill-accent" />
+            </g>
+          )
+        })}
+      </svg>
+      <p className="mt-4 text-center text-sm text-muted-foreground">
+        The further a mark sits from the line, the more it costs you.
+      </p>
+    </div>
   )
 }
 

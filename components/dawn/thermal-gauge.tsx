@@ -1,4 +1,4 @@
-import { BANDS, type Band } from "@/lib/kbt/scoring"
+import { BANDS, formatScore, type Band } from "@/lib/kbt/scoring"
 import { cn } from "@/lib/utils"
 
 const BAND_COLOR: Record<Band["id"], string> = {
@@ -22,14 +22,14 @@ export function ThermalGauge({
       <div className="flex items-end justify-between gap-6">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-            Thermal reading
+            Stress level
           </p>
           <p className="mt-2 flex items-baseline gap-2">
             <span
               className="text-6xl font-bold tabular-nums leading-none sm:text-7xl"
               style={{ color: `hsl(${BAND_COLOR[band.id]})` }}
             >
-              {score}
+              {formatScore(score)}
             </span>
             <span className="text-lg text-muted-foreground">/ 100</span>
           </p>
@@ -42,7 +42,7 @@ export function ThermalGauge({
         </span>
       </div>
 
-      {/* Scale */}
+      {/* Scale — 0 is the God Line, 100 is furthest from it. */}
       <div className="mt-8">
         <div
           className="relative h-3 w-full rounded-full"
@@ -54,7 +54,7 @@ export function ThermalGauge({
               hsl(var(--thermal-high)) 100%)`,
           }}
           role="img"
-          aria-label={`Thermal reading ${score} out of 100 — ${band.label}`}
+          aria-label={`Stress level ${formatScore(score)} out of 100 — ${band.label}`}
         >
           <div
             className="absolute top-1/2 h-7 w-7 -translate-x-1/2 -translate-y-1/2 rounded-full border-[3px] border-background bg-foreground shadow-lg"
@@ -76,6 +76,11 @@ export function ThermalGauge({
               {b.label}
             </span>
           ))}
+        </div>
+
+        <div className="mt-4 flex justify-between text-[11px] text-muted-foreground">
+          <span>0 — on the God Line</span>
+          <span>100 — furthest from it</span>
         </div>
       </div>
     </div>

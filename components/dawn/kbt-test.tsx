@@ -17,22 +17,21 @@ import {
   type Level,
   type Trait,
 } from "@/lib/kbt/questions"
-import { computeScore, type Answers, type TraitResult } from "@/lib/kbt/scoring"
+import { DOMAINS, type Domain } from "@/lib/kbt/domains"
+import {
+  computeScore,
+  formatScore,
+  type Answers,
+  type KbtResult,
+  type TraitResult,
+} from "@/lib/kbt/scoring"
 import { MeterBar, ThermalGauge } from "./thermal-gauge"
+import { KbtSheet, type SheetParticipant } from "./kbt-sheet"
 import { cn } from "@/lib/utils"
 
-type Stage = "intro" | "questions" | "results"
+type Stage = "intro" | "domain" | "questions" | "results"
 
-interface Participant {
-  name: string
-  age: string
-  email: string
-  mobile: string
-  locality: string
-  occupation: string
-}
-
-const EMPTY_PARTICIPANT: Participant = {
+const EMPTY_PARTICIPANT: SheetParticipant = {
   name: "",
   age: "",
   email: "",
@@ -45,10 +44,13 @@ const LEVELS: Level[] = ["L", "M", "H"]
 
 export function KbtTest() {
   const [stage, setStage] = useState<Stage>("intro")
-  const [participant, setParticipant] = useState<Participant>(EMPTY_PARTICIPANT)
+  const [participant, setParticipant] =
+    useState<SheetParticipant>(EMPTY_PARTICIPANT)
+  const [domain, setDomain] = useState<Domain | null>(null)
   const [answers, setAnswers] = useState<Answers>({})
   const [index, setIndex] = useState(0)
   const [showHelp, setShowHelp] = useState(false)
+  const [takenAt, setTakenAt] = useState<Date | null>(null)
 
   const advanceTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const headingRef = useRef<HTMLHeadingElement>(null)
@@ -84,6 +86,7 @@ export function KbtTest() {
         if (index < KBT_TRAITS.length - 1) {
           goTo(index + 1)
         } else {
+          setTakenAt(new Date())
           setStage("results")
           window.scrollTo({ top: 0, behavior: "smooth" })
         }
@@ -97,6 +100,8 @@ export function KbtTest() {
     advancing.current = false
     setAnswers({})
     setIndex(0)
+    setDomain(null)
+    setTakenAt(null)
     setParticipant(EMPTY_PARTICIPANT)
     setStage("intro")
     window.scrollTo({ top: 0 })
@@ -107,7 +112,17 @@ export function KbtTest() {
       <IntroStage
         participant={participant}
         onChange={setParticipant}
-        onStart={() => {
+        onStart={() => setStage("domain")}
+      />
+    )
+  }
+
+  if (stage === "domain") {
+    return (
+      <DomainStage
+        onBack={() => setStage("intro")}
+        onChoose={(d) => {
+          setDomain(d)
           setStage("questions")
           requestAnimationFrame(() => headingRef.current?.focus())
         }}
@@ -115,11 +130,13 @@ export function KbtTest() {
     )
   }
 
-  if (stage === "results" && result) {
+  if (stage === "results" && result && domain && takenAt) {
     return (
       <ResultsStage
         result={result}
         participant={participant}
+        domain={domain}
+        takenAt={takenAt}
         onRestart={restart}
       />
     )
@@ -132,10 +149,15 @@ export function KbtTest() {
     <div className="mx-auto max-w-2xl px-5 py-10 sm:px-8 sm:py-14">
       {/* Progress */}
       <div>
-        <div className="flex items-baseline justify-between text-sm">
+        <div className="flex items-baseline justify-between gap-4 text-sm">
           <span className="font-medium text-muted-foreground">
             Question {index + 1} of {KBT_TRAITS.length}
           </span>
+          {domain && (
+            <span className="truncate rounded-full bg-secondary px-3 py-1 text-xs font-semibold">
+              {domain.label}
+            </span>
+          )}
           <span className="tabular-nums text-muted-foreground">
             {Math.round(progress)}%
           </span>
@@ -151,6 +173,7 @@ export function KbtTest() {
       <QuestionCard
         key={trait.id}
         trait={trait}
+        domain={domain}
         selected={answers[trait.id]}
         onSelect={select}
         showHelp={showHelp}
@@ -192,15 +215,15 @@ function IntroStage({
   onChange,
   onStart,
 }: {
-  participant: Participant
-  onChange: (p: Participant) => void
+  participant: SheetParticipant
+  onChange: (p: SheetParticipant) => void
   onStart: () => void
 }) {
-  const set = (key: keyof Participant) => (value: string) =>
+  const set = (key: keyof SheetParticipant) => (value: string) =>
     onChange({ ...participant, [key]: value })
 
   const fields: Array<{
-    key: keyof Participant
+    key: keyof SheetParticipant
     label: string
     type?: string
     inputMode?: "text" | "numeric" | "tel" | "email"
@@ -215,9 +238,7 @@ function IntroStage({
 
   return (
     <div className="mx-auto max-w-2xl px-5 py-12 sm:px-8 sm:py-16">
-      <h1 className="text-3xl font-bold sm:text-4xl">
-        Before we start
-      </h1>
+      <h1 className="text-3xl font-bold sm:text-4xl">Before we start</h1>
       <p className="mt-5 leading-relaxed text-muted-foreground text-pretty">
         These details appear on your result sheet so you can keep or share it.
         Every field is optional — leave them blank and you can still take the
@@ -255,12 +276,13 @@ function IntroStage({
           <div className="rounded-xl border border-border bg-secondary/50 p-5">
             <h2 className="text-sm font-semibold">How to answer</h2>
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-              You will see twenty-one dimensions, one at a time. For each, mark
-              whether it is <strong className="font-semibold text-foreground">Low</strong>,{" "}
+              You will pick one area of life, then rate twenty-one dimensions
+              inside it — each one{" "}
+              <strong className="font-semibold text-foreground">Low</strong>,{" "}
               <strong className="font-semibold text-foreground">Medium</strong>,
-              or <strong className="font-semibold text-foreground">High</strong>{" "}
-              in you. Answer with your first honest instinct — the considered
-              second answer is usually the flattering one.
+              or <strong className="font-semibold text-foreground">High</strong>
+              . Answer with your first honest instinct; the considered second
+              answer is usually the flattering one.
             </p>
           </div>
 
@@ -268,7 +290,7 @@ function IntroStage({
             type="submit"
             className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-7 py-3.5 text-base font-semibold text-primary-foreground shadow-lg shadow-primary/20 transition-transform hover:scale-[1.01] sm:w-auto"
           >
-            Start the test
+            Continue
             <ArrowRight className="h-4 w-4" />
           </button>
         </div>
@@ -279,8 +301,67 @@ function IntroStage({
 
 /* ------------------------------------------------------------------ */
 
+function DomainStage({
+  onChoose,
+  onBack,
+}: {
+  onChoose: (d: Domain) => void
+  onBack: () => void
+}) {
+  return (
+    <div className="mx-auto max-w-2xl px-5 py-12 sm:px-8 sm:py-16">
+      <p className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+        First question
+      </p>
+      <h1 className="mt-3 text-3xl font-bold sm:text-4xl">
+        Which part of your life is under the most strain?
+      </h1>
+      <p className="mt-5 leading-relaxed text-muted-foreground text-pretty">
+        The KBT reads one area at a time. The same dimension behaves quite
+        differently at work than it does at home, so mixing them gives a
+        blurred picture. Pick the area weighing on you most — you can come back
+        and take the test on another one afterwards.
+      </p>
+
+      <div className="mt-10 space-y-3">
+        {DOMAINS.map((d) => (
+          <button
+            key={d.id}
+            type="button"
+            onClick={() => onChoose(d)}
+            className="group flex w-full items-start gap-4 rounded-xl border border-border bg-card p-5 text-left transition-all hover:border-primary hover:bg-primary/[0.04]"
+          >
+            <span className="min-w-0 flex-1">
+              <span className="block text-lg font-semibold">{d.label}</span>
+              <span className="mt-0.5 block text-sm font-medium text-muted-foreground">
+                {d.blurb}
+              </span>
+              <span className="mt-2 block text-sm leading-relaxed text-muted-foreground">
+                {d.covers}
+              </span>
+            </span>
+            <ArrowRight className="mt-1 h-5 w-5 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
+          </button>
+        ))}
+      </div>
+
+      <button
+        type="button"
+        onClick={onBack}
+        className="mt-8 inline-flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+      >
+        <ArrowLeft className="h-4 w-4" />
+        Back
+      </button>
+    </div>
+  )
+}
+
+/* ------------------------------------------------------------------ */
+
 function QuestionCard({
   trait,
+  domain,
   selected,
   onSelect,
   showHelp,
@@ -288,6 +369,7 @@ function QuestionCard({
   headingRef,
 }: {
   trait: Trait
+  domain: Domain | null
   selected?: Level
   onSelect: (level: Level) => void
   showHelp: boolean
@@ -316,6 +398,12 @@ function QuestionCard({
       </h2>
       <p className="mt-3 text-lg leading-relaxed text-muted-foreground text-pretty">
         {trait.prompt}
+        {domain && (
+          <span className="font-medium text-foreground">
+            {" "}
+            — {domain.framing}.
+          </span>
+        )}
       </p>
 
       {/* Options */}
@@ -380,6 +468,11 @@ function QuestionCard({
             <p className="text-sm leading-relaxed text-muted-foreground text-pretty">
               {trait.help}
             </p>
+            {domain && (
+              <p className="border-l-2 border-primary/40 pl-4 text-sm leading-relaxed text-foreground">
+                {domain.lens}
+              </p>
+            )}
             <VideoSlot trait={trait} />
           </div>
         )}
@@ -429,137 +522,170 @@ function VideoSlot({ trait }: { trait: Trait }) {
 function ResultsStage({
   result,
   participant,
+  domain,
+  takenAt,
   onRestart,
 }: {
-  result: NonNullable<ReturnType<typeof computeScore>>
-  participant: Participant
+  result: KbtResult
+  participant: SheetParticipant
+  domain: Domain
+  takenAt: Date
   onRestart: () => void
 }) {
   return (
     <div className="mx-auto max-w-3xl px-5 py-12 sm:px-8 sm:py-16">
-      <p className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-        Kernal Behaviour Thermal Test — I
-      </p>
-      <h1 className="mt-3 text-3xl font-bold sm:text-4xl">
-        {participant.name ? `${participant.name}, here is your reading` : "Your reading"}
-      </h1>
-
-      <div className="mt-10 rounded-2xl border border-border bg-card p-6 sm:p-9">
-        <ThermalGauge score={result.score} band={result.band} />
-        <p className="mt-8 leading-relaxed text-muted-foreground text-pretty">
-          {result.band.summary}
+      <div className="print:hidden">
+        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+          Kernal Behaviour Thermal Test — I · {domain.label}
         </p>
+        <h1 className="mt-3 text-3xl font-bold sm:text-4xl">
+          {participant.name
+            ? `${participant.name}, here is your reading`
+            : "Your reading"}
+        </h1>
+
+        <div className="mt-10 rounded-2xl border border-border bg-card p-6 sm:p-9">
+          <ThermalGauge score={result.score} band={result.band} />
+          <p className="mt-8 leading-relaxed text-muted-foreground text-pretty">
+            {result.band.summary}
+          </p>
+          {result.capped && (
+            <p className="mt-4 rounded-lg bg-secondary p-3 text-sm text-muted-foreground">
+              Your raw total came to {formatScore(result.rawScore)}, which the
+              scale caps at 100.
+            </p>
+          )}
+        </div>
+
+        {/* Effectiveness */}
+        <div className="mt-6 rounded-2xl border border-border bg-card p-6 sm:p-9">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+            Effectiveness of your effort
+          </p>
+          <p className="mt-2 flex items-baseline gap-2">
+            <span className="text-5xl font-bold tabular-nums leading-none text-primary sm:text-6xl">
+              {formatScore(result.efficiency)}%
+            </span>
+          </p>
+          <div className="mt-6 h-3 w-full overflow-hidden rounded-full bg-secondary">
+            <div
+              className="h-full rounded-full bg-primary"
+              style={{ width: `${Math.max(result.efficiency, 1)}%` }}
+            />
+          </div>
+          <p className="mt-6 leading-relaxed text-muted-foreground text-pretty">
+            Stress and effectiveness move one-for-one against each other. Put
+            100% of your effort into {domain.label.toLowerCase()} at this
+            reading, and roughly{" "}
+            <strong className="font-semibold text-foreground">
+              {formatScore(result.efficiency)}%
+            </strong>{" "}
+            of it reaches its object. The remaining{" "}
+            {formatScore(result.score)}% is absorbed by the strain itself
+            before it can do any good.
+          </p>
+        </div>
+
+        <div className="mt-6 grid gap-4 sm:grid-cols-2">
+          <MeterBar
+            label="Load on you"
+            value={result.driverLoad}
+            tone="accent"
+            caption="How much of the strain column is currently active."
+          />
+          <MeterBar
+            label="Resources available"
+            value={result.resourceStrength}
+            tone="primary"
+            caption="How much inner capacity you have to meet that load."
+          />
+        </div>
       </div>
 
-      <div className="mt-6 grid gap-4 sm:grid-cols-2">
-        <MeterBar
-          label="Load on you"
-          value={result.driverLoad}
-          tone="accent"
-          caption="How much of the strain column is currently active."
+      {/* The sheet — this is what prints */}
+      <section className="mt-12 print:mt-0">
+        <h2 className="text-lg font-semibold print:hidden">Your KBT sheet</h2>
+        <p className="mb-5 mt-1.5 text-sm text-muted-foreground print:hidden">
+          The centre line is the God Line — perfect balance. Every mark is
+          scored by how far it sits from it.
+        </p>
+        <KbtSheet
+          participant={participant}
+          domain={domain}
+          result={result}
+          takenAt={takenAt}
         />
-        <MeterBar
-          label="Resources available"
-          value={result.resourceStrength}
-          tone="primary"
-          caption="How much inner capacity you have to meet that load."
-        />
-      </div>
-
-      {result.topDrivers.length > 0 && (
-        <ResultGroup
-          title="Drawing on you most"
-          caption="These are the pressures you rated highest. They are the usual place to start."
-          items={result.topDrivers}
-        />
-      )}
-
-      {result.thinnestResources.length > 0 && (
-        <ResultGroup
-          title="Where your capacity is thinnest"
-          caption="Building any one of these tends to lighten several pressures at once."
-          items={result.thinnestResources}
-        />
-      )}
-
-      {result.strengths.length > 0 && (
-        <ResultGroup
-          title="Already working for you"
-          caption="Rated High. These are the resources to lean on while you work on the rest."
-          items={result.strengths}
-        />
-      )}
-
-      {/* Full sheet */}
-      <section className="mt-12">
-        <h2 className="text-lg font-semibold">Your full sheet</h2>
-        <ul className="mt-4 divide-y divide-border-subtle border-y border-border-subtle">
-          {result.all.map((r) => (
-            <li
-              key={r.trait.id}
-              className="flex items-center justify-between gap-4 py-3"
-            >
-              <span className="flex min-w-0 items-center gap-3">
-                <span
-                  className={cn(
-                    "h-2 w-2 shrink-0 rounded-full",
-                    r.trait.group === "resource" ? "bg-primary" : "bg-accent",
-                  )}
-                  aria-hidden="true"
-                />
-                <span className="truncate text-[15px]">{r.trait.label}</span>
-              </span>
-              <span className="shrink-0 rounded-md bg-secondary px-2.5 py-1 text-xs font-semibold">
-                {LEVEL_LABELS[r.level]}
-              </span>
-            </li>
-          ))}
-        </ul>
       </section>
 
-      {/* Next steps */}
-      <section className="mt-12 rounded-2xl bg-primary p-7 sm:p-9">
-        <h2 className="text-xl font-bold text-primary-foreground">
-          Talk it through with someone
-        </h2>
-        <p className="mt-3 leading-relaxed text-primary-foreground/75 text-pretty">
-          A reading is only useful if it goes somewhere. Dawn Org offers
-          counselling, psychiatry, yoga, and personality development — and the
-          KBT is how most of those conversations begin.
+      <div className="print:hidden">
+        {result.topDrivers.length > 0 && (
+          <ResultGroup
+            title="Drawing on you most"
+            caption="Furthest from the God Line on the strain side. The usual place to start."
+            items={result.topDrivers}
+          />
+        )}
+
+        {result.thinnestResources.length > 0 && (
+          <ResultGroup
+            title="Where your capacity is thinnest"
+            caption="Building any one of these pulls several other marks back towards the line."
+            items={result.thinnestResources}
+          />
+        )}
+
+        {result.strengths.length > 0 && (
+          <ResultGroup
+            title="Already on the line"
+            caption="Rated High, scoring zero. These are the resources to lean on while you work on the rest."
+            items={result.strengths}
+          />
+        )}
+
+        {/* Next steps */}
+        <section className="mt-12 rounded-2xl bg-primary p-7 sm:p-9">
+          <h2 className="text-xl font-bold text-primary-foreground">
+            Talk it through with someone
+          </h2>
+          <p className="mt-3 leading-relaxed text-primary-foreground/75 text-pretty">
+            A reading is only useful if it goes somewhere. Dawn Org offers
+            counselling, psychiatry, yoga, and personality development — and
+            the KBT is how most of those conversations begin.
+          </p>
+          <Link
+            href="/#faq"
+            className="mt-7 inline-flex items-center gap-2 rounded-full bg-accent px-6 py-3 text-sm font-semibold text-accent-foreground transition-transform hover:scale-[1.02]"
+          >
+            Book a consultation
+            <ArrowRight className="h-4 w-4" />
+          </Link>
+        </section>
+
+        <div className="mt-8 flex flex-wrap gap-3">
+          <button
+            type="button"
+            onClick={() => window.print()}
+            className="inline-flex items-center gap-2 rounded-full border border-border-strong px-5 py-2.5 text-sm font-medium transition-colors hover:bg-surface-hover"
+          >
+            <Printer className="h-4 w-4" />
+            Print sheet or save as PDF
+          </button>
+          <button
+            type="button"
+            onClick={onRestart}
+            className="inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+          >
+            <RotateCcw className="h-4 w-4" />
+            Take another domain
+          </button>
+        </div>
+
+        <p className="mt-10 text-xs leading-relaxed text-muted-foreground">
+          The KBT is a self-reflection aid, not a diagnostic instrument. It does
+          not replace assessment by a qualified professional. If you are in
+          distress, please contact Dawn Org or your local emergency service.
         </p>
-        <Link
-          href="/#faq"
-          className="mt-7 inline-flex items-center gap-2 rounded-full bg-accent px-6 py-3 text-sm font-semibold text-accent-foreground transition-transform hover:scale-[1.02]"
-        >
-          Book a consultation
-          <ArrowRight className="h-4 w-4" />
-        </Link>
-      </section>
-
-      <div className="mt-8 flex flex-wrap gap-3">
-        <button
-          type="button"
-          onClick={() => window.print()}
-          className="inline-flex items-center gap-2 rounded-full border border-border-strong px-5 py-2.5 text-sm font-medium transition-colors hover:bg-surface-hover"
-        >
-          <Printer className="h-4 w-4" />
-          Print or save as PDF
-        </button>
-        <button
-          type="button"
-          onClick={onRestart}
-          className="inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-        >
-          <RotateCcw className="h-4 w-4" />
-          Start again
-        </button>
       </div>
-
-      <p className="mt-10 text-xs leading-relaxed text-muted-foreground">
-        The KBT is a self-reflection aid, not a diagnostic instrument. It does
-        not replace assessment by a qualified professional. If you are in
-        distress, please contact Dawn Org or your local emergency service.
-      </p>
     </div>
   )
 }
@@ -585,15 +711,20 @@ function ResultGroup({
           >
             <div className="flex items-baseline justify-between gap-4">
               <h3 className="font-semibold">{r.trait.label}</h3>
-              <span
-                className={cn(
-                  "shrink-0 rounded-md px-2.5 py-1 text-xs font-semibold",
-                  r.trait.group === "driver"
-                    ? "bg-accent/15 text-accent"
-                    : "bg-primary/10 text-primary",
-                )}
-              >
-                {LEVEL_LABELS[r.level]}
+              <span className="flex shrink-0 items-center gap-2">
+                <span className="text-xs tabular-nums text-muted-foreground">
+                  {r.points} pts
+                </span>
+                <span
+                  className={cn(
+                    "rounded-md px-2.5 py-1 text-xs font-semibold",
+                    r.trait.group === "driver"
+                      ? "bg-accent/15 text-accent"
+                      : "bg-primary/10 text-primary",
+                  )}
+                >
+                  {LEVEL_LABELS[r.level]}
+                </span>
               </span>
             </div>
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
