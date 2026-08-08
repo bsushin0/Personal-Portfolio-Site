@@ -31,7 +31,7 @@ const FAQ = [
   },
   {
     q: "What is the God Line?",
-    a: "It is the line down the centre of the sheet, which people also call the Guru Line or simply the line of wholeness — whatever name fits your own understanding. It marks perfect balance: no strain at all, and every ounce of effort landing where it is aimed. Nobody reaches it. Everyone carries some stress about something, and that gap is the point of the exercise. Your score is simply how far your marks sit from that line.",
+    a: "It is the line down the centre of the sheet, which people also call the Guru Line or simply the line of wholeness — whatever name fits your own understanding. It marks perfect balance: no strain at all, and every ounce of effort landing where it is aimed. Nobody reaches it, in any dimension — that is why even the best answer on the sheet sits beside the line rather than on it. Everyone carries something, and that gap is the point of the exercise. Your reading is simply how far out your marks are sitting.",
   },
   {
     q: "What does “thermal” mean here?",
@@ -39,7 +39,7 @@ const FAQ = [
   },
   {
     q: "What is the effectiveness figure?",
-    a: "Stress and effectiveness move one-for-one against each other. If your reading in an area is 40, then roughly 60% of what you put into that area actually reaches it — the rest is absorbed by the strain before it does any good. It is usually the number people find hardest to argue with.",
+    a: "It is how much of what you put into an area of life actually reaches it. At a stress reading of 40, roughly 60% of your effort lands; the rest is absorbed by the strain before it does any good. It is usually the figure people find hardest to argue with.",
   },
   {
     q: "What does it cost?",
@@ -139,7 +139,7 @@ export default function HomePage() {
                   pressures and none.
                 </p>
                 <p>
-                  That is why the test scores both sides, and why the result
+                  That is why the test reads both sides, and why the result
                   tells you which of the two to work on first.
                 </p>
               </div>
@@ -197,20 +197,21 @@ export default function HomePage() {
                   <p>
                     Down the middle of the sheet runs a single line. Some call
                     it the God Line, some the Guru Line, some simply the line of
-                    wholeness — the name matters less than what sits on it.
+                    wholeness — the name matters less than what it stands for.
                   </p>
                   <p>
                     On that line there is no strain at all, and every ounce of
                     effort you spend arrives where you aimed it. It is the state
                     the whole practice points towards, and no living person
-                    occupies it. Everyone is carrying something.
+                    occupies it. Everyone is carrying something, in every part
+                    of life — which is why even the closest mark on the sheet
+                    still stands clear of the line.
                   </p>
                   <p>
-                    Which makes it a useful place to measure from. A mark
-                    resting on the line scores nothing. One step out scores 5,
-                    two steps out scores 10. Add the twenty-one marks, halve the
-                    total, and you have your stress level — a plain statement of
-                    how far from the line you are standing today.
+                    Which makes it a useful place to measure from. Your reading
+                    is simply how far out your twenty-one marks are sitting
+                    today: the nearer the line, the less of you is being spent
+                    on strain.
                   </p>
                 </div>
               </div>
@@ -357,8 +358,13 @@ export default function HomePage() {
   )
 }
 
-/** Miniature of the sheet's centre column, showing distance as score. */
+/**
+ * Miniature of the sheet's centre column. Note the clear space either side of
+ * the line: the nearest column a mark can occupy still stands away from it,
+ * because no living person sits on the line in any dimension.
+ */
 function GodLineDiagram() {
+  /** Column index per row, 0 being the column nearest the line. */
   const rows = [
     { left: 2, right: 0 },
     { left: 1, right: 1 },
@@ -368,36 +374,39 @@ function GodLineDiagram() {
     { left: 1, right: 2 },
   ]
   const step = 34
-  const top = 54
+  const gap = 22
+  const top = 62
   const centre = 170
+  const colX = (side: -1 | 1, i: number) => centre + side * (gap + i * step)
 
   return (
     <div className="rounded-2xl border border-border bg-card p-6 sm:p-8">
       <svg viewBox="0 0 340 300" className="w-full" aria-hidden="true">
-        {/* Distance labels */}
-        {[
-          { x: centre - 2 * step, label: "10" },
-          { x: centre - step, label: "5" },
-          { x: centre, label: "0" },
-          { x: centre + step, label: "5" },
-          { x: centre + 2 * step, label: "10" },
-        ].map((t) => (
-          <text
-            key={t.x}
-            x={t.x}
-            y={30}
-            textAnchor="middle"
-            fontSize="12"
-            fontWeight="700"
-            className="fill-muted-foreground"
-          >
-            {t.label}
-          </text>
-        ))}
+        {/* Column headings, reading outward from the line on each side */}
+        {(
+          [
+            [-1, ["H", "M", "L"]],
+            [1, ["L", "M", "H"]],
+          ] as Array<[-1 | 1, string[]]>
+        ).map(([side, labels]) =>
+          labels.map((label, i) => (
+            <text
+              key={`${side}-${label}`}
+              x={colX(side, i)}
+              y={34}
+              textAnchor="middle"
+              fontSize="12"
+              fontWeight="700"
+              className="fill-muted-foreground"
+            >
+              {label}
+            </text>
+          )),
+        )}
 
         <text
           x={centre}
-          y={288}
+          y={290}
           textAnchor="middle"
           fontSize="11"
           fontWeight="700"
@@ -406,38 +415,66 @@ function GodLineDiagram() {
         >
           GOD LINE
         </text>
+        <text
+          x={centre}
+          y={276}
+          textAnchor="middle"
+          fontSize="9.5"
+          className="fill-muted-foreground"
+        >
+          nobody stands here
+        </text>
 
         <line
           x1={centre}
-          y1={40}
+          y1={44}
           x2={centre}
-          y2={268}
+          y2={262}
           className="stroke-primary"
           strokeWidth="2.5"
         />
 
         {rows.map((r, i) => {
           const y = top + i * step
-          const lx = centre - r.left * step
-          const rx = centre + r.right * step
           return (
             <g key={i}>
+              {/* Two rules, broken either side of the line — no mark can cross
+                  into the clear space, let alone reach the line itself. */}
               <line
-                x1={centre - 2 * step}
+                x1={colX(-1, 2)}
                 y1={y}
-                x2={centre + 2 * step}
+                x2={colX(-1, 0)}
                 y2={y}
                 className="stroke-border-strong"
                 strokeWidth="1"
               />
-              <circle cx={lx} cy={y} r="6" className="fill-primary" />
-              <circle cx={rx} cy={y} r="6" className="fill-accent" />
+              <line
+                x1={colX(1, 0)}
+                y1={y}
+                x2={colX(1, 2)}
+                y2={y}
+                className="stroke-border-strong"
+                strokeWidth="1"
+              />
+              <circle
+                cx={colX(-1, r.left)}
+                cy={y}
+                r="6"
+                className="fill-primary"
+              />
+              <circle
+                cx={colX(1, r.right)}
+                cy={y}
+                r="6"
+                className="fill-accent"
+              />
             </g>
           )
         })}
       </svg>
       <p className="mt-4 text-center text-sm text-muted-foreground">
-        The further a mark sits from the line, the more it costs you.
+        The nearer your marks sit to the line, the less strain you are carrying
+        — but the line itself stays out of reach.
       </p>
     </div>
   )

@@ -25,7 +25,7 @@ import {
   type TraitResult,
 } from "@/lib/kbt/scoring"
 import { TEST_PRICE } from "@/lib/kbt/pricing"
-import { MeterBar, ThermalGauge } from "./thermal-gauge"
+import { ThermalGauge } from "./thermal-gauge"
 import { KbtSheet, type SheetParticipant } from "./kbt-sheet"
 import { TraitExplainer } from "./trait-explainer"
 import { cn } from "@/lib/utils"
@@ -552,12 +552,6 @@ function ResultsStage({
           <p className="mt-8 leading-relaxed text-muted-foreground text-pretty">
             {result.band.summary}
           </p>
-          {result.capped && (
-            <p className="mt-4 rounded-lg bg-secondary p-3 text-sm text-muted-foreground">
-              Your raw total came to {formatScore(result.rawScore)}, which the
-              scale caps at 100.
-            </p>
-          )}
         </div>
 
         {/* Effectiveness */}
@@ -577,31 +571,14 @@ function ResultsStage({
             />
           </div>
           <p className="mt-6 leading-relaxed text-muted-foreground text-pretty">
-            Stress and effectiveness move one-for-one against each other. Put
-            100% of your effort into {domain.label.toLowerCase()} at this
+            Put everything you have into this part of your life at this
             reading, and roughly{" "}
             <strong className="font-semibold text-foreground">
               {formatScore(result.efficiency)}%
             </strong>{" "}
-            of it reaches its object. The remaining{" "}
-            {formatScore(result.score)}% is absorbed by the strain itself
+            of it reaches its object. The rest is absorbed by the strain itself
             before it can do any good.
           </p>
-        </div>
-
-        <div className="mt-6 grid gap-4 sm:grid-cols-2">
-          <MeterBar
-            label="Load on you"
-            value={result.driverLoad}
-            tone="accent"
-            caption="How much of the strain column is currently active."
-          />
-          <MeterBar
-            label="Resources available"
-            value={result.resourceStrength}
-            tone="primary"
-            caption="How much inner capacity you have to meet that load."
-          />
         </div>
       </div>
 
@@ -609,8 +586,8 @@ function ResultsStage({
       <section className="mt-12 print:mt-0">
         <h2 className="text-lg font-semibold print:hidden">Your KBT sheet</h2>
         <p className="mb-5 mt-1.5 text-sm text-muted-foreground print:hidden">
-          The centre line is the God Line — perfect balance. Every mark is
-          scored by how far it sits from it.
+          Your twenty-one answers, marked on the Dawn Org sheet. The centre line
+          is the God Line — perfect balance, which is why no mark reaches it.
         </p>
         <KbtSheet
           participant={participant}
@@ -624,7 +601,7 @@ function ResultsStage({
         {result.topDrivers.length > 0 && (
           <ResultGroup
             title="Drawing on you most"
-            caption="Furthest from the God Line on the strain side. The usual place to start."
+            caption="The strains sitting furthest out in this area of life. The usual place to start."
             items={result.topDrivers}
           />
         )}
@@ -639,8 +616,8 @@ function ResultsStage({
 
         {result.strengths.length > 0 && (
           <ResultGroup
-            title="Already on the line"
-            caption="Rated High, scoring zero. These are the resources to lean on while you work on the rest."
+            title="What is carrying you"
+            caption="Your strongest inner resources here — the ones to lean on while you work on the rest."
             items={result.strengths}
           />
         )}
@@ -715,9 +692,6 @@ function ResultGroup({
             <div className="flex items-baseline justify-between gap-4">
               <h3 className="font-semibold">{r.trait.label}</h3>
               <span className="flex shrink-0 items-center gap-2">
-                <span className="text-xs tabular-nums text-muted-foreground">
-                  {r.points} pts
-                </span>
                 <span
                   className={cn(
                     "rounded-md px-2.5 py-1 text-xs font-semibold",

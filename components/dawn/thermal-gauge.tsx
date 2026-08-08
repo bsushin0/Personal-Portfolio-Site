@@ -42,7 +42,7 @@ export function ThermalGauge({
         </span>
       </div>
 
-      {/* Scale — 0 is the God Line, 100 is furthest from it. */}
+      {/* Scale — the low end sits nearest the God Line, never on it. */}
       <div className="mt-8">
         <div
           className="relative h-3 w-full rounded-full"
@@ -79,43 +79,10 @@ export function ThermalGauge({
         </div>
 
         <div className="mt-4 flex justify-between text-[11px] text-muted-foreground">
-          <span>0 — on the God Line</span>
-          <span>100 — furthest from it</span>
+          <span>Closest to the God Line</span>
+          <span>Furthest from it</span>
         </div>
       </div>
-    </div>
-  )
-}
-
-export function MeterBar({
-  label,
-  value,
-  caption,
-  tone,
-}: {
-  label: string
-  value: number
-  caption: string
-  tone: "primary" | "accent"
-}) {
-  return (
-    <div className="rounded-xl border border-border bg-card p-5">
-      <div className="flex items-baseline justify-between gap-3">
-        <p className="text-sm font-semibold">{label}</p>
-        <p className="text-sm font-bold tabular-nums">{value}%</p>
-      </div>
-      <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-secondary">
-        <div
-          className={cn(
-            "h-full rounded-full",
-            tone === "primary" ? "bg-primary" : "bg-accent",
-          )}
-          style={{ width: `${Math.max(value, 2)}%` }}
-        />
-      </div>
-      <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
-        {caption}
-      </p>
     </div>
   )
 }

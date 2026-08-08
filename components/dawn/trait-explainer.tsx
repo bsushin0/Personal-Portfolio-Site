@@ -3,16 +3,20 @@
 import { useState } from "react"
 import { Pause, Play } from "lucide-react"
 import { LEVEL_LABELS, type Level, type Trait } from "@/lib/kbt/questions"
-import { pointsFor } from "@/lib/kbt/scoring"
 import { cn } from "@/lib/utils"
 
-const STEP = 88
+const STEP = 78
+/**
+ * Even the best answer sits clear of the God Line. Nobody is untouched in any
+ * dimension of life, so no mark is ever drawn on the line itself.
+ */
+const GAP = 30
 const CY = 62
 
 /**
  * Animated stand-in for the counsellor explainer clips. It walks the three
  * possible answers outward from the God Line so the participant can see what
- * their choice costs before they make it.
+ * each choice means before they make it.
  *
  * Marks step away from the line in the same direction they do on the printed
  * sheet: resources sit to its left, strains to its right.
@@ -22,9 +26,9 @@ export function TraitExplainer({ trait }: { trait: Trait }) {
 
   const isResource = trait.group === "resource"
   const levels: Level[] = isResource ? ["H", "M", "L"] : ["L", "M", "H"]
-  const lineX = isResource ? 222 : 28
+  const lineX = isResource ? 236 : 14
   const dir = isResource ? -1 : 1
-  const xAt = (i: number) => lineX + dir * i * STEP
+  const xAt = (i: number) => lineX + dir * (GAP + i * STEP)
   const playState = playing ? "running" : "paused"
 
   return (
@@ -43,7 +47,7 @@ export function TraitExplainer({ trait }: { trait: Trait }) {
           )}
         </button>
         <p className="text-xs font-semibold uppercase tracking-[0.1em] text-muted-foreground">
-          What your answer costs
+          What each answer means
         </p>
       </div>
 
@@ -52,7 +56,7 @@ export function TraitExplainer({ trait }: { trait: Trait }) {
           viewBox="0 0 250 106"
           className="w-full"
           role="img"
-          aria-label={`Diagram: rating ${trait.label} ${LEVEL_LABELS[levels[0]]} places your mark on the God Line at 0 points, ${LEVEL_LABELS[levels[1]]} scores 5, and ${LEVEL_LABELS[levels[2]]} scores 10.`}
+          aria-label={`Diagram: rating ${trait.label} ${LEVEL_LABELS[levels[0]]} places your mark closest to the God Line — still clear of it, since nobody sits on the line — while ${LEVEL_LABELS[levels[1]]} sits further out and ${LEVEL_LABELS[levels[2]]} furthest out.`}
         >
           {/* Track the marks sit on */}
           <line
@@ -74,9 +78,9 @@ export function TraitExplainer({ trait }: { trait: Trait }) {
             strokeWidth="2.5"
           />
           <text
-            x={lineX}
+            x={lineX + dir * 4}
             y={14}
-            textAnchor="middle"
+            textAnchor={isResource ? "end" : "start"}
             fontSize="9"
             fontWeight="700"
             letterSpacing="0.8"
@@ -111,7 +115,7 @@ export function TraitExplainer({ trait }: { trait: Trait }) {
                 fontSize="9"
                 className="fill-muted-foreground"
               >
-                {pointsFor(trait, level)} pts
+                {LEVEL_LABELS[level]}
               </text>
             </g>
           ))}
@@ -134,6 +138,11 @@ export function TraitExplainer({ trait }: { trait: Trait }) {
             }
           />
         </svg>
+
+        <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+          Even the closest answer stands clear of the line — nobody is
+          untouched in any part of life.
+        </p>
 
         <div className="mt-3 grid">
           {levels.map((level, i) => (

@@ -10,13 +10,21 @@ import {
  * Dawn Org's scoring method.
  *
  * Every mark is scored by its distance from the centre line of the sheet —
- * the God Line. On the left column the High mark sits against that line, so
- * H scores 0 and L (furthest out) scores 10. On the right column the Low mark
- * sits against the line, so L scores 0 and H scores 10. The 21 points are
- * summed and halved to give the stress level.
+ * the God Line. On the left column the High mark is the innermost, so H scores
+ * 0 and L (furthest out) scores 10. On the right column Low is the innermost,
+ * so L scores 0 and H scores 10. The 21 points are summed and halved to give
+ * the stress level.
  *
  * The theoretical maximum is 21 x 10 / 2 = 105, so a reading above 100 is
  * possible but takes near-worst answers throughout; it is capped at 100.
+ *
+ * Note that the innermost column is not the God Line itself — every diagram
+ * draws it standing clear of the line, since nobody is untouched in any
+ * dimension. The line is beyond the sheet's best answer, not on it.
+ *
+ * None of this arithmetic is shown to the participant. On the client's
+ * instruction the site surfaces only the stress level, the effectiveness
+ * figure, and which dimensions are carrying or draining them.
  */
 
 /** Points for a mark, by how far it sits from the God Line. */

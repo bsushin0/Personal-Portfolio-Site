@@ -16,8 +16,9 @@ export interface SheetParticipant {
   occupation: string
 }
 
-/* Geometry of the printed grid. The God Line sits at the centre; a mark's
-   horizontal distance from it is exactly the points it scores. */
+/* Geometry of the printed grid. The God Line sits at the centre, with clear
+   space either side of it: the innermost columns (left H, right L) stop short
+   of the line, because no mark ever lands on it. */
 const VIEW_W = 900
 const VIEW_H = 600
 const CHART_TOP = 60
@@ -190,11 +191,11 @@ export function KbtSheet({
         </svg>
 
         <p className="mt-3 border-t border-[#dfe3f2] pt-3 text-[10.5px] leading-relaxed text-[#5a6296]">
-          Every mark is scored by its distance from the God Line: on the line
-          scores 0, one step out scores 5, two steps out scores 10. The 21
-          points are added and halved to give the stress level. The God Line
-          itself is perfect balance — no strain, full efficiency — and is not
-          reachable in practice.
+          The line down the centre is the God Line — perfect balance, no strain,
+          every effort landing where it is aimed. No mark reaches it: everyone
+          carries something in every dimension, so even the innermost columns
+          stand clear of the line. The nearer your marks sit to it, the less of
+          you is being spent on strain.
         </p>
       </div>
     </div>
@@ -258,8 +259,8 @@ function Particulars({
   const right: Array<[string, string]> = [
     ["Occupation", participant.occupation],
     ["Domain", domain.label],
-    ["Score", `${formatScore(result.score)}%  (${result.band.label})`],
-    ["Efficiency", `${formatScore(result.efficiency)}%`],
+    ["Stress Level", `${formatScore(result.score)}%  (${result.band.label})`],
+    ["Effectiveness", `${formatScore(result.efficiency)}%`],
     ["Date & Time", dateTime],
   ]
 

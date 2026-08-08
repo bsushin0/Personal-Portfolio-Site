@@ -280,8 +280,9 @@ html {
 
 /*
  * Without motion the cycle cannot carry meaning, so the captions stop
- * overlapping and become a plain list, and the mark rests on the God Line.
- * These have to win against the blanket reduced-motion rule above.
+ * overlapping and become a plain list, and the mark rests in the column
+ * nearest the God Line. These have to win against the blanket reduced-motion
+ * rule above.
  */
 @media (prefers-reduced-motion: reduce) {
   .kbt-explainer-caption {
