@@ -12,7 +12,6 @@
  *   - /api/log-visit     → INSERT visit_logs
  *   - /api/contact       → INSERT contact_submissions
  *   - /api/admin/view-visits → SELECT visit_logs (admin dashboard)
- *   - /api/admin/cleanup-logs → DELETE old visit_logs
  *
  * Note: Fine-grained interaction events (clicks, briefer uses, chatbot opens) are tracked
  * separately in MongoDB via lib/mongo-analytics.ts + /api/events.
