@@ -1,4 +1,4 @@
-import Anthropic from "@anthropic-ai/sdk"
+import { getAnthropicClient } from "@/lib/anthropic-client"
 import { NextResponse } from "next/server"
 import { fetchMETAR, fetchTAF, fetchSIGMETs, fetchAIRMETs } from "@/lib/aviation-api"
 import { buildBriefingPrompt, SYSTEM_PROMPT } from "@/lib/briefing-prompt"
@@ -41,7 +41,7 @@ export async function POST(req: Request) {
   }
 
   const weatherContext = buildBriefingPrompt(body, wx)
-  const client = new Anthropic()
+  const client = getAnthropicClient()
 
   const startTime = Date.now()
 
