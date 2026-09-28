@@ -310,7 +310,7 @@ const skillCategories: SkillCategory[] = [
     id: 5,
     title: "Tools & Platforms",
     icon: <Cog className="h-5 w-5" />,
-    skills: ["PostgreSQL", "Next.js", "Salesforce", "Git", "Power Platform", "Microsoft Azure", "SAP", "Resend", "Google API", "Prompt Engineering", "Ollama", "JIRA"],
+    skills: ["PostgreSQL", "Next.js", "Salesforce", "Git", "Power Platform", "Microsoft Azure", "SAP", "Resend", "Google API", "Prompt Engineering", "Ollama", "JIRA", "Figma"],
   },
   {
     id: 6,

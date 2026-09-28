@@ -96,6 +96,19 @@ All active goals and work logs are recorded here by Mira and her team.
 - Status: COMPLETE
 - Next: NONE
 
+## [2026-09-27] mira — v3.13.0
+- Task: Sync site content with the Sep 2026 resumes (Brief + Detailed) and run the pre-production final check
+- Content changes:
+  - lib/projects.ts — added Relay, AeroLog, TraineeFlightOps (TFO), LostLink; AiRa entry now describes its move from RAG bot to agentic model (its earlier working name, "Custom Agentic AI Chatbot", is intentionally NOT a separate project)
+  - components/experience.tsx — clinical rotations 12 hrs -> 28 hrs each (matches 56+ total already on the NREMT card and in the chatbot knowledge)
+  - components/about.tsx — 24+ -> 56+ clinical hours; added a short paragraph on TFO and Relay
+  - components/skills.tsx — added Figma
+  - lib/certifications.ts, lib/embeddings.json — removed NREMT EMS ID from public text and chatbot knowledge; chatbot clinical dates aligned to Oct-Dec 2025
+- Fix: app/api/brief/route.ts — Response.json -> NextResponse.json (main-branch build was failing type-check on Main-Dev)
+- Files created: public/project-banners/{relay,aerolog,tfo,lostlink}.svg
+- Status: COMPLETE (pending PR preview review)
+- Next: regenerate lib/embeddings.json from the private bio files so the chatbot knows the new projects
+
 ## [2026-04-28] mira — v3.12.8
 - Task: Unify hero avatar and scroll-driven shrinking animation into one seamless continuous object
 - Architecture: Replaced discrete Framer Motion layoutId hero→corner morph with a scroll-driven fixed overlay "ScrollTraveler". The traveler is anchored at the corner button DOM position, but at scroll=0 applies a translateX/Y + scale transform to visually sit exactly over the hero avatar. As scrollYProgress advances to 0.85, both transform components interpolate to identity, landing the traveler precisely at the corner. The corner button then fades in (traveler fades out), completing the handoff.

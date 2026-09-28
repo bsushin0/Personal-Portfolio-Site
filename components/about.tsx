@@ -20,7 +20,7 @@ export default function About() {
     {
       icon: <Shield className="h-6 w-6" />,
       title: "Security & Clinical",
-      description: "NREMT-certified EMT actively practicing inter-facility transport at OnTime Transport, with 24+ hours of clinical field experience across hospital ER and pre-hospital EMS. Hands-on IAM product ownership at a Fortune 500 utility. Assistant Team Lead with Purdue University Police Department.",
+      description: "NREMT-certified EMT actively practicing inter-facility transport at OnTime Transport, with 56+ hours of clinical field experience across hospital ER and pre-hospital EMS. Hands-on IAM product ownership at a Fortune 500 utility. Assistant Team Lead with Purdue University Police Department.",
     },
     {
       icon: <Users className="h-6 w-6" />,
@@ -53,6 +53,12 @@ export default function About() {
           ~92% accuracy and cut model update time from days to hours. The throughline: I care about shipping things
           that actually work in production, not just demos. I&apos;m especially drawn to Aerospace and National Security —
           domains where product rigor, secure AI, and reliability are not optional.
+        </p>
+        <p className="text-foreground/60 max-w-3xl mx-auto text-lg leading-relaxed mt-4">
+          This semester I&apos;m the project manager on a three-person team building a pilot-training tracking system for a
+          simulated aviation client, and I&apos;m building Relay on my own, a platform that sends an incident to the nearest
+          qualified responder no matter which department they work for. Both come out of things I&apos;ve seen working as an
+          EMT and at large events.
         </p>
       </motion.div>
 

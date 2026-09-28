@@ -17,7 +17,7 @@ export const certifications: Certification[] = [
     date: "Apr 2026 — Active",
     image: "",
     credentialUrl: "#",
-    description: "Active NREMT certification (EMS ID: 3668-4546-3129) with 56+ hours of clinical field experience across hospital ER and pre-hospital EMS environments.",
+    description: "Active NREMT certification with 56+ hours of clinical field experience across hospital ER and pre-hospital EMS environments.",
     pdfPath: "/certs/nremt.pdf",
   },
   {
