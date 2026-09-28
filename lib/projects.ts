@@ -67,7 +67,8 @@ export const projects: Project[] = [
       "Web-accessible system that tracks pilot trainee flight progress, course and lesson prerequisites, and instructor credentials for a simulated aviation-department client. I'm the project manager on a three-person team. I wrote the project charter, own scope and schedule, and work with the two engineers on requirements, architecture, and security controls. Purdue CNIT 18200, due December 2026.",
     tags: ["Project Management", "Systems Development", "Security Controls", "Requirements"],
     image: "/project-banners/tfo.svg",
-    isPrivate: true,
+    status: "coming-soon",
+    isPrivate: true
   },
   {
     id: 8,
