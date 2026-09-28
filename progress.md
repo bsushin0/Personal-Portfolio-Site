@@ -15,6 +15,59 @@ All active goals and work logs are recorded here by Mira and her team.
 
 -->
 
+## [2026-06-08] mira — v3.12.20
+- Task: Integrate MongoDB Atlas, Neon documentation, and Braintrust LLM observability
+- MongoDB (free M0 tier):
+  - lib/mongodb.ts — singleton client with Next.js hot-reload safe pattern; graceful null fallback
+  - lib/mongo-analytics.ts — server-side event helpers (logEvent, getEventCounts, getTopProjects, getTopBrieferAirports)
+  - lib/analytics.ts — client-side trackEvent() helper (sessionStorage session ID, fire-and-forget)
+  - app/api/events/route.ts — POST endpoint; validates type, sanitizes metadata, writes to MongoDB "events" collection
+  - components/visit-tracker.tsx — added page_view event alongside existing Neon visit log
+  - components/projects.tsx — project_click events on GitHub + Live Demo links
+  - components/chatbot.tsx — chatbot_open event on corner button click
+  - app/projects/preflight-briefer/client.tsx — briefer_use event on form submit
+- MongoDB CMS:
+  - lib/mongo-cms.ts — getCmsProjects, getCmsCertifications, upsertProject, upsertCertification (static fallback when collection empty)
+  - app/api/cms/projects/route.ts — GET (MongoDB or static) + POST (upsert, x-cms-secret auth)
+  - app/api/cms/certifications/route.ts — same pattern
+  - app/api/cms/seed/route.ts — POST to seed DB from static TS data (idempotent upsert)
+- Braintrust (free tier ~1000 logs/month):
+  - lib/braintrust.ts — logLLMCall() wrapper; asyncFlush, fully non-blocking, no-op when key not set
+  - app/api/brief/route.ts — logs Anthropic/Claude calls with tokens + latency
+  - app/api/chat/route.ts — logs Gemini calls with context chunks + latency
+- Neon: added comprehensive doc comment to lib/db.ts explaining tables, routes, and relationship to MongoDB layer
+- .env.local: added MONGODB_URI, CMS_SECRET, BRAINTRUST_API_KEY placeholders with setup instructions
+- package.json: added mongodb ^6.12.0 + braintrust ^0.0.185, bumped to 3.12.20
+- Status: COMPLETE
+- Next: Run `pnpm install`, fill MONGODB_URI + BRAINTRUST_API_KEY in .env.local, run `/api/cms/seed` once after Atlas cluster is connected
+
+## [2026-06-08] mira — v3.12.20
+- Task: Activate MongoDB Atlas + BrainTrust integrations (code was pre-built; wired up credentials)
+- Changes:
+  - .env.local — added MONGODB_URI (Atlas M0 free tier, portfolio db), BRAINTRUST_API_KEY, CMS_SECRET
+  - scripts/seed-mongodb.ts (new) — standalone seed script to populate projects + certifications collections
+- Integration status:
+  - Neon PostgreSQL ✅ (visit_logs, contact_submissions — already live)
+  - MongoDB Atlas ✅ (events analytics + CMS — activated; seed pending user run)
+  - BrainTrust ✅ (LLM observability for /api/brief and /api/chat — activated)
+- Files created: scripts/seed-mongodb.ts
+- Files modified: .env.local, package.json (3.12.19 → 3.12.20)
+- Status: COMPLETE — user must run terminal steps below
+- Next: pnpm install, seed MongoDB, push Vercel env vars, git push
+
+## [2026-06-08] mira — v3.12.19
+- Task: Add ANTHROPIC_API_KEY to .env.local to enable Pre-Flight AI Briefer API route
+- Files modified: .env.local (appended ANTHROPIC_API_KEY)
+- Status: COMPLETE
+- Next: Run `pnpm install` (SDK upgrade 0.24→0.102), run cleanup `git rm -r --cached` for junk files, then push to Main-Dev
+
+## [2026-06-08] mira — v3.12.18
+- Task: Integrate Pre-Flight AI Briefer directly into portfolio as live demo page at /projects/preflight-briefer
+- Files created: types/aviation.ts, lib/aviation-api.ts, lib/briefing-prompt.ts, app/api/brief/route.ts, components/briefer-wx-card.tsx, components/briefer-output.tsx, components/briefer-sigmet-strip.tsx, app/projects/preflight-briefer/page.tsx, app/projects/preflight-briefer/client.tsx
+- Files modified: lib/utils.ts (added isValidICAO + formatTime), lib/projects.ts (liveUrl → /projects/preflight-briefer), package.json (added @anthropic-ai/sdk ^0.24.0, bumped to 3.12.18)
+- Status: COMPLETE
+- Next: Install @anthropic-ai/sdk (pnpm install), push to Main-Dev
+
 ## [2026-06-08] mira — v3.12.17
 - Task: Content accuracy audit — fix clinical rotation dates/hours, update About clinical hours claim, add NREMT EMT to hero roles
 - Changes:
@@ -42,6 +95,19 @@ All active goals and work logs are recorded here by Mira and her team.
 - Files created: none
 - Status: COMPLETE
 - Next: NONE
+
+## [2026-09-27] mira — v3.13.0
+- Task: Sync site content with the Sep 2026 resumes (Brief + Detailed) and run the pre-production final check
+- Content changes:
+  - lib/projects.ts — added Relay, AeroLog, TraineeFlightOps (TFO), LostLink; AiRa entry now describes its move from RAG bot to agentic model (its earlier working name, "Custom Agentic AI Chatbot", is intentionally NOT a separate project)
+  - components/experience.tsx — clinical rotations 12 hrs -> 28 hrs each (matches 56+ total already on the NREMT card and in the chatbot knowledge)
+  - components/about.tsx — 24+ -> 56+ clinical hours; added a short paragraph on TFO and Relay
+  - components/skills.tsx — added Figma
+  - lib/certifications.ts, lib/embeddings.json — removed NREMT EMS ID from public text and chatbot knowledge; chatbot clinical dates aligned to Oct-Dec 2025
+- Fix: app/api/brief/route.ts — Response.json -> NextResponse.json (main-branch build was failing type-check on Main-Dev)
+- Files created: public/project-banners/{relay,aerolog,tfo,lostlink}.svg
+- Status: COMPLETE (pending PR preview review)
+- Next: regenerate lib/embeddings.json from the private bio files so the chatbot knows the new projects
 
 ## [2026-04-28] mira — v3.12.8
 - Task: Unify hero avatar and scroll-driven shrinking animation into one seamless continuous object

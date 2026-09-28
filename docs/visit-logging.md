@@ -137,37 +137,13 @@ ORDER BY visit_date DESC;
 
 ## Retention Policy
 
-Logs are automatically deleted after **30 days** (configurable via `RETENTION_DAYS` env var).
-
-### Manual Cleanup
-```bash
-curl -X POST \
-  -H "Authorization: Bearer YOUR_CLEANUP_SECRET" \
-  "https://your-site.com/api/admin/cleanup-logs?days=30"
-```
-
-### Automated Cleanup (GitHub Actions)
-```yaml
-name: Cleanup Old Visit Logs
-on:
-  schedule:
-    - cron: '0 2 * * *'
-jobs:
-  cleanup:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Cleanup visit logs
-        run: |
-          curl -X POST \
-            -H "Authorization: Bearer ${{ secrets.CLEANUP_SECRET }}" \
-            "https://your-site.com/api/admin/cleanup-logs?days=30"
-```
+There is no automated cleanup. The old `/api/admin/cleanup-logs` endpoint was a stub that never deleted anything and has been removed. Prune old rows manually in the Neon SQL editor if needed.
 
 ## Privacy & Compliance
 
 - **Inform users** about IP logging in your privacy policy
 - **GDPR Compliance**: IP addresses are personal data; ensure proper consent
-- **Data Retention**: Logs auto-deleted after 30 days (configurable)
+- **Data Retention**: Logs are not auto-deleted; prune manually
 - **User Rights**: Allow users to request their data be deleted
 
 ## Troubleshooting

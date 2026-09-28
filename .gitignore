@@ -29,3 +29,15 @@ next-env.d.ts
 
 # Private documents and resumes
 /private/
+
+# macOS
+.DS_Store
+**/.DS_Store
+
+# Claude Code internals
+.claude/worktrees/
+.claude/settings.local.json
+
+# Misc
+*.zip
+files.zip
