@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef } from "react"
 
 export default function CursorSystem() {
   const ringRef = useRef<HTMLDivElement>(null)
@@ -8,12 +8,11 @@ export default function CursorSystem() {
   const posRef = useRef({ x: -9999, y: -9999 })
   const ringPosRef = useRef({ x: -9999, y: -9999 })
   const rafRef = useRef<number | null>(null)
-  const [isActive, setIsActive] = useState(false)
-
   useEffect(() => {
     if (window.matchMedia("(pointer: coarse)").matches) return
 
-    setIsActive(true)
+    if (ringRef.current) ringRef.current.style.display = "block"
+    if (dotRef.current) dotRef.current.style.display = "block"
     document.body.style.cursor = "none"
 
     const lerp = (a: number, b: number, t: number) => a + (b - a) * t
@@ -81,14 +80,13 @@ export default function CursorSystem() {
     }
   }, [])
 
-  if (!isActive) return null
-
   return (
     <>
       <div
         ref={ringRef}
         aria-hidden="true"
         style={{
+          display: "none",
           position: "fixed",
           top: 0,
           left: 0,
@@ -107,6 +105,7 @@ export default function CursorSystem() {
         ref={dotRef}
         aria-hidden="true"
         style={{
+          display: "none",
           position: "fixed",
           top: 0,
           left: 0,

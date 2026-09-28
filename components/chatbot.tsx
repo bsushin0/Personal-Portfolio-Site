@@ -347,17 +347,14 @@ function TooltipBubble({ message, onClose, onAskMe, prefersReduced }: TooltipBub
 function AvatarCornerButton() {
   const { openChat, isPastHero, setIsPastHero, isCornerReady } = useChatContext();
   const [tooltipMsg, setTooltipMsg] = useState<string | null>(null);
-  const [prefersReduced, setPrefersReduced] = useState(false);
+  const [prefersReduced] = useState(() =>
+    typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches
+  );
 
   // Refs — avoid triggering re-renders on every observer callback
   const tooltipTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const lastSectionRef = useRef<string>("");
   const isAnimatingRef = useRef(false); // gate: debounce rapid section crossings
-
-  // Detect reduced motion once on mount
-  useEffect(() => {
-    setPrefersReduced(window.matchMedia("(prefers-reduced-motion: reduce)").matches);
-  }, []);
 
   // Hero intersection — threshold 0.50: avatar only returns to hero when 50% of hero is visible
   useEffect(() => {

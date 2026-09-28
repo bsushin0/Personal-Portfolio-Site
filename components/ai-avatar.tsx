@@ -303,15 +303,20 @@ export default function AiAvatar() {
     setIsProximate(dist < 200)
   }, [mousePosition])
 
-  // Idle detection — 4s without any mouse movement near avatar
+  // Idle detection — 4s without mouse movement; handler keeps setState out of effect body
   useEffect(() => {
-    if (idleTimerRef.current) clearTimeout(idleTimerRef.current)
-    setIsIdle(false)
-    idleTimerRef.current = setTimeout(() => setIsIdle(true), 4000)
+    const resetIdle = () => {
+      setIsIdle(false)
+      if (idleTimerRef.current) clearTimeout(idleTimerRef.current)
+      idleTimerRef.current = setTimeout(() => setIsIdle(true), 4000)
+    }
+    window.addEventListener("mousemove", resetIdle)
+    resetIdle()
     return () => {
+      window.removeEventListener("mousemove", resetIdle)
       if (idleTimerRef.current) clearTimeout(idleTimerRef.current)
     }
-  }, [mousePosition])
+  }, [])
 
   // Click handler - ripple + expression
   const handleClick = () => {
