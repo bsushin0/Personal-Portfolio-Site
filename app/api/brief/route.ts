@@ -1,4 +1,5 @@
 import Anthropic from "@anthropic-ai/sdk"
+import { NextResponse } from "next/server"
 import { fetchMETAR, fetchTAF, fetchSIGMETs, fetchAIRMETs } from "@/lib/aviation-api"
 import { buildBriefingPrompt, SYSTEM_PROMPT } from "@/lib/briefing-prompt"
 import { logLLMCall } from "@/lib/braintrust"
@@ -13,7 +14,7 @@ export async function POST(req: Request) {
   const body = (await req.json()) as BriefingRequest
 
   if (!body.departure || !/^[A-Z]{4}$/i.test(body.departure.trim())) {
-    return Response.json({ error: "Invalid departure ICAO code" }, { status: 400 })
+    return NextResponse.json({ error: "Invalid departure ICAO code" }, { status: 400 })
   }
 
   const dep = body.departure.trim().toUpperCase()
