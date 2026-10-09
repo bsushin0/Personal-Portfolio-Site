@@ -15,6 +15,16 @@ All active goals and work logs are recorded here by Mira and her team.
 
 -->
 
+## [2026-10-09] claude — v4.0.0 "Flight Deck"
+- Task: Build the approved v4 aviation/EMT/AI redesign into the Next.js app
+- Files created: app/flight.css, app/api/wx/route.ts, context/flight-context.tsx, lib/{flight,experience,education,skills}.ts, components/flight/* (flight-header, sky, hero, plane-3d, primitives, crew-briefing, logbook, departures, ground-school, radar, patches, radio-contact, flight-footer, plane-cursor)
+- Files modified: app/layout.tsx, app/page.tsx, app/globals.css, components/chatbot.tsx (First Officer label), lib/mongo-analytics.ts + app/api/events/route.ts (squawk event), next.config.mjs (X-Frame-Options SAMEORIGIN), package.json (three, 4.0.0), README.md
+- Files deleted: legacy section components (hero, about, interests, experience, projects, education, skills, certifications, contact-form, footer, navbar), ambient-background, floating-orbs, cursor-system, tilt-card, mode-toggle, lib/motion-variants.ts
+- Verified: tsc clean, eslint 0 errors, next build OK; production server checked at 1440px and 390px (no horizontal overflow, no page errors), WebGL plane + no-WebGL fallback, squawk 7700, logbook/boarding-pass/radar/cert dialogs, mobile flight-plan menu
+- Not done: sound pack, LiveATC audio (licensing open); chatbot embeddings (lib/embeddings.json) still mention AP credits from the private bio (regenerate with pnpm build:embeddings)
+- Status: COMPLETE (awaiting owner review)
+- Next: NONE
+
 ## [2026-06-08] mira — v3.12.20
 - Task: Integrate MongoDB Atlas, Neon documentation, and Braintrust LLM observability
 - MongoDB (free M0 tier):

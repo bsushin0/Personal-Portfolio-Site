@@ -1,40 +1,16 @@
-"use client"
-
-import type React from "react"
-import { useState } from "react"
-import { motion } from "framer-motion"
-import { Badge } from "@/components/ui/badge"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog"
-import { Code, Lock, Cog, Brain, Cloud, Users, Heart } from "lucide-react"
-import {
-  headingVariants,
-  cardVariants,
-  staggerContainer as containerVariants,
-  fastStaggerContainer as badgeContainerVariants,
-  badgeVariants,
-} from "@/lib/motion-variants"
-import TiltCard from "@/components/tilt-card"
-
-type SkillDetail = {
+export type SkillDetail = {
   narrative: string
   appliedAt: string[]
 }
 
-type SkillCategory = {
+export type SkillCategory = {
   id: number
   title: string
-  icon: React.ReactNode
+  short: string
   skills: string[]
 }
 
-const skillDetails: Record<string, SkillDetail> = {
+export const skillDetails: Record<string, SkillDetail> = {
   "Python": {
     narrative: "Python is the language I think in for anything data or AI. I used it to build the Wine Varietals forecasting pipeline for BASF — data ingestion, feature engineering, model training with TensorFlow/Keras, all the way to MLOps automation. I also built the process automation tool at PSEG that compressed a multi-day workflow into near-instant execution. It's the first tool I reach for when the problem involves data, inference, or automation.",
     appliedAt: ["BASF — Wine Forecasting (92% accuracy ML pipeline)", "PSEG 2024 — Process automation tool", "Project AiRa — RAG system backend", "Personal Portfolio — Embedding generation scripts"],
@@ -281,158 +257,47 @@ const skillDetails: Record<string, SkillDetail> = {
   },
 }
 
-const skillCategories: SkillCategory[] = [
+export const skillCategories: SkillCategory[] = [
   {
     id: 1,
     title: "Languages & Frameworks",
-    icon: <Code className="h-5 w-5" />,
+    short: "LANG",
     skills: ["Python", "Java", "C/C++", "SQL", "JavaScript", "TypeScript", "R", "HTML", "Bash/Linux", "Agile/Scrum"],
   },
   {
     id: 2,
     title: "AI & Machine Learning",
-    icon: <Brain className="h-5 w-5" />,
+    short: "AI/ML",
     skills: ["PyTorch", "TensorFlow", "Scikit-learn", "NLP", "Deep Learning", "Generative AI", "RAG", "LLM Fine-tuning", "MLOps", "Time-Series Forecasting"],
   },
   {
     id: 3,
     title: "Cloud & DevOps",
-    icon: <Cloud className="h-5 w-5" />,
+    short: "CLOUD",
     skills: ["AWS", "Vercel", "CI/CD (GitHub Actions)", "Docker", "Linux Systems Administration", "Serverless Architecture"],
   },
   {
     id: 4,
     title: "Security & IAM",
-    icon: <Lock className="h-5 w-5" />,
+    short: "SEC",
     skills: ["Identity & Access Management (IAM)", "UAT", "SIT", "Access Control", "Security Operations", "Risk Assessment", "Compliance Documentation"],
   },
   {
     id: 5,
     title: "Tools & Platforms",
-    icon: <Cog className="h-5 w-5" />,
+    short: "TOOLS",
     skills: ["PostgreSQL", "Next.js", "Salesforce", "Git", "Power Platform", "Microsoft Azure", "SAP", "Resend", "Google API", "Prompt Engineering", "Ollama", "JIRA", "Figma"],
   },
   {
     id: 6,
     title: "Product & Leadership",
-    icon: <Users className="h-5 w-5" />,
+    short: "LEAD",
     skills: ["Product Management", "Technical Leadership", "Stakeholder Management", "Cross-functional Collaboration", "AI Ethics", "Analytical Problem-Solving", "Strategic Communication"],
   },
   {
     id: 7,
     title: "Medical & EMS",
-    icon: <Heart className="h-5 w-5" />,
+    short: "EMS",
     skills: ["Patient Assessment", "NREMT Protocols", "BLS", "Vitals Monitoring", "Patient Care Reporting (PCR)", "Inter-Facility Transport", "Pre-Hospital EMS"],
   },
 ]
-
-interface SkillModalProps {
-  skill: string | null
-  onClose: () => void
-}
-
-function SkillModal({ skill, onClose }: SkillModalProps) {
-  if (!skill) return null
-  const detail = skillDetails[skill]
-
-  return (
-    <Dialog open={!!skill} onOpenChange={(v) => { if (!v) onClose() }}>
-      <DialogContent className="max-w-lg w-[95vw]">
-        <DialogHeader>
-          <DialogTitle className="text-lg font-bold text-foreground">{skill}</DialogTitle>
-          <DialogDescription className="sr-only">Skill context for {skill}</DialogDescription>
-        </DialogHeader>
-        {detail ? (
-          <div className="space-y-4">
-            <p className="text-sm text-foreground/75 leading-relaxed">{detail.narrative}</p>
-            {detail.appliedAt.length > 0 && (
-              <div>
-                <p className="text-xs font-semibold text-foreground/50 uppercase tracking-wider mb-2">Where I used it</p>
-                <ul className="space-y-1.5">
-                  {detail.appliedAt.map((item, i) => (
-                    <li key={i} className="flex items-start gap-2 text-sm text-foreground/65">
-                      <span className="text-primary/50 mt-[0.18em] shrink-0">—</span>
-                      <span>{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
-        ) : (
-          <p className="text-sm text-foreground/60">
-            {skill} is part of my technical toolkit. Click through to the Projects and Experience sections for context on where I applied it.
-          </p>
-        )}
-      </DialogContent>
-    </Dialog>
-  )
-}
-
-export default function Skills() {
-  const [activeSkill, setActiveSkill] = useState<string | null>(null)
-
-  return (
-    <section id="skills" className="py-20 bg-gradient-lab dark:bg-gradient-neural border-t border-border-subtle/80">
-      <motion.div
-        className="text-center mb-16"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.3 }}
-        variants={headingVariants}
-      >
-        <h2 className="text-3xl md:text-4xl font-bold mb-3 text-foreground tracking-tight">Technical Skills</h2>
-        <p className="text-foreground/55 max-w-2xl mx-auto text-sm">
-          Programming, platforms, AI/ML, and product leadership. Click any skill to see where I applied it.
-        </p>
-      </motion.div>
-
-      <motion.div
-        className="grid grid-cols-1 md:grid-cols-2 gap-8"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.1 }}
-        variants={containerVariants}
-      >
-        {skillCategories.map((category) => (
-          <motion.div key={category.id} variants={cardVariants}>
-            <TiltCard className="h-full">
-              <Card className="glass-effect-sm border-glow card-interactive h-full" data-cursor-hover>
-                <CardHeader className="pb-3">
-                  <CardTitle className="flex items-center gap-3 text-base font-semibold text-foreground">
-                    <div className="p-2 rounded-lg bg-indigo-500/10 text-indigo-500 border border-indigo-500/20 shrink-0">
-                      {category.icon}
-                    </div>
-                    {category.title}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <motion.div
-                    className="flex flex-wrap gap-2"
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true, amount: 0.2 }}
-                    variants={badgeContainerVariants}
-                  >
-                    {category.skills.map((skill) => (
-                      <motion.div key={skill} variants={badgeVariants}>
-                        <Badge
-                          className="bg-surface-tag text-foreground/70 border border-border-subtle/80 hover:scale-105 hover:bg-indigo-500/10 hover:text-indigo-600 dark:hover:text-indigo-300 hover:border-indigo-500/30 transition-all cursor-pointer select-none"
-                          onClick={() => setActiveSkill(skill)}
-                        >
-                          {skill}
-                        </Badge>
-                      </motion.div>
-                    ))}
-                  </motion.div>
-                </CardContent>
-              </Card>
-            </TiltCard>
-          </motion.div>
-        ))}
-      </motion.div>
-
-      <SkillModal skill={activeSkill} onClose={() => setActiveSkill(null)} />
-    </section>
-  )
-}

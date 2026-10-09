@@ -20,7 +20,8 @@ export type EventType =
   | "chatbot_message"
   | "contact_view"
   | "resume_view"
-  | "cert_view";
+  | "cert_view"
+  | "squawk";
 
 export interface PortfolioEvent {
   type: EventType;

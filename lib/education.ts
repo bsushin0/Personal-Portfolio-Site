@@ -1,26 +1,9 @@
-"use client"
-
-import { useState } from "react"
-import { motion, type Variants } from "framer-motion"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog"
-import { GraduationCap, TrendingUp, BookOpen, Star } from "lucide-react"
-import { headingVariants, cardVariants as fadeUpVariants, badgeVariants } from "@/lib/motion-variants"
-
-// ── Course modal data ─────────────────────────────────────────────────────────
-type CourseDetail = {
+export type CourseDetail = {
   institution: string
   narrative: string
 }
 
-const courseDetails: Record<string, CourseDetail> = {
+export const courseDetails: Record<string, CourseDetail> = {
   // ── Purdue University courses ───────────────────────────────────────────────
   "Intro to Artificial Intelligence": {
     institution: "Purdue University",
@@ -151,8 +134,7 @@ const courseDetails: Record<string, CourseDetail> = {
   },
 }
 
-// ── Static data ───────────────────────────────────────────────────────────────
-const coreCourses = [
+export const coreCourses = [
   "Intro to Artificial Intelligence",
   "Data Mining & Machine Learning",
   "Data Structures & Algorithms",
@@ -170,7 +152,7 @@ const coreCourses = [
   "Philosophy of Science",
 ]
 
-const anthropicCourses = [
+export const anthropicCourses = [
   "Claude 101",
   "Claude Code 101",
   "Introduction to Claude at Work",
@@ -183,280 +165,38 @@ const anthropicCourses = [
   "Introduction to Subagents",
 ]
 
-const highlights = [
+export const otherCoursework =
+  "Also completed: Multivariate Calculus, Intro to Statistics, History of Modern Philosophy (A), and ongoing Aviation coursework (AT 43300 Supervised Aviation Experience)."
+
+export const degree = {
+  title: "B.S. Artificial Intelligence",
+  minor: "Minor: Computer Networking and Information Technology (CNIT)",
+  school: "Purdue University, West Lafayette, IN",
+  period: "August 2023 – May 2027 (Expected)",
+  gpa: "GPA: 3.01 / 4.00",
+  standing: "Good Academic Standing",
+}
+
+// AP credits are intentionally never shown on the site.
+export const educationHighlights = [
   {
-    icon: <Star className="h-5 w-5" />,
     label: "The Data Mine",
     detail: "Corporate Partners program — semesters I & III, collaborating with industry partners on data-driven projects",
   },
   {
-    icon: <Star className="h-5 w-5" />,
     label: "CERIAS Security Seminar",
     detail: "Specialized cybersecurity coursework (CS 59100) through Purdue's security research center",
   },
   {
-    icon: <TrendingUp className="h-5 w-5" />,
     label: "Upward GPA Trend",
     detail: "Improved from 2.66 (Fall 2023) to 3.01 overall (as of Spring 2026) — consistent growth each academic year",
   },
   {
-    icon: <BookOpen className="h-5 w-5" />,
-    label: "27 AP Transfer Credits",
-    detail: "Entered Purdue with advanced standing in Biology, CS, English, Calculus I & II, and Psychology",
+    label: "Private Pilot Training",
+    detail: "Student pilot working toward a Private Pilot License, alongside AT 43300 Supervised Aviation Experience",
   },
   {
-    icon: <Star className="h-5 w-5" />,
     label: "Floor Senator",
     detail: "Purdue University Residences student government representative (Aug 2025 – May 2026)",
   },
 ]
-
-// ── Animation variants ────────────────────────────────────────────────────────
-const containerVariants: Variants = {
-  hidden: {},
-  visible: {
-    transition: {
-      staggerChildren: 0.1,
-    },
-  },
-}
-
-const itemVariants: Variants = {
-  hidden: { opacity: 0, x: -16 },
-  visible: { opacity: 1, x: 0, transition: { duration: 0.4, ease: "easeOut" } },
-}
-
-const badgeContainerVariants: Variants = {
-  hidden: {},
-  visible: {
-    transition: {
-      staggerChildren: 0.05,
-    },
-  },
-}
-
-// ── Course Modal ──────────────────────────────────────────────────────────────
-interface CourseModalProps {
-  course: string | null
-  onClose: () => void
-}
-
-function CourseModal({ course, onClose }: CourseModalProps) {
-  if (!course) return null
-  const detail = courseDetails[course]
-
-  return (
-    <Dialog open={!!course} onOpenChange={(v) => { if (!v) onClose() }}>
-      <DialogContent className="max-w-lg w-[95vw]">
-        <DialogHeader>
-          <DialogTitle className="text-lg font-bold text-foreground">{course}</DialogTitle>
-          <DialogDescription className="sr-only">Course detail for {course}</DialogDescription>
-        </DialogHeader>
-        {detail ? (
-          <div className="space-y-4">
-            <p className="text-xs font-semibold text-foreground/50 uppercase tracking-wider">
-              {detail.institution}
-            </p>
-            <p className="text-sm text-foreground/75 leading-relaxed">{detail.narrative}</p>
-          </div>
-        ) : (
-          <p className="text-sm text-foreground/60">
-            {course} is part of my coursework at Purdue or Anthropic Academy. Ask the AI assistant for more context.
-          </p>
-        )}
-      </DialogContent>
-    </Dialog>
-  )
-}
-
-// ── Clickable course badge ────────────────────────────────────────────────────
-interface CourseBadgeProps {
-  course: string
-  variant: "purdue" | "anthropic"
-  onClick: (course: string) => void
-}
-
-function CourseBadge({ course, variant, onClick }: CourseBadgeProps) {
-  return (
-    <motion.div variants={badgeVariants}>
-      <Badge
-        variant="secondary"
-        className={
-          variant === "purdue"
-            ? "bg-surface-tag text-foreground/70 border border-border-subtle/80 cursor-pointer select-none hover:bg-indigo-500/10 hover:text-indigo-600 dark:hover:text-indigo-300 hover:border-indigo-500/30 hover:scale-105 transition-all"
-            : "bg-indigo-500/10 text-indigo-600 dark:text-indigo-300 border border-indigo-500/20 cursor-pointer select-none hover:bg-indigo-500/20 hover:border-indigo-500/40 hover:scale-105 transition-all"
-        }
-        onClick={() => onClick(course)}
-        role="button"
-        tabIndex={0}
-        onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onClick(course) } }}
-      >
-        {course}
-      </Badge>
-    </motion.div>
-  )
-}
-
-// ── Main component ────────────────────────────────────────────────────────────
-export default function Education() {
-  const [activeCourse, setActiveCourse] = useState<string | null>(null)
-
-  return (
-    <section id="education" className="py-20 border-t border-border-subtle/80">
-      <motion.div
-        className="text-center mb-16"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.3 }}
-        variants={headingVariants}
-      >
-        <h2 className="text-3xl md:text-4xl font-bold text-foreground tracking-tight mb-4">Education</h2>
-        <p className="text-foreground/60 max-w-2xl mx-auto">
-          Computer Science degree with an AI specialization, grounded in mathematics, data science, and ethics. Click any course to see what I took away from it.
-        </p>
-      </motion.div>
-
-      {/* Degree Header Card */}
-      <motion.div
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.3 }}
-        variants={fadeUpVariants}
-        className="mb-8"
-      >
-        <Card className="glass-effect-sm border-glow">
-          <CardHeader>
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-              <div className="flex items-start gap-4">
-                <div className="flex items-center justify-center w-14 h-14 rounded-full bg-indigo-500/10 text-indigo-500 border border-indigo-500/20 shrink-0">
-                  <GraduationCap className="h-7 w-7" />
-                </div>
-                <div>
-                  <CardTitle className="text-xl text-foreground">B.S. Artificial Intelligence</CardTitle>
-                  <p className="text-foreground/60 text-sm font-medium mt-0.5">Minor: Computer Networking and Information Technology (CNIT)</p>
-                  <p className="text-foreground/70 font-medium mt-1">Purdue University, West Lafayette, IN</p>
-                  <p className="text-foreground/50 text-sm mt-1">August 2023 – May 2027 (Expected)</p>
-                </div>
-              </div>
-              <div className="flex flex-wrap gap-2 md:flex-col md:items-end">
-                <Badge className="bg-indigo-500/10 text-indigo-600 dark:text-indigo-300 border border-indigo-500/20 w-fit">
-                  GPA: 3.01 / 4.00
-                </Badge>
-                <Badge variant="outline" className="border-border-subtle/80 text-foreground/60 w-fit">
-                  Good Academic Standing
-                </Badge>
-              </div>
-            </div>
-          </CardHeader>
-        </Card>
-      </motion.div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Highlights */}
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.2 }}
-          variants={fadeUpVariants}
-        >
-          <Card className="glass-effect-sm border-glow h-full">
-            <CardHeader>
-              <CardTitle className="text-base text-foreground/80 uppercase tracking-widest text-sm">
-                Programs & Highlights
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <motion.div
-                className="space-y-4"
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, amount: 0.2 }}
-                variants={containerVariants}
-              >
-                {highlights.map((h) => (
-                  <motion.div key={h.label} className="flex items-start gap-3" variants={itemVariants}>
-                    <div className="flex items-center justify-center w-8 h-8 rounded-full bg-indigo-500/10 text-indigo-500 border border-indigo-500/20 shrink-0 mt-0.5">
-                      {h.icon}
-                    </div>
-                    <div>
-                      <p className="text-sm font-semibold text-foreground">{h.label}</p>
-                      <p className="text-sm text-foreground/60 leading-relaxed">{h.detail}</p>
-                    </div>
-                  </motion.div>
-                ))}
-              </motion.div>
-            </CardContent>
-          </Card>
-        </motion.div>
-
-        {/* Core Coursework */}
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.2 }}
-          variants={fadeUpVariants}
-        >
-          <Card className="glass-effect-sm border-glow h-full">
-            <CardHeader>
-              <CardTitle className="text-base text-foreground/80 uppercase tracking-widest text-sm">
-                Relevant Coursework
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              {/* Purdue University */}
-              <div>
-                <p className="text-xs font-semibold text-foreground/50 uppercase tracking-widest mb-3">Purdue University</p>
-                <motion.div
-                  className="flex flex-wrap gap-2"
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true, amount: 0.2 }}
-                  variants={badgeContainerVariants}
-                >
-                  {coreCourses.map((course) => (
-                    <CourseBadge
-                      key={course}
-                      course={course}
-                      variant="purdue"
-                      onClick={setActiveCourse}
-                    />
-                  ))}
-                </motion.div>
-                <p className="text-xs text-foreground/40 mt-4">
-                  Also completed: Multivariate Calculus, Intro to Statistics, History of Modern Philosophy (A),
-                  and ongoing Aviation coursework (AT 43300 Supervised Aviation Experience).
-                </p>
-              </div>
-
-              {/* Divider */}
-              <div className="border-t border-border-subtle/60" />
-
-              {/* Anthropic Academy */}
-              <div>
-                <p className="text-xs font-semibold text-foreground/50 uppercase tracking-widest mb-3">Anthropic Academy</p>
-                <motion.div
-                  className="flex flex-wrap gap-2"
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true, amount: 0.2 }}
-                  variants={badgeContainerVariants}
-                >
-                  {anthropicCourses.map((course) => (
-                    <CourseBadge
-                      key={course}
-                      course={course}
-                      variant="anthropic"
-                      onClick={setActiveCourse}
-                    />
-                  ))}
-                </motion.div>
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
-      </div>
-
-      <CourseModal course={activeCourse} onClose={() => setActiveCourse(null)} />
-    </section>
-  )
-}

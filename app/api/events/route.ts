@@ -21,6 +21,7 @@ const VALID_EVENT_TYPES: Set<string> = new Set([
   "contact_view",
   "resume_view",
   "cert_view",
+  "squawk",
 ]);
 
 export async function POST(req: NextRequest) {

@@ -599,7 +599,7 @@ export function Chatbot() {
                 </motion.div>
                 <div>
                   <h3 className="font-semibold text-foreground">
-                    Sushin&apos;s AI Assistant
+                    AiRa · First Officer
                   </h3>
                   <p className="text-xs text-foreground/60">
                     Powered by Gemini

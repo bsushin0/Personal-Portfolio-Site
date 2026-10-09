@@ -4,10 +4,6 @@
 @tailwind components;
 @tailwind utilities;
 
-* {
-  @apply transition-colors duration-300;
-}
-
 body {
   font-family: 'Inter', 'Geist', 'Space Grotesk', sans-serif;
   letter-spacing: -0.01em;
