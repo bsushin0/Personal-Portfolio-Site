@@ -10,7 +10,7 @@ import { IconLink } from "@/components/flight/primitives"
 
 const Plane3D = dynamic(() => import("@/components/flight/plane-3d"), { ssr: false })
 
-const ROLES = ["AI Engineer", "ML Practitioner", "Product Thinker", "NREMT EMT", "Student Pilot", "Purdue Builder", "Systems Designer"]
+const ROLES = ["AI Engineer", "ML Practitioner", "Product Thinker", "Project Manager", "Licensed EMT", "Student Pilot", "Purdue Builder", "Systems Designer"]
 
 const GROUND: Record<SkyPhase, string> = {
   day: "linear-gradient(180deg, #24331f 0%, #18221a 35%, #0d130f 100%)",

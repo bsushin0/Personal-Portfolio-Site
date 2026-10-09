@@ -16,6 +16,7 @@ function shortPeriod(period: string) {
     .map((p) => {
       const [m, y] = p.trim().split(/\s+/)
       if (!y) return p.toUpperCase()
+      if (/^(spring|summer|fall|winter)$/i.test(m)) return `${m.toUpperCase()} ’${y.slice(2)}`
       return `${MONTHS[m.toLowerCase()] ?? m.slice(0, 3).toUpperCase()} ’${y.slice(2)}`
     })
     .join(" – ")

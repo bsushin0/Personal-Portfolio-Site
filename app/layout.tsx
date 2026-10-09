@@ -24,9 +24,9 @@ export const viewport: Viewport = {
 }
 
 const siteUrl = "https://www.sushinbandha.com"
-const siteTitle = "Sushin Bandha — AI Engineer, Product Manager & Student Pilot"
+const siteTitle = "Sushin Bandha — Artificial Intelligence, Product & Project Management"
 const siteDescription =
-  "Purdue AI student, student pilot, and NREMT EMT building secure, production-grade AI products. Climb through my logbook, departures board of projects, skills radar, and certifications."
+  "Purdue AI student, student pilot, and licensed EMT building secure, production-grade AI products. Climb through my logbook, departures board of projects, skills radar, and certifications."
 
 export const metadata: Metadata = {
   title: siteTitle,

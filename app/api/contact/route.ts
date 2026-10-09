@@ -138,16 +138,16 @@ export async function POST(request: NextRequest) {
           <hr style="border: none; border-top: 1px solid #ccc; margin: 20px 0;">
           
           <h3 style="color: #00c1ff; margin-top: 20px;">About Me</h3>
-          <p>I'm a Computer Science specialist with deep expertise in AI/ML systems, cybersecurity, and scalable architecture. My work focuses on building intelligent solutions that solve real-world problems through advanced algorithms, secure design principles, and thoughtful engineering.</p>
-          
-          <p>I'm passionate about:</p>
+          <p>I'm a Purdue University Artificial Intelligence student (B.S., expected May 2027) working across AI, product management, and project management. I've owned an enterprise IAM product launch at PSEG, built an ML forecasting pipeline for BASF, and I'm a licensed EMT (NREMT, New Jersey, and Indiana) and a student pilot.</p>
+
+          <p>What I focus on:</p>
           <ul style="color: #666; line-height: 1.8;">
-            <li><strong>AI & Machine Learning</strong> - Building intelligent systems and optimizing neural networks</li>
-            <li><strong>Cybersecurity</strong> - Designing secure systems and identifying vulnerabilities</li>
-            <li><strong>Full-Stack Development</strong> - Creating scalable, production-grade applications</li>
-            <li><strong>System Design</strong> - Architecting robust solutions for complex problems</li>
+            <li><strong>Artificial Intelligence</strong> - RAG and agentic systems, applied ML, and MLOps</li>
+            <li><strong>Product Management</strong> - Backlogs, UAT/SIT, and launches that ship without defects</li>
+            <li><strong>Project Management</strong> - Charters, scope, and schedules for small technical teams</li>
+            <li><strong>Secure Systems</strong> - Identity & access management and compliance-minded design</li>
           </ul>
-          
+
           <p>I've attached my resume for your reference. I'm always interested in discussing challenging opportunities, collaborating on impactful projects, or exploring how my skills can add value to your team.</p>
           
           <hr style="border: none; border-top: 1px solid #ccc; margin: 20px 0;">

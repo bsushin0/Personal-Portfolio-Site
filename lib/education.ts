@@ -35,6 +35,16 @@ export const courseDetails: Record<string, CourseDetail> = {
     narrative:
       "This was the course where I internalized object-oriented design as a discipline, not just syntax. We built multi-class projects using encapsulation, inheritance, polymorphism, and interfaces — with proper separation of concerns enforced by code review. Design patterns (strategy, observer, factory) were introduced and applied in project work. Java's strict type system and verbose class hierarchy forced me to think carefully about interfaces before writing implementations. That habit now shows up in every TypeScript interface and abstract class I write.",
   },
+  "Human-Computer Interaction": {
+    institution: "Purdue University",
+    narrative:
+      "CS 47500 is a semester-long run through the full user-centered design lifecycle. My five-person team is designing LostLink, a community-driven lost-and-found platform for Purdue's campus: need-finding research, a proposal defining target users and the gaps in today's campus lost-and-found process, high-fidelity Figma prototypes, and usability testing later in the semester.",
+  },
+  "Database Systems": {
+    institution: "Purdue University",
+    narrative:
+      "CS 348 is where I built AeroLog, a database-backed flight log for pilots, frequent flyers, and aviation enthusiasts. I modeled a normalized PostgreSQL schema (flights, airlines, airports, aircraft types), implemented full create/read/update/delete workflows, and built a filterable analytics and reporting interface on Next.js with Neon.",
+  },
   "Programming in C": {
     institution: "Purdue University",
     narrative:
@@ -142,6 +152,8 @@ export const coreCourses = [
   "Computer Architecture",
   "OOP (Java)",
   "Programming in C",
+  "Human-Computer Interaction",
+  "Database Systems",
   "Intro to Analysis of Algorithms",
   "Probability",
   "Linear Algebra",
@@ -180,8 +192,8 @@ export const degree = {
 // AP credits are intentionally never shown on the site.
 export const educationHighlights = [
   {
-    label: "The Data Mine",
-    detail: "Corporate Partners program — semesters I & III, collaborating with industry partners on data-driven projects",
+    label: "BASF x The Data Mine",
+    detail: "Machine Learning Practitioner in The Data Mine Corporate Partners program (semesters I & III) — built BASF's wine yield forecasting model",
   },
   {
     label: "CERIAS Security Seminar",

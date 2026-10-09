@@ -5,10 +5,11 @@ import { CALLSIGN } from "@/lib/flight"
 const crewId: [string, string, string][] = [
   ["I", "Name", "BANDHA, SUSHIN"],
   ["II", "Certificate", "STUDENT PILOT · PPL IN TRAINING"],
-  ["III", "Medical", "NREMT EMT · AHA BLS (ACTIVE)"],
+  ["III", "Medical", "LICENSED EMT · NREMT · NJ · IN · AHA BLS"],
   ["IV", "Base", "KLAF · WEST LAFAYETTE, IN"],
   ["V", "Training", "B.S. ARTIFICIAL INTELLIGENCE · PURDUE '27"],
-  ["VI", "Ratings", "PRODUCT · ML · IAM · OPS"],
+  ["VI", "Ratings", "AI · PRODUCT MGMT · PROJECT MGMT"],
+  ["VII", "Languages", "ENGLISH · TELUGU · HINDI · FRENCH"],
 ]
 
 const duties = [
@@ -16,25 +17,25 @@ const duties = [
     icon: GraduationCap,
     title: "Education",
     description:
-      "B.S. Artificial Intelligence at Purdue University (Minor: CNIT) — student pilot in private pilot training, Data Mine Corporate Partners participant, CERIAS Security Seminar graduate.",
+      "B.S. Artificial Intelligence at Purdue University (Minor: CNIT), expected May 2027 — Google AI Professional Certificate holder, BASF x The Data Mine ML practitioner, student pilot in private pilot training.",
   },
   {
     icon: Code,
     title: "Product & ML",
     description:
-      "Product Management Intern at PSEG in IAM (99%-defect-free launch, 300+ UAT/SIT cases). Automation Intern leading a 25-person team. Built a 92%-accurate wine sales forecasting model and MLOps pipeline reducing update time by 97% for BASF.",
+      "Product Management Intern at PSEG in IAM (99%-defect-free launch, 300+ UAT/SIT cases). Product Intern (Automation & Internal Tools) leading a 25-intern team. Built a 92%-accurate wine sales forecasting model and MLOps pipeline reducing update time by 97% for BASF.",
   },
   {
     icon: HeartPulse,
     title: "Security & Clinical",
     description:
-      "NREMT-certified EMT actively practicing inter-facility transport at OnTime Transport, with 56+ hours of clinical field experience across hospital ER and pre-hospital EMS. Hands-on IAM product ownership at a Fortune 500 utility. Assistant Team Lead with Purdue University Police Department.",
+      "Licensed EMT (NREMT, New Jersey, Indiana) actively practicing inter-facility transport at OnTime Transport, with 56+ hours of clinical field experience across hospital ER and pre-hospital EMS. Hands-on IAM product ownership at a Fortune 500 utility. Assistant Team Lead with Purdue University Police Department.",
   },
   {
     icon: Users,
     title: "Leadership",
     description:
-      "Led 25-intern cross-functional teams at PSEG. Event Supervisor for 10,000+ patron Big Ten athletic events at Purdue Athletics. Mentored 20–25 first-year students as a Boiler Gold Rush Team Leader.",
+      "Led 25-intern cross-functional teams at PSEG. Event Supervisor for 60,000+ patron Big Ten athletic events at Purdue Athletics. Mentored 20–25 first-year students as a Boiler Gold Rush Team Leader.",
   },
 ]
 
@@ -74,7 +75,7 @@ export default function CrewBriefing() {
             </div>
             <dl className="mt-4 space-y-3">
               {crewId.map(([n, k, v]) => (
-                <div key={n} className="grid grid-cols-[28px_88px_1fr] items-baseline gap-2">
+                <div key={n} className="grid grid-cols-[30px_88px_1fr] items-baseline gap-2">
                   <dt className="font-mono-fd text-[11px] text-[color:var(--fd-dim)]">{n}.</dt>
                   <dt className="fd-label text-[10px]">{k}</dt>
                   <dd className="font-mono-fd text-[12.5px] tracking-[0.04em] text-[color:var(--fd-text)]">{v}</dd>
@@ -93,9 +94,10 @@ export default function CrewBriefing() {
           <div className="fd-panel space-y-5 p-5 sm:p-7 text-[15.5px] sm:text-[17px] leading-[1.75] text-[color:var(--fd-muted)]">
             <p>
               I&apos;m an Artificial Intelligence student at Purdue University (B.S. AI, class of 2027), pursuing a private pilot license on the
-              side, and an NREMT-certified EMT actively practicing inter-facility transport — because I genuinely believe the best builders
-              understand the systems and people they serve. My academic trajectory reflects that: I joined The Data Mine corporate partners
-              program to work on real industry data problems, and completed the CERIAS cybersecurity seminar.
+              side, and a licensed EMT (NREMT, New Jersey, and Indiana) actively practicing inter-facility transport — because I genuinely
+              believe the best builders understand the systems and people they serve. My academic trajectory reflects that: I joined The Data
+              Mine corporate partners program as a machine learning practitioner on a BASF project, completed the CERIAS cybersecurity seminar,
+              and earned the Google AI Professional Certificate.
             </p>
             <p>
               Professionally, I&apos;ve spent two summers at PSEG as a Product Intern — owning an IAM product backlog of 50+ items, executing

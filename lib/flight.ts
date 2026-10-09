@@ -35,7 +35,7 @@ export const SQUAWKS: Record<string, { label: string; message: string; target?: 
   "1200": { label: "VFR", message: "Squawking VFR. Enjoy the flight." },
   "7700": {
     label: "EMERG",
-    message: "Squawk 7700 — good news, there's an NREMT-certified EMT on board.",
+    message: "Squawk 7700 — good news, there's a licensed EMT on board.",
     target: "experience",
   },
   "7600": {

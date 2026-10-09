@@ -15,7 +15,7 @@ export const projects: Project[] = [
     id: 2,
     title: "Project AiRa",
     description:
-      "Custom agentic AI chatbot, built in-house and running in production. It started as a Retrieval-Augmented Generation (RAG) system with its own embedding generation and vector search, with semantic similarity thresholds and tuned document chunking so answers stay grounded in real documents instead of guesses. I'm now moving it from a RAG bot toward an agentic model with memory, tool use, and multi-step reasoning, using Ollama, custom training datasets, prompt engineering, bot monitoring, and CI/CD-based testing.",
+      "Custom agentic AI chatbot, built in-house and running in production. It started as a Retrieval-Augmented Generation (RAG) system with its own embedding generation and vector search, with semantic similarity thresholds and tuned document chunking so answers stay grounded in real documents instead of guesses. I'm now moving it from a RAG bot toward an agentic model with memory, tool use, and multi-step reasoning, using Ollama, custom training datasets, prompt engineering, bot monitoring, and AI workers inside a CI/CD framework for test-driven model improvement.",
     tags: ["Python", "RAG", "Vector Search", "Embeddings", "Ollama", "Agentic AI", "Prompt Engineering", "CI/CD"],
     image: "/project-banners/project-aira.svg",
     isPrivate: true,
@@ -24,7 +24,7 @@ export const projects: Project[] = [
     id: 5,
     title: "Relay",
     description:
-      "Incident and emergency response platform that routes an incident to the nearest qualified on-duty responder across departments (EMS, security, event operations), instead of each organization running its own radio and roll-call process. I'm building it on my own and handling both the product side and the backend. It comes straight from working as an EMT and supervising 10,000+ patron events.",
+      "Incident and emergency response platform that routes an incident to the nearest qualified on-duty responder across departments (EMS, security, event operations), instead of each organization running its own radio and roll-call process. I'm building it on my own and handling both the product side and the backend. It comes straight from working as an EMT and supervising 60,000+ patron events.",
     tags: ["Product Management", "Backend Engineering", "Incident Response", "Emergency Services"],
     image: "/project-banners/relay.svg",
     status: "coming-soon",
@@ -32,10 +32,10 @@ export const projects: Project[] = [
   },
   {
     id: 1,
-    title: "Wine Varietals Yield Forecasting",
+    title: "Wine Yield Forecasting — BASF x The Data Mine",
     description:
-      "Delivered a machine learning solution providing 92% accurate wine sales forecasts for BASF. Built automated MLOps pipeline that reduced model update time from 2-3 days to 1-2 hours, enabling data-driven inventory and marketing decisions.",
-    tags: ["Python", "TensorFlow", "Keras", "MLOps", "Time-Series Forecasting"],
+      "Delivered a machine learning time-series forecasting model achieving 92% sales prediction accuracy for BASF, enabling data-driven inventory and marketing decisions. I translated stakeholder business requirements into technical specifications, designed and deployed an automated MLOps pipeline that cut model update turnaround from 2–3 days to ~1–2 hours (a 97% efficiency improvement), and refactored legacy analytics code to improve overall system reliability by 30%.",
+    tags: ["Python", "Scikit-learn", "MLOps", "Time-Series Forecasting"],
     image: "/project-banners/wine-forecasting.svg",
     status: "not-available",
   },
@@ -54,8 +54,8 @@ export const projects: Project[] = [
     id: 6,
     title: "AeroLog",
     description:
-      "Universal flight log and tracker for pilots, frequent flyers, and aviation enthusiasts. You log flights you flew, rode as a passenger, or spotted. It has a normalized PostgreSQL schema (flights, airlines, airports, aircraft types), full create/read/update/delete workflows, and a filterable reporting page. Built for CS 348 Database Systems.",
-    tags: ["Next.js", "TypeScript", "PostgreSQL", "Neon", "Tailwind CSS"],
+      "Universal flight log and tracker for pilots, frequent flyers, and aviation enthusiasts. You log flights you flew, rode as a passenger, or spotted. It has a normalized PostgreSQL schema (flights, airlines, airports, aircraft types), full create/read/update/delete workflows, and a filterable analytics/reporting interface. Built for CS 348 Database Systems.",
+    tags: ["Next.js (App Router)", "TypeScript", "PostgreSQL", "Neon", "Tailwind CSS"],
     image: "/project-banners/aerolog.svg",
     status: "coming-soon",
     isPrivate: true,
@@ -81,9 +81,9 @@ export const projects: Project[] = [
   },
   {
     id: 3,
-    title: "Personal Portfolio Site",
+    title: "AI Portfolio Platform with RAG Chatbot",
     description:
-      "Full-stack AI-powered portfolio showcasing product & leadership roles. Built with Next.js 15 and TypeScript, featuring an interactive RAG chatbot for visitor engagement, responsive design with Tailwind & Shadcn/UI, production-grade security hardening (HSTS, CSP), and comprehensive analytics tracking. Live demonstration of modern web development and AI integration.",
+      "Full-stack AI-powered portfolio showcasing product & leadership roles. Built with Next.js 15 and TypeScript, featuring an interactive RAG chatbot for visitor engagement, responsive design with Tailwind & Shadcn/UI, production-grade security hardening (HSTS, CSP), CI/CD on Vercel with secure API key management, and a serverless contact form with PostgreSQL persistence, IP geolocation, and Resend email delivery. Live demonstration of modern web development and AI integration.",
     tags: ["Next.js 15", "TypeScript", "RAG Chatbot", "Tailwind CSS", "PostgreSQL", "Vercel"],
     image: "/project-banners/nextjs-ai-stack.svg",
     githubUrl: "https://github.com/bsushin0/Personal-Portfolio-Site",

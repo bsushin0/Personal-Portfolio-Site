@@ -41,7 +41,7 @@ export default function GroundSchool() {
     <section id="education" className="fd-section">
       <Container>
         <WaypointHeader id="education" title="Ground School" kicker="Education">
-          Computer Science degree with an AI specialization, grounded in mathematics, data science, and ethics. Pick any checklist item to see what I took away from it.
+          B.S. in Artificial Intelligence with a minor in Computer Networking and Information Technology, grounded in mathematics, data science, and ethics. Pick any checklist item to see what I took away from it.
         </WaypointHeader>
 
         <div className="grid gap-6 lg:grid-cols-[1.1fr_1fr]">

@@ -15,6 +15,14 @@ All active goals and work logs are recorded here by Mira and her team.
 
 -->
 
+## [2026-10-09] claude — v4.0.1 resume sync
+- Task: Sync site content to the updated Detailed/Brief resumes (resume is source of truth)
+- Changes: 60,000+ patrons; clinical rotations Fall 2026; licensed EMT (NREMT, NJ, IN); +Google AI Professional Certificate, NJ/IN EMT licenses, Golf Cart Safety (25 credentials); PSEG 2024 Automation & Internal Tools bullets; PSSP bullets; BASF model Scikit-learn (not TensorFlow/Keras); project titles/tags; degree wording (B.S. AI); +HCI, Database Systems coursework; languages; headline; confirmation-email bio
+- Files: lib/{experience,projects,skills,education,certifications,flight,embeddings}.*, components/flight/{crew-briefing,ground-school,hero,flight-footer,logbook,patches}.tsx, app/layout.tsx, app/api/contact/route.ts, public/sushin-bandha-resume.pdf (Detailed resume), package.json 4.0.1
+- Private (git-ignored): resumes copied to private/documents/; bio/*.md rewritten to resume facts (backup in private/documents/bio.bak-2026-10-09); embeddings regenerated
+- Status: COMPLETE (awaiting owner review)
+- Next: NONE
+
 ## [2026-10-09] claude — v4.0.0 "Flight Deck"
 - Task: Build the approved v4 aviation/EMT/AI redesign into the Next.js app
 - Files created: app/flight.css, app/api/wx/route.ts, context/flight-context.tsx, lib/{flight,experience,education,skills}.ts, components/flight/* (flight-header, sky, hero, plane-3d, primitives, crew-briefing, logbook, departures, ground-school, radar, patches, radio-contact, flight-footer, plane-cursor)

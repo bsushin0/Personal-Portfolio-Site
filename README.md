@@ -1,6 +1,6 @@
 # Sushin Bandha - AI Portfolio Site
 
-[![Version](https://img.shields.io/badge/version-4.0.0-blue?style=for-the-badge)](./AGENTS.md)
+[![Version](https://img.shields.io/badge/version-4.0.1-blue?style=for-the-badge)](./AGENTS.md)
 [![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://sushin-bandha.vercel.app)
 ![Next.js](https://img.shields.io/badge/Next.js-15-black?style=for-the-badge&logo=next.js)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=for-the-badge&logo=typescript)
@@ -235,6 +235,9 @@ Modify professional experience in `lib/experience.ts`. Update the `experiences` 
 Edit `lib/certifications.ts` to add/update certifications and achievements.
 
 ## Changelog
+
+### v4.0.1 - 2026-10-09
+- Content synced to the updated resumes: 60,000+ patron events, Fall 2026 clinical rotations, NJ/IN EMT licenses, Google AI Professional Certificate, Golf Cart Safety (25 credentials), Scikit-learn for BASF, HCI and Database Systems coursework, languages. Downloadable resume and chatbot knowledge refreshed.
 
 ### v4.0.0 - 2026-10-09 (Major Release — "Flight Deck")
 - Full redesign: the page is a flight plan. Scrolling climbs from KLAF through CREWS → LOGBK → GATES → GRNDS → RADAR → PATCH → CENTR, with a live altimeter and route strip in the header.

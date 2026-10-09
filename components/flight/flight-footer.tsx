@@ -12,7 +12,7 @@ export default function FlightFooter() {
       <div className="mx-auto grid max-w-6xl gap-8 px-4 py-10 sm:px-6 md:grid-cols-[1fr_auto] md:items-end">
         <div>
           <p className="font-display-fd text-xl font-semibold text-[color:var(--fd-text)]">Sushin Bandha</p>
-          <p className="mt-1 text-[14px] text-[color:var(--fd-muted)]">AI Engineer &amp; Product Manager · Student Pilot · NREMT EMT</p>
+          <p className="mt-1 text-[14px] text-[color:var(--fd-muted)]">Artificial Intelligence · Product Management · Project Management</p>
           <ol className="mt-5 flex flex-wrap gap-x-5 gap-y-1 font-mono-fd text-[11px] tracking-[0.08em] text-[color:var(--fd-dim)]" aria-label="Shutdown checklist">
             {SHUTDOWN.map((s) => (
               <li key={s}>☑ {s}</li>
