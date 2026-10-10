@@ -1,6 +1,6 @@
 {
   "name": "personal-portfolio-site",
-  "version": "4.0.1",
+  "version": "4.1.0",
   "private": true,
   "scripts": {
     "build": "next build",
@@ -75,7 +75,6 @@
     "sonner": "^1.7.1",
     "tailwind-merge": "^2.5.5",
     "tailwindcss-animate": "^1.0.7",
-    "three": "0.170.0",
     "vaul": "^0.9.6",
     "zod": "^3.25.76"
   },
@@ -91,7 +90,6 @@
     "@types/pdf-parse": "^1.1.5",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@types/three": "0.170.0",
     "dotenv": "^17.2.3",
     "eslint": "^9.39.2",
     "eslint-config-next": "16.1.4",

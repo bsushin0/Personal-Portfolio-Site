@@ -15,6 +15,16 @@ All active goals and work logs are recorded here by Mira and her team.
 
 -->
 
+## [2026-10-09] claude — v4.1.0 Flight Deck from the approved mock
+- Task: Rebuild the home page from the approved v4 walk-through mock (owner: "this is not what we had in the last iteration"), remove the airplane, keep a centered runway, and make the climb drive background effects all the way to the bottom
+- Source: mock recovered by replaying session 4a541f6b (artifact links had expired); patched for resume-synced content, no aircraft, projected world background, live endpoints
+- Files created: app/(deck)/{layout.tsx,page.tsx,deck-markup.html,deck.css}, public/flight-deck.js, lib/{profile,site-metadata}.ts
+- Files moved: app/layout.tsx → app/(site)/layout.tsx, app/projects → app/(site)/projects
+- Files deleted: app/page.tsx, app/flight.css, components/flight/*, context/flight-context.tsx, lib/flight.ts; dependency three + @types/three
+- Verified: next lint 0 errors, next build OK; production server — deck renders with live /api/wx, 9 logbook rows, 8 departures, 25 credentials, cert PDFs, briefer page unaffected; artifact checked at 1440px and 390px (no overflow), day/night/overcast
+- Status: COMPLETE (awaiting owner review)
+- Next: NONE
+
 ## [2026-10-09] claude — v4.0.1 resume sync
 - Task: Sync site content to the updated Detailed/Brief resumes (resume is source of truth)
 - Changes: 60,000+ patrons; clinical rotations Fall 2026; licensed EMT (NREMT, NJ, IN); +Google AI Professional Certificate, NJ/IN EMT licenses, Golf Cart Safety (25 credentials); PSEG 2024 Automation & Internal Tools bullets; PSSP bullets; BASF model Scikit-learn (not TensorFlow/Keras); project titles/tags; degree wording (B.S. AI); +HCI, Database Systems coursework; languages; headline; confirmation-email bio

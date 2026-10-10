@@ -1,6 +1,6 @@
 # Sushin Bandha - AI Portfolio Site
 
-[![Version](https://img.shields.io/badge/version-4.0.1-blue?style=for-the-badge)](./AGENTS.md)
+[![Version](https://img.shields.io/badge/version-4.1.0-blue?style=for-the-badge)](./AGENTS.md)
 [![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://sushin-bandha.vercel.app)
 ![Next.js](https://img.shields.io/badge/Next.js-15-black?style=for-the-badge&logo=next.js)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=for-the-badge&logo=typescript)
@@ -40,32 +40,31 @@ A modern, AI-powered portfolio website showcasing technical expertise in AI, pro
 
 ```
 ├── app/
-│   ├── layout.tsx           # Root layout with providers
-│   ├── page.tsx             # Home page
+│   ├── (deck)/              # Home page — the Flight Deck (own root layout, no Tailwind)
+│   │   ├── layout.tsx       # Fonts, analytics, visit tracker
+│   │   ├── page.tsx         # Renders deck-markup.html + content JSON from lib/*.ts
+│   │   ├── deck-markup.html # Static markup: header, hero runway, section shells, AiRa, dialogs
+│   │   └── deck.css         # Deck tokens, day/night panels, every section's styles
+│   ├── (site)/              # Inner pages (Tailwind + React chatbot)
+│   │   ├── layout.tsx
+│   │   └── projects/preflight-briefer/
 │   └── api/
-│       ├── chat/            # RAG chatbot endpoint
+│       ├── chat/            # RAG chatbot endpoint (AiRa on both layouts)
 │       ├── contact/         # Contact form submission
+│       ├── wx/              # Visitor's local weather for the sky
 │       └── debug-ip/        # IP debugging utility
+├── public/
+│   └── flight-deck.js       # Deck runtime: sky + projected world, altimeter, sections, AiRa, keys
 ├── components/
-│   ├── chatbot.tsx          # AiRa, the "First Officer" chatbot
-│   ├── flight/              # v4 Flight Deck sections
-│   │   ├── flight-header.tsx    # Route strip, altimeter, transponder (squawk codes), shortcuts
-│   │   ├── sky.tsx              # Local time + weather sky, climbs with scroll
-│   │   ├── hero.tsx / plane-3d.tsx  # KLAF departure, horizon, three.js trainer
-│   │   ├── crew-briefing.tsx    # About + interests (CREWS)
-│   │   ├── logbook.tsx          # Experience (LOGBK)
-│   │   ├── departures.tsx       # Projects split-flap board + boarding passes (GATES)
-│   │   ├── ground-school.tsx    # Education (GRNDS)
-│   │   ├── radar.tsx            # Skills radar (RADAR)
-│   │   ├── patches.tsx          # Certifications (PATCH)
-│   │   └── radio-contact.tsx    # Contact form (CENTR)
+│   ├── chatbot.tsx          # AiRa chatbot for the inner pages
 │   └── ui/                  # Shadcn/ui primitives
 ├── lib/
 │   ├── projects.ts          # Project data
 │   ├── experience.ts        # Logbook entries
 │   ├── education.ts         # Degree, highlights, coursework
 │   ├── skills.ts            # Skill categories + narratives
-│   ├── flight.ts            # Waypoints, callsign, squawk codes
+│   ├── profile.ts           # Hero roles + interests
+│   ├── site-metadata.ts     # Shared SEO metadata
 │   ├── embeddings.json      # Pre-computed embeddings
 │   ├── vector-search.ts     # Semantic search utilities
 │   ├── utils.ts             # Helper functions
@@ -235,6 +234,13 @@ Modify professional experience in `lib/experience.ts`. Update the `experiences` 
 Edit `lib/certifications.ts` to add/update certifications and achievements.
 
 ## Changelog
+
+### v4.1.0 - 2026-10-09
+- Home page rebuilt from the approved v4 walk-through mock (Saira Condensed / Instrument Sans type, PFD hero, route nav with transponder, crew certificate, paper logbook, split-flap departures + boarding passes, ground-school syllabus, radar scope, patches/badges/passport stamps, COM radio contact, vitals-monitor dividers, AiRa First Officer, day/night panels, keyboard map).
+- No aircraft: the hero is a centered runway 28 (threshold bars, numbers, PAPI, edge lights). Scrolling climbs from the runway to FL410 and the background keeps changing all the way down — a projected world (Indiana farmland grid, the Wabash, town lights after dusk), cloud decks you climb through, motion streaks, a darker sky and Earth curvature near the top.
+- Sky follows the visitor's clock and `/api/wx` conditions; contact form posts to `/api/contact`; AiRa uses `/api/chat` with an offline fallback built from site content.
+- Content stays resume-synced (v4.0.1 data in `lib/*.ts`): 25 credentials incl. NJ/IN EMT licenses and the Google AI Professional Certificate, Fall 2026 rotations, 60,000+ patrons. No AP credits, no email.
+- Home page moved to its own root layout (`app/(deck)`), inner pages to `app/(site)`. Removed the v4.0 React flight components and the `three` dependency. Spoken announcements removed; sound is cockpit tones only.
 
 ### v4.0.1 - 2026-10-09
 - Content synced to the updated resumes: 60,000+ patron events, Fall 2026 clinical rotations, NJ/IN EMT licenses, Google AI Professional Certificate, Golf Cart Safety (25 credentials), Scikit-learn for BASF, HCI and Database Systems coursework, languages. Downloadable resume and chatbot knowledge refreshed.
