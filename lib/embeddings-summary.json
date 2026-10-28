@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-04-28T16:55:19.026Z",
-  "totalChunks": 18,
+  "generatedAt": "2026-10-09T22:28:14.070Z",
+  "totalChunks": 21,
   "matchingStrategy": "keyword-based",
   "embeddingDimensions": 0,
-  "fileSizeKB": 28.73,
+  "fileSizeKB": 35.43,
   "sources": [
     "01-profile.md",
     "02-experience.md",
@@ -17,5 +17,5 @@
     "10-website.md",
     "README.md"
   ],
-  "averageChunkLength": 1421
+  "averageChunkLength": 1513
 }

@@ -1,6 +1,6 @@
 # Sushin Bandha - AI Portfolio Site
 
-[![Version](https://img.shields.io/badge/version-3.3.0-blue?style=for-the-badge)](./AGENTS.md)
+[![Version](https://img.shields.io/badge/version-4.1.0-blue?style=for-the-badge)](./AGENTS.md)
 [![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://sushin-bandha.vercel.app)
 ![Next.js](https://img.shields.io/badge/Next.js-15-black?style=for-the-badge&logo=next.js)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=for-the-badge&logo=typescript)
@@ -40,24 +40,31 @@ A modern, AI-powered portfolio website showcasing technical expertise in AI, pro
 
 ```
 ├── app/
-│   ├── layout.tsx           # Root layout with providers
-│   ├── page.tsx             # Home page
+│   ├── (deck)/              # Home page — the Flight Deck (own root layout, no Tailwind)
+│   │   ├── layout.tsx       # Fonts, analytics, visit tracker
+│   │   ├── page.tsx         # Renders deck-markup.html + content JSON from lib/*.ts
+│   │   ├── deck-markup.html # Static markup: header, hero runway, section shells, AiRa, dialogs
+│   │   └── deck.css         # Deck tokens, day/night panels, every section's styles
+│   ├── (site)/              # Inner pages (Tailwind + React chatbot)
+│   │   ├── layout.tsx
+│   │   └── projects/preflight-briefer/
 │   └── api/
-│       ├── chat/            # RAG chatbot endpoint
+│       ├── chat/            # RAG chatbot endpoint (AiRa on both layouts)
 │       ├── contact/         # Contact form submission
+│       ├── wx/              # Visitor's local weather for the sky
 │       └── debug-ip/        # IP debugging utility
+├── public/
+│   └── flight-deck.js       # Deck runtime: sky + projected world, altimeter, sections, AiRa, keys
 ├── components/
-│   ├── chatbot.tsx          # Conversational AI component
-│   ├── hero.tsx             # Landing hero section
-│   ├── projects.tsx         # Featured projects showcase
-│   ├── experience.tsx       # Professional experience
-│   ├── skills.tsx           # Technical skills
-│   ├── certifications.tsx   # Educational certifications
-│   ├── contact-form.tsx     # Get in touch form
-│   ├── navbar.tsx           # Navigation bar
+│   ├── chatbot.tsx          # AiRa chatbot for the inner pages
 │   └── ui/                  # Shadcn/ui primitives
 ├── lib/
 │   ├── projects.ts          # Project data
+│   ├── experience.ts        # Logbook entries
+│   ├── education.ts         # Degree, highlights, coursework
+│   ├── skills.ts            # Skill categories + narratives
+│   ├── profile.ts           # Hero roles + interests
+│   ├── site-metadata.ts     # Shared SEO metadata
 │   ├── embeddings.json      # Pre-computed embeddings
 │   ├── vector-search.ts     # Semantic search utilities
 │   ├── utils.ts             # Helper functions
@@ -220,13 +227,33 @@ export const projects: Project[] = [
 
 ### Experience
 
-Modify professional experience in `components/experience.tsx`. Update the `experiences` array with new internships, roles, or volunteer positions.
+Modify professional experience in `lib/experience.ts`. Update the `experiences` array with new internships, roles, or volunteer positions.
 
 ### Certifications
 
 Edit `lib/certifications.ts` to add/update certifications and achievements.
 
 ## Changelog
+
+### v4.1.0 - 2026-10-09
+- Home page rebuilt from the approved v4 walk-through mock (Saira Condensed / Instrument Sans type, PFD hero, route nav with transponder, crew certificate, paper logbook, split-flap departures + boarding passes, ground-school syllabus, radar scope, patches/badges/passport stamps, COM radio contact, vitals-monitor dividers, AiRa First Officer, day/night panels, keyboard map).
+- No aircraft: the hero is a centered runway 28 (threshold bars, numbers, PAPI, edge lights). Scrolling climbs from the runway to FL410 and the background keeps changing all the way down — a projected world (Indiana farmland grid, the Wabash, town lights after dusk), cloud decks you climb through, motion streaks, a darker sky and Earth curvature near the top.
+- Sky follows the visitor's clock and `/api/wx` conditions; contact form posts to `/api/contact`; AiRa uses `/api/chat` with an offline fallback built from site content.
+- Content stays resume-synced (v4.0.1 data in `lib/*.ts`): 25 credentials incl. NJ/IN EMT licenses and the Google AI Professional Certificate, Fall 2026 rotations, 60,000+ patrons. No AP credits, no email.
+- Home page moved to its own root layout (`app/(deck)`), inner pages to `app/(site)`. Removed the v4.0 React flight components and the `three` dependency. Spoken announcements removed; sound is cockpit tones only.
+
+### v4.0.1 - 2026-10-09
+- Content synced to the updated resumes: 60,000+ patron events, Fall 2026 clinical rotations, NJ/IN EMT licenses, Google AI Professional Certificate, Golf Cart Safety (25 credentials), Scikit-learn for BASF, HCI and Database Systems coursework, languages. Downloadable resume and chatbot knowledge refreshed.
+
+### v4.0.0 - 2026-10-09 (Major Release — "Flight Deck")
+- Full redesign: the page is a flight plan. Scrolling climbs from KLAF through CREWS → LOGBK → GATES → GRNDS → RADAR → PATCH → CENTR, with a live altimeter and route strip in the header.
+- Sky follows the visitor's local time and weather (`/api/wx`, Open-Meteo via Vercel IP geolocation, KLAF fallback); clouds sink below you as you climb.
+- three.js high-wing trainer in the hero, banking with the pointer; horizon between first and last name; runway in perspective.
+- Experience as a pilot logbook, projects as a split-flap departures board (animates only once fully in view) with boarding passes, skills on a radar scope, certifications as patches/passport stamps/wings — all 21 certs including AHA BLS.
+- Contact form as a radio panel (no email shown anywhere), AiRa relabelled First Officer, transponder easter eggs (7700, 7600, 2027), plane cursor, keyboard shortcuts (`?`).
+- AP credits removed from all copy. `X-Frame-Options` changed to `SAMEORIGIN` so certificate PDFs open in the in-page viewer.
+- Removed legacy section components, ambient background, floating orbs, cursor system, tilt cards, theme toggle (site is dark-cockpit only).
+
 
 ### v3.3.0 - 2026-04-06
 - **Universal CSS variable design token system**: `app/globals.css` is now the single source of truth for all colors. Added semantic tokens: `--surface-raised/overlay/input/hover/tag`, `--border-subtle/strong`, `--success/error/warning/info` (with `-foreground` and `-border` variants), and `--ai-glow/secondary/gradient-from/to` plus `--scrollbar-*` tokens.

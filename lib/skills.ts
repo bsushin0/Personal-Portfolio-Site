@@ -1,43 +1,19 @@
-"use client"
-
-import type React from "react"
-import { useState } from "react"
-import { motion } from "framer-motion"
-import { Badge } from "@/components/ui/badge"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog"
-import { Code, Lock, Cog, Brain, Cloud, Users, Heart } from "lucide-react"
-import {
-  headingVariants,
-  cardVariants,
-  staggerContainer as containerVariants,
-  fastStaggerContainer as badgeContainerVariants,
-  badgeVariants,
-} from "@/lib/motion-variants"
-import TiltCard from "@/components/tilt-card"
-
-type SkillDetail = {
+export type SkillDetail = {
   narrative: string
   appliedAt: string[]
 }
 
-type SkillCategory = {
+export type SkillCategory = {
   id: number
   title: string
-  icon: React.ReactNode
+  short: string
   skills: string[]
 }
 
-const skillDetails: Record<string, SkillDetail> = {
+export const skillDetails: Record<string, SkillDetail> = {
   "Python": {
-    narrative: "Python is the language I think in for anything data or AI. I used it to build the Wine Varietals forecasting pipeline for BASF — data ingestion, feature engineering, model training with TensorFlow/Keras, all the way to MLOps automation. I also built the process automation tool at PSEG that compressed a multi-day workflow into near-instant execution. It's the first tool I reach for when the problem involves data, inference, or automation.",
-    appliedAt: ["BASF — Wine Forecasting (92% accuracy ML pipeline)", "PSEG 2024 — Process automation tool", "Project AiRa — RAG system backend", "Personal Portfolio — Embedding generation scripts"],
+    narrative: "Python is the language I think in for anything data or AI. I used it to build the wine yield forecasting pipeline for BASF through The Data Mine — data ingestion, feature engineering, model training with Scikit-learn, all the way to MLOps automation. I also built the process automation tool at PSEG that compressed a multi-day workflow into near-instant execution. It's the first tool I reach for when the problem involves data, inference, or automation.",
+    appliedAt: ["BASF x The Data Mine — Wine yield forecasting (92% accuracy ML pipeline)", "PSEG 2024 — Process automation tool", "Project AiRa — RAG system backend", "Personal Portfolio — Embedding generation scripts"],
   },
   "TypeScript": {
     narrative: "TypeScript is how I keep large Next.js codebases sane. For this portfolio site I've written everything in strict TypeScript — data models for certifications, projects, and experiences; typed API routes for the RAG chatbot; and strongly-typed component props across the entire UI. The type system catches whole categories of bugs before they reach the browser.",
@@ -64,24 +40,24 @@ const skillDetails: Record<string, SkillDetail> = {
     appliedAt: ["Project AiRa — LLM backend integration", "Personal Portfolio — Gemini 2.5 Flash-Lite via Vercel AI SDK"],
   },
   "TensorFlow": {
-    narrative: "I built the Wine Varietals forecasting model for BASF using TensorFlow and Keras. The project involved designing time-series architectures, tuning hyperparameters, running validation across seasonal patterns, and evaluating performance with proper holdout sets. The final model hit 92% accuracy and was wrapped in an MLOps pipeline that cut update cycles by 97%.",
-    appliedAt: ["BASF — Wine Varietals yield forecasting (92% accuracy)"],
+    narrative: "TensorFlow is one of the two deep learning frameworks I work with, alongside PyTorch. I use it in Purdue AI coursework to build and train neural networks, tune hyperparameters, and evaluate models on proper holdout sets — and to understand when a classical model is the better tool, which is why the BASF forecasting project ended up in Scikit-learn.",
+    appliedAt: ["Purdue AI coursework"],
   },
   "MLOps": {
     narrative: "The biggest pain point I solved at BASF was operational: their model update cycle took 2–3 days because data ingestion, retraining, and validation were all manual steps. I automated the entire pipeline — ingestion, feature engineering, training, evaluation, and promotion — reducing turnaround to 1–2 hours. That's what MLOps means to me: making ML reliable in production, not just accurate in notebooks.",
     appliedAt: ["BASF — Wine Forecasting automated pipeline (2–3 days → 1–2 hours)"],
   },
   "Time-Series Forecasting": {
-    narrative: "Time-series forecasting is where ML met real business impact for me. The BASF project required forecasting wine varietal sales across seasonal cycles, accounting for lead time, inventory constraints, and market volatility. Getting to 92% accuracy required thoughtful feature engineering of lag variables and rolling statistics, not just model selection.",
-    appliedAt: ["BASF — Wine Varietals yield forecasting"],
+    narrative: "Time-series forecasting is where ML met real business impact for me. The BASF project required forecasting wine sales across seasonal cycles, accounting for lead time, inventory constraints, and market volatility. Getting to 92% accuracy required thoughtful feature engineering of lag variables and rolling statistics, not just model selection.",
+    appliedAt: ["BASF x The Data Mine — Wine yield forecasting"],
   },
   "Deep Learning": {
     narrative: "My deep learning experience centers on applied architectures — neural networks for time-series regression, sequence models, and feature extraction. I've used both TensorFlow/Keras and PyTorch in coursework and projects. The focus has always been on understanding the architecture tradeoffs rather than just plugging in pretrained models.",
-    appliedAt: ["BASF — Forecasting model architecture", "Purdue AI coursework"],
+    appliedAt: ["Purdue AI coursework"],
   },
   "Generative AI": {
-    narrative: "Generative AI is central to both my coursework and my production work. I completed 14 Anthropic Academy certifications spanning Claude API integration, MCP, agentic systems, and AI fluency frameworks. Practically, I've built and deployed generative AI features — the RAG chatbot, prompt engineering patterns, and confidence-filtered generation — in a live production site.",
-    appliedAt: ["Personal Portfolio — RAG chatbot", "Project AiRa", "Anthropic Academy — 14 certifications"],
+    narrative: "Generative AI is central to both my coursework and my production work. I hold the Google AI Professional Certificate (seven courses) and completed 14 Anthropic Academy certifications spanning Claude API integration, MCP, agentic systems, and AI fluency frameworks. Practically, I've built and deployed generative AI features — the RAG chatbot, prompt engineering patterns, and confidence-filtered generation — in a live production site.",
+    appliedAt: ["Personal Portfolio — RAG chatbot", "Project AiRa", "Google AI Professional Certificate", "Anthropic Academy — 14 certifications"],
   },
   "LLM Fine-tuning": {
     narrative: "Fine-tuning is something I've studied in depth in the context of when NOT to do it. For most production use cases, well-designed prompts with retrieved context outperform fine-tuned models at a fraction of the cost and maintenance burden. My coursework and Anthropic Academy training covered fine-tuning tradeoffs, data requirements, and evaluation methodology.",
@@ -92,12 +68,12 @@ const skillDetails: Record<string, SkillDetail> = {
     appliedAt: ["Project AiRa — Document chunking and retrieval", "Personal Portfolio — lib/document-processor.ts"],
   },
   "PyTorch": {
-    narrative: "PyTorch is my framework of choice for research-oriented ML work and coursework at Purdue. I use TensorFlow/Keras when an existing production pipeline uses it (as at BASF), but for new experimentation PyTorch's dynamic computation graph and debugging ergonomics suit my work style better.",
+    narrative: "PyTorch is my framework of choice for research-oriented ML work and coursework at Purdue. I also work in TensorFlow, but for new experimentation PyTorch's dynamic computation graph and debugging ergonomics suit my work style better.",
     appliedAt: ["Purdue AI coursework", "Personal ML experiments"],
   },
   "Scikit-learn": {
-    narrative: "Scikit-learn covers the classical ML toolkit — regression, classification, clustering, cross-validation, and feature pipelines. I used it for baseline models and feature selection before moving to deep learning architectures in the BASF project, and it remains my first stop for any tabular data problem.",
-    appliedAt: ["BASF — Baseline models and feature analysis", "Purdue coursework"],
+    narrative: "Scikit-learn is what I built the BASF wine yield forecasting model with — feature engineering, time-series model training, and evaluation that reached 92% sales prediction accuracy, wrapped in an automated MLOps pipeline. It covers the classical ML toolkit — regression, classification, clustering, cross-validation, and feature pipelines — and remains my first stop for any tabular data problem.",
+    appliedAt: ["BASF x The Data Mine — Wine yield forecasting (92% accuracy)", "Purdue coursework"],
   },
   "AWS": {
     narrative: "I've used AWS for infrastructure fundamentals — IAM, S3, and cloud resource concepts learned through coursework and the Anthropic Claude with Google Cloud's Vertex AI course. My production deployments currently run on Vercel, but cloud architecture fundamentals are central to how I think about scalability and access control.",
@@ -184,7 +160,7 @@ const skillDetails: Record<string, SkillDetail> = {
     appliedAt: ["PSEG 2025 — IAM platform product ownership", "PSEG 2024 — Onboarding portal product lead", "Personal Portfolio — Product-led design decisions"],
   },
   "Technical Leadership": {
-    narrative: "Technical leadership for me means making decisions and explaining the reasoning, not just making decisions. At PSEG I led 25 interns on the onboarding portal — defining requirements, distributing work, resolving technical blockers, and maintaining quality. At Purdue Athletics I supervise multi-location operations for 10,000+ patron events. Leadership is execution under pressure.",
+    narrative: "Technical leadership for me means making decisions and explaining the reasoning, not just making decisions. At PSEG I led 25 interns on the onboarding portal — defining requirements, distributing work, resolving technical blockers, and maintaining quality. At Purdue Athletics I supervise multi-location operations for 60,000+ patron Big Ten events. Leadership is execution under pressure.",
     appliedAt: ["PSEG 2024 — Led 25-person cross-functional intern team", "Purdue Athletics — Event supervisor for Big Ten events"],
   },
   "Stakeholder Management": {
@@ -231,6 +207,14 @@ const skillDetails: Record<string, SkillDetail> = {
     narrative: "HTML is the semantic structure layer of everything I build for the web. I care about semantic HTML — using the right elements for the right content — because it directly affects accessibility and SEO. The portfolio is built with proper landmark regions, heading hierarchy, and ARIA attributes throughout.",
     appliedAt: ["Personal Portfolio — Semantic HTML throughout"],
   },
+  "Excel": {
+    narrative: "Excel is where I did the market analysis behind the PSEG IAM scalability business case — structuring stakeholder research and the numbers that supported the recommendation that won executive approval.",
+    appliedAt: ["PSEG 2025 — IAM scalability business case (market analysis)"],
+  },
+  "PowerPoint": {
+    narrative: "PowerPoint carried the PSEG IAM scalability business case to executives, and the five PoC automation tools I presented to senior leadership in 2024. The skill is deciding what a decision-maker needs to see, and leaving the rest out.",
+    appliedAt: ["PSEG 2025 — IAM business case presentation", "PSEG 2024 — PoC presentations to senior leadership"],
+  },
   "Bash/Linux": {
     narrative: "Shell scripting and Linux CLI are daily tools. I write bash scripts for build automation, file manipulation, and environment setup. The embedding generation pipeline, cert PDF copying, and deployment scripts for this portfolio are all bash-driven. Linux is the environment everything runs in — understanding it at the CLI level is non-optional for systems work.",
     appliedAt: ["Personal Portfolio — Build scripts and automation", "PSSP — Linux-based systems exposure"],
@@ -240,8 +224,8 @@ const skillDetails: Record<string, SkillDetail> = {
     appliedAt: ["Project AiRa — Local LLM testing and development"],
   },
   "JIRA": {
-    narrative: "JIRA was the backlog management tool at PSEG. I used it to triage the 50+ item IAM backlog — creating epics, breaking features into user stories, tagging dependencies, and tracking sprint progress. Good JIRA hygiene is a product management multiplier: visibility into what's blocked, why, and by whom.",
-    appliedAt: ["PSEG 2025 — IAM product backlog management"],
+    narrative: "I'm familiar with JIRA from working in Agile product teams — tracking backlog items, user stories, and sprint progress. Good ticket hygiene is a product management multiplier: visibility into what's blocked, why, and by whom.",
+    appliedAt: ["PSEG — Agile product team context"],
   },
   "Google API": {
     narrative: "I've integrated Google's text-embedding-004 model via the Gemini API to generate 768-dimensional embeddings for the portfolio's RAG system. The API integration includes error handling, rate limiting, and batch processing of document chunks during the build-time embedding generation step.",
@@ -271,7 +255,7 @@ const skillDetails: Record<string, SkillDetail> = {
     narrative: "Inter-facility transport is the coordination of medically supervised patient movement between healthcare facilities — from skilled nursing facilities to hospitals, from ERs to specialty centers. Each transport involves pre-transport coordination with sending and receiving facilities, patient packaging and loading, in-transport monitoring, and a structured clinical handoff. The logistics are more complex than they appear: matching acuity level to transport capability, managing time-sensitive medications, and communicating clearly across facility systems.",
     appliedAt: ["OnTime Transport — Active inter-facility and non-emergency medical transport"],
   },
-  "Pre-Hospital EMS": {
+  "Pre-Hospital Emergency Response": {
     narrative: "Pre-hospital emergency medicine is EMT work in the least controlled environment possible — responding to calls with unknown scene conditions, adapting assessment and interventions to whatever you encounter, and making transport decisions without access to labs or imaging. The TEAS field ride-along and NREMT training prepared me for systematic scene management under uncertainty. The mental model — scene safety, primary survey, interventions, transport — is protocol-driven by design because improvisation in emergency medicine is dangerous.",
     appliedAt: ["TEAS — Tippecanoe Emergency Ambulance Service field ride-along", "NREMT training and certification"],
   },
@@ -281,158 +265,47 @@ const skillDetails: Record<string, SkillDetail> = {
   },
 }
 
-const skillCategories: SkillCategory[] = [
+export const skillCategories: SkillCategory[] = [
   {
     id: 1,
     title: "Languages & Frameworks",
-    icon: <Code className="h-5 w-5" />,
+    short: "LANG",
     skills: ["Python", "Java", "C/C++", "SQL", "JavaScript", "TypeScript", "R", "HTML", "Bash/Linux", "Agile/Scrum"],
   },
   {
     id: 2,
     title: "AI & Machine Learning",
-    icon: <Brain className="h-5 w-5" />,
+    short: "AI/ML",
     skills: ["PyTorch", "TensorFlow", "Scikit-learn", "NLP", "Deep Learning", "Generative AI", "RAG", "LLM Fine-tuning", "MLOps", "Time-Series Forecasting"],
   },
   {
     id: 3,
     title: "Cloud & DevOps",
-    icon: <Cloud className="h-5 w-5" />,
+    short: "CLOUD",
     skills: ["AWS", "Vercel", "CI/CD (GitHub Actions)", "Docker", "Linux Systems Administration", "Serverless Architecture"],
   },
   {
     id: 4,
     title: "Security & IAM",
-    icon: <Lock className="h-5 w-5" />,
+    short: "SEC",
     skills: ["Identity & Access Management (IAM)", "UAT", "SIT", "Access Control", "Security Operations", "Risk Assessment", "Compliance Documentation"],
   },
   {
     id: 5,
     title: "Tools & Platforms",
-    icon: <Cog className="h-5 w-5" />,
-    skills: ["PostgreSQL", "Next.js", "Salesforce", "Git", "Power Platform", "Microsoft Azure", "SAP", "Resend", "Google API", "Prompt Engineering", "Ollama", "JIRA", "Figma"],
+    short: "TOOLS",
+    skills: ["PostgreSQL", "Next.js", "Salesforce", "Git", "Excel", "PowerPoint", "Power Platform", "Microsoft Azure", "SAP", "Resend", "Google API", "Prompt Engineering", "Ollama", "JIRA", "Figma"],
   },
   {
     id: 6,
-    title: "Product & Leadership",
-    icon: <Users className="h-5 w-5" />,
+    title: "Product & Soft Skills",
+    short: "LEAD",
     skills: ["Product Management", "Technical Leadership", "Stakeholder Management", "Cross-functional Collaboration", "AI Ethics", "Analytical Problem-Solving", "Strategic Communication"],
   },
   {
     id: 7,
     title: "Medical & EMS",
-    icon: <Heart className="h-5 w-5" />,
-    skills: ["Patient Assessment", "NREMT Protocols", "BLS", "Vitals Monitoring", "Patient Care Reporting (PCR)", "Inter-Facility Transport", "Pre-Hospital EMS"],
+    short: "EMS",
+    skills: ["Patient Assessment", "NREMT Protocols", "BLS", "Vitals Monitoring", "Patient Care Reporting (PCR)", "Inter-Facility Transport", "Pre-Hospital Emergency Response"],
   },
 ]
-
-interface SkillModalProps {
-  skill: string | null
-  onClose: () => void
-}
-
-function SkillModal({ skill, onClose }: SkillModalProps) {
-  if (!skill) return null
-  const detail = skillDetails[skill]
-
-  return (
-    <Dialog open={!!skill} onOpenChange={(v) => { if (!v) onClose() }}>
-      <DialogContent className="max-w-lg w-[95vw]">
-        <DialogHeader>
-          <DialogTitle className="text-lg font-bold text-foreground">{skill}</DialogTitle>
-          <DialogDescription className="sr-only">Skill context for {skill}</DialogDescription>
-        </DialogHeader>
-        {detail ? (
-          <div className="space-y-4">
-            <p className="text-sm text-foreground/75 leading-relaxed">{detail.narrative}</p>
-            {detail.appliedAt.length > 0 && (
-              <div>
-                <p className="text-xs font-semibold text-foreground/50 uppercase tracking-wider mb-2">Where I used it</p>
-                <ul className="space-y-1.5">
-                  {detail.appliedAt.map((item, i) => (
-                    <li key={i} className="flex items-start gap-2 text-sm text-foreground/65">
-                      <span className="text-primary/50 mt-[0.18em] shrink-0">—</span>
-                      <span>{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
-        ) : (
-          <p className="text-sm text-foreground/60">
-            {skill} is part of my technical toolkit. Click through to the Projects and Experience sections for context on where I applied it.
-          </p>
-        )}
-      </DialogContent>
-    </Dialog>
-  )
-}
-
-export default function Skills() {
-  const [activeSkill, setActiveSkill] = useState<string | null>(null)
-
-  return (
-    <section id="skills" className="py-20 bg-gradient-lab dark:bg-gradient-neural border-t border-border-subtle/80">
-      <motion.div
-        className="text-center mb-16"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.3 }}
-        variants={headingVariants}
-      >
-        <h2 className="text-3xl md:text-4xl font-bold mb-3 text-foreground tracking-tight">Technical Skills</h2>
-        <p className="text-foreground/55 max-w-2xl mx-auto text-sm">
-          Programming, platforms, AI/ML, and product leadership. Click any skill to see where I applied it.
-        </p>
-      </motion.div>
-
-      <motion.div
-        className="grid grid-cols-1 md:grid-cols-2 gap-8"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.1 }}
-        variants={containerVariants}
-      >
-        {skillCategories.map((category) => (
-          <motion.div key={category.id} variants={cardVariants}>
-            <TiltCard className="h-full">
-              <Card className="glass-effect-sm border-glow card-interactive h-full" data-cursor-hover>
-                <CardHeader className="pb-3">
-                  <CardTitle className="flex items-center gap-3 text-base font-semibold text-foreground">
-                    <div className="p-2 rounded-lg bg-indigo-500/10 text-indigo-500 border border-indigo-500/20 shrink-0">
-                      {category.icon}
-                    </div>
-                    {category.title}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <motion.div
-                    className="flex flex-wrap gap-2"
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true, amount: 0.2 }}
-                    variants={badgeContainerVariants}
-                  >
-                    {category.skills.map((skill) => (
-                      <motion.div key={skill} variants={badgeVariants}>
-                        <Badge
-                          className="bg-surface-tag text-foreground/70 border border-border-subtle/80 hover:scale-105 hover:bg-indigo-500/10 hover:text-indigo-600 dark:hover:text-indigo-300 hover:border-indigo-500/30 transition-all cursor-pointer select-none"
-                          onClick={() => setActiveSkill(skill)}
-                        >
-                          {skill}
-                        </Badge>
-                      </motion.div>
-                    ))}
-                  </motion.div>
-                </CardContent>
-              </Card>
-            </TiltCard>
-          </motion.div>
-        ))}
-      </motion.div>
-
-      <SkillModal skill={activeSkill} onClose={() => setActiveSkill(null)} />
-    </section>
-  )
-}
