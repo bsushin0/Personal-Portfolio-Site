@@ -8,6 +8,7 @@ import { skillDetails, skillCategories } from "@/lib/skills"
 import { certifications } from "@/lib/certifications"
 import { projects } from "@/lib/projects"
 import { interests, roles } from "@/lib/profile"
+import { atcAirports, HOME_AIRPORT } from "@/lib/atc-feeds"
 
 // v4.1 "Flight Deck": the page is a climb from runway 28 at KLAF to FL410. The static
 // markup lives in deck-markup.html; public/flight-deck.js renders every section from the
@@ -38,6 +39,8 @@ export default function Home() {
     certs: certifications,
     projects,
     roles,
+    atc: atcAirports,
+    atcHome: HOME_AIRPORT,
   }
   const banners = Object.fromEntries(projects.map((p) => [p.image, p.image]))
 

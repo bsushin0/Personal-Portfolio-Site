@@ -689,7 +689,8 @@ details.allwrap summary{cursor:pointer;font-family:var(--f-mono);font-size:.7rem
 .lvm{grid-column:1/-1;height:4px;background:#0b1a11;overflow:hidden}
 .lvm i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--i-green),var(--i-amber));transition:width .09s linear}
 .lvpill{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:60;display:flex;align-items:center;gap:10px;background:rgba(5,9,18,.92);border:1px solid #4a1f1f;color:var(--i-text,#e8eef6);font-family:var(--f-mono);font-size:.64rem;letter-spacing:.1em;padding:6px 8px 6px 12px;box-shadow:0 10px 30px rgba(0,0,0,.4);backdrop-filter:blur(6px)}
-.lvpill b{display:flex;align-items:center;gap:7px;color:#ff8a8a;font-weight:600}
+.lvpill b{display:flex;align-items:center;gap:7px;color:#ff8a8a;font-weight:600;white-space:nowrap}
+.lvpill #lvPillT{white-space:nowrap}
 .lvpill b i{width:8px;height:8px;border-radius:50%;background:var(--i-red,#ff4a4a);box-shadow:0 0 8px var(--i-red,#ff4a4a);animation:blink 1.2s steps(1) infinite}
 .lvpill button{background:#0b111e;border:1px solid #1f2a3f;color:inherit;font:inherit;padding:6px 9px;cursor:pointer;min-height:32px}
 .lvpill a{color:var(--i-cyan,#57d7eb);font-size:.56rem}
@@ -771,3 +772,20 @@ body.mayday::after{content:"";position:fixed;inset:0;pointer-events:none;z-index
   body.medcall .vmon .vf{display:none}
   .med{bottom:120px;max-height:calc(100svh - var(--nav-h) - 136px)}
 }
+
+/* live ATC: header button, airport picker, transcript lines */
+.tools .atcb{position:relative}
+.tools .atcb .lvd{position:absolute;right:5px;top:5px;width:6px;height:6px;border-radius:50%;background:transparent}
+.tools .atcb.on{color:var(--i-amber,#f4b13d);border-color:currentColor}
+.tools .atcb.on .lvd{background:var(--i-amber,#f4b13d);animation:blink .8s steps(1) infinite}
+.tools .atcb.live{color:var(--i-red,#ff5263)}
+.tools .atcb.live .lvd{background:var(--i-red,#ff5263);box-shadow:0 0 6px var(--i-red,#ff5263);animation:none}
+#menu #mAtc[aria-pressed="true"]{color:var(--i-red,#ff5263)}
+.dir .apt{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.dir .aptsel{display:flex;align-items:center;gap:6px;font-family:var(--f-mono);font-size:.54rem;letter-spacing:.14em;color:var(--i-muted)}
+.dir .aptsel select{background:#0b111e;border:1px solid #1f2a3f;color:var(--i-text);font-family:var(--f-mono);font-size:.64rem;padding:5px 6px;max-width:210px;min-height:30px}
+.feed p.live .txw{color:#e9fff1}
+.feed p.live .txw:not(.done){color:var(--i-muted);animation:blink 1s steps(1) infinite}
+.lvpill .ptx{max-width:340px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#e9fff1;font-size:.62rem;letter-spacing:.02em}
+.lvpill .ptx:empty{display:none}
+@media (max-width:900px){.lvpill .ptx{max-width:160px}}

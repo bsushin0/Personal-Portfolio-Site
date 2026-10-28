@@ -19,6 +19,10 @@ export type WxResponse = {
   sunrise: string | null // ISO local time of the visitor's location
   sunset: string | null
   utcOffsetSec: number
+  // Coarse visitor position (0.1° ≈ 10 km) so the radio can tune the nearest LiveATC airport.
+  // null when Vercel had no IP location and we fell back to KLAF.
+  lat: number | null
+  lon: number | null
 }
 
 function classify(code: number, cloudCover: number): WxCondition {
@@ -38,8 +42,11 @@ function num(v: string | null) {
 }
 
 export async function GET(request: NextRequest) {
-  const lat = num(request.headers.get("x-vercel-ip-latitude")) ?? KLAF.lat
-  const lon = num(request.headers.get("x-vercel-ip-longitude")) ?? KLAF.lon
+  const ipLat = num(request.headers.get("x-vercel-ip-latitude"))
+  const ipLon = num(request.headers.get("x-vercel-ip-longitude"))
+  const lat = ipLat ?? KLAF.lat
+  const lon = ipLon ?? KLAF.lon
+  const coarse = (v: number | null) => (v == null ? null : Math.round(v * 10) / 10)
   const rawCity = request.headers.get("x-vercel-ip-city")
   const city = rawCity ? decodeURIComponent(rawCity) : KLAF.city
 
@@ -64,11 +71,13 @@ export async function GET(request: NextRequest) {
       sunrise: data.daily?.sunrise?.[0] ?? null,
       sunset: data.daily?.sunset?.[0] ?? null,
       utcOffsetSec: Number(data.utc_offset_seconds ?? 0),
+      lat: coarse(ipLat),
+      lon: coarse(ipLon),
     }
     return NextResponse.json(body, {
       headers: { "Cache-Control": "private, max-age=900" },
     })
   } catch {
-    return NextResponse.json({ error: "unavailable" }, { status: 503 })
+    return NextResponse.json({ error: "unavailable", lat: coarse(ipLat), lon: coarse(ipLon) }, { status: 503 })
   }
 }

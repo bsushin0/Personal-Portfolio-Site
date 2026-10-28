@@ -22,6 +22,7 @@
     <div class="tools">
       <div class="xpdr" id="xpdrBox" data-tip="Transponder · type a code anywhere"><span class="t">XPDR<b id="xpdrMode">ALT</b></span><input id="xpdr" inputmode="numeric" maxlength="4" value="1200" aria-label="Transponder squawk code"><button type="button" id="ident">IDENT</button></div>
       <button class="chip hide-m" id="wxBtn" type="button" aria-expanded="false" aria-controls="wxPop"><span class="dot" id="wxDot"></span><span id="wxChipT">KLAF VFR</span></button>
+      <button class="ico hide-m atcb" id="atcBtn" type="button" aria-pressed="false" aria-label="Live ATC audio (L)" data-tip="Live ATC · L"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 13v8M9 21h6"/><circle cx="12" cy="10" r="2"/><path d="M8.5 6.5a5 5 0 0 0 0 7M15.5 6.5a5 5 0 0 1 0 7M5.6 3.6a9 9 0 0 0 0 12.8M18.4 3.6a9 9 0 0 1 0 12.8"/></svg><i class="lvd" aria-hidden="true"></i></button>
       <button class="ico hide-m" id="soundBtn" type="button" aria-pressed="false" aria-label="Sound effects" data-tip="Sound"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5 6 9H2v6h4l5 4z"/><path class="sw" d="M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14" opacity=".25"/></svg></button>
       <button class="ico hide-m" id="keysBtn" type="button" aria-label="Keyboard shortcuts" data-tip="Keys · ?" data-icon="kbd"></button>
       <button class="rocker hide-m" id="themeBtn" type="button" aria-label="Switch day or night interface"><span>DAY</span><span>NGT</span></button>
@@ -229,7 +230,7 @@
             <div class="kl">TUNE STBY<div style="display:flex;gap:6px"><button type="button" id="fDn" aria-label="Tune down">−</button><button type="button" id="fUp" aria-label="Tune up">+</button></div></div>
             <div class="knob" id="knob" role="slider" tabindex="0" aria-label="Standby frequency" aria-valuemin="118" aria-valuemax="136.975" aria-valuenow="118.7"></div>
           </div>
-          <div class="dir"><small>KLAF · LAFAYETTE, IN · LIVE FEEDS VIA LIVEATC.NET</small><div class="list" id="dir"></div></div>
+          <div class="dir"><div class="apt"><small id="aptT">KLAF · LAFAYETTE, IN · HOME BASE</small><label class="aptsel">AIRPORT<select id="aptSel" aria-label="Choose the airport to monitor"></select></label></div><div class="list" id="dir"></div></div>
           <div class="feed" id="feed" aria-live="polite"><p>Tune ACTIVE to a station to monitor it. Transmissions show here as they come in.</p></div>
           <div class="txled" id="txled"><i></i>TX</div>
           <div class="live" id="live">
@@ -237,7 +238,7 @@
             <label class="lvvol">VOL<input type="range" id="lvVol" min="0" max="1" step="0.05" value="0.8" aria-label="Live audio volume"></label>
             <span class="lvm" aria-hidden="true"><i id="lvMeter"></i></span>
           </div>
-          <p class="note">Live audio: <a href="https://www.liveatc.net/search/?icao=KLAF" target="_blank" rel="noopener">LiveATC.net</a> KLAF feeds, streamed straight from LiveATC. Tune any LIVE frequency to switch channels. For entertainment only, not for navigation. ATIS and Guard are simulated.</p>
+          <p class="note">Live audio: <a href="https://www.liveatc.net/" target="_blank" rel="noopener">LiveATC.net</a> feeds, streamed straight from LiveATC. The radio picks the LiveATC airport nearest you (from your network location; nothing is stored). Tune any LIVE frequency to switch channels. Transcripts are machine-generated and may be wrong. For entertainment only, not for navigation. ATIS and Guard are simulated.</p>
         </div>
         <form class="cform" id="cform" novalidate>
           <div class="two">
@@ -286,7 +287,7 @@
 <div class="keyshelp" id="keysHelp" hidden role="dialog" aria-label="Keyboard shortcuts"><div class="kb">
   <h3>Keyboard</h3>
   <div class="grid">
-    <div class="grp"><b>ANYWHERE</b><div><span>Previous / next section</span><span><kbd>[</kbd> <kbd>]</kbd></span></div><div><span>Ask AiRa</span><kbd>/</kbd></div><div><span>Squawk a code</span><span><kbd>7700</kbd> <kbd>7600</kbd> <kbd>1200</kbd></span></div><div><span>Weather &amp; time</span><kbd>C</kbd></div><div><span>This help</span><kbd>?</kbd></div><div><span>Close anything</span><kbd>Esc</kbd></div></div>
+    <div class="grp"><b>ANYWHERE</b><div><span>Previous / next section</span><span><kbd>[</kbd> <kbd>]</kbd></span></div><div><span>Live ATC on / off</span><kbd>L</kbd></div><div><span>Ask AiRa</span><kbd>/</kbd></div><div><span>Squawk a code</span><span><kbd>7700</kbd> <kbd>7600</kbd> <kbd>1200</kbd></span></div><div><span>Weather &amp; time</span><kbd>C</kbd></div><div><span>This help</span><kbd>?</kbd></div><div><span>Close anything</span><kbd>Esc</kbd></div></div>
     <div class="grp"><b>HERO · KLAF</b><div><span>Begin climb</span><kbd>⏎</kbd></div></div>
     <div class="grp"><b>LISTS · LOGBOOK, BOARD, LESSONS</b><div><span>Move</span><span><kbd>↑</kbd> <kbd>↓</kbd></span></div><div><span>Open</span><kbd>⏎</kbd></div><div><span>Refresh departures</span><kbd>R</kbd></div></div>
     <div class="grp"><b>VITALS MONITOR · MEDICAL CALLS</b><div><span>Tap to pace / compress</span><kbd>Space</kbd></div><div><span>Hold to exert</span><kbd>E</kbd></div><div><span>Resting rate</span><span><kbd>↑</kbd> <kbd>↓</kbd></span></div><div><span>Shock</span><kbd>S</kbd></div><div><span>Answer a call</span><span><kbd>1</kbd>–<kbd>3</kbd></span></div></div>
@@ -297,7 +298,7 @@
   <button class="close" type="button" id="keysClose">Close · Esc</button>
 </div></div>
 
-<div class="lvpill" id="lvPill" hidden role="region" aria-label="Live ATC audio"><b><i aria-hidden="true"></i>LIVE ATC</b><span id="lvPillT"></span><button type="button" id="lvPillNext" aria-label="Next live channel">CH ⇄</button><button type="button" id="lvPillX" aria-label="Stop live audio">■</button><a href="https://www.liveatc.net/" target="_blank" rel="noopener">LiveATC.net</a></div>
+<div class="lvpill" id="lvPill" hidden role="region" aria-label="Live ATC audio"><b><i aria-hidden="true"></i>LIVE ATC</b><span id="lvPillT"></span><span class="ptx" id="lvPillTx" aria-live="polite"></span><button type="button" id="lvPillNext" aria-label="Next live channel">CH ⇄</button><button type="button" id="lvPillX" aria-label="Stop live audio">■</button><a href="https://www.liveatc.net/" target="_blank" rel="noopener">LiveATC.net</a></div>
 <div class="lvl" id="lvl" aria-hidden="true"></div>
 <aside class="vmon" id="vmon" aria-label="Vitals monitor">
   <div class="vh"><span class="who">PILOT · N-BANDHA</span><span class="hhw">♥ <b class="hh">72</b></span><span class="rh">NSR</span><button type="button" id="vmMin" aria-label="Collapse vitals monitor" aria-expanded="true">–</button></div>

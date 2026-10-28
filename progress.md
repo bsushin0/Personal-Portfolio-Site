@@ -15,6 +15,16 @@ All active goals and work logs are recorded here by Mira and her team.
 
 -->
 
+## [2026-10-28] claude — v4.3.0 nearest live feeds, transcripts, quieter effects
+- Task: Owner asked for live transcripts in the radio feed while LiveATC audio plays, a LIVE ATC on/off button in the cockpit header, feeds chosen from the visitor's location, and less sound-effect noise (departure board especially)
+- Feeds: lib/atc-feeds.ts, 45 airports / ~115 LiveATC mounts curated by hand from LiveATC airport pages (their ToS bars automated scraping; keep it hand-maintained). /api/wx now also returns coarse lat/lon (0.1°) from Vercel IP geolocation; the radio tunes the nearest airport within 250 mi (else KLAF) and has an airport picker. Mounts fall back in order when one is down
+- Transcripts: browser detects each transmission on the live feed, downsamples to 8 kHz mono WAV and posts it to the new app/api/atc-transcribe route (Gemini via GOOGLE_GENERATIVE_AI_API_KEY; ATC_TRANSCRIBE_MODEL / ATC_TRANSCRIBE_LIMIT optional, default 150 clips per IP per hour). Lines show in the feed and on the floating LIVE ATC bar; nothing stored
+- Header: LIVE ATC button (amber connecting, red live) next to Sound; Live ATC in the mobile flight-plan menu; L toggles anywhere
+- Sound: master effects volume 0.55, departure board plays one soft flap burst instead of a tick per character, no sound on row hover, softer waypoint/callout chimes, quieter key ticks
+- Files: public/flight-deck.js, app/(deck)/{deck-markup.html,deck.css,page.tsx}, lib/atc-feeds.ts, app/api/atc-transcribe/route.ts, app/api/wx/route.ts, package.json 4.3.0
+- Status: COMPLETE (awaiting owner review on the Vercel preview)
+- Next: NONE
+
 ## [2026-10-28] claude — v4.2.0 live ATC, takeoff roll, medical calls
 - Task: Owner asked for live LiveATC audio with channel switching, a takeoff-roll scroll where the runway passes underneath and each waypoint's panels arrive at its flight level, a more embedded EMT experience with random life-saving events, and a check of Resend and other connections
 - Radio: real KLAF frequencies (TWR 119.600, GND 121.900, Grissom APP 123.850, ATIS 127.750 simulated, Guard 121.500 simulated). LISTEN LIVE streams LiveATC mounts klaf / klaf1_gnd2 (fallback klaf1_gnd) / klaf1_app straight from d.liveatc.net in the browser through MediaSource (starts in a few seconds; a bare <audio> took 20+ s on the 8 kbps feeds), radio band-pass, real level meter driving the RX light, floating LIVE ATC pill with channel switch when the radio is off-screen, stops when the tab is hidden, LiveATC.net credit links. Not proxied (ToS 3.3). ToS 3.15 asks to consult LiveATC before linking directly to streams; window.FD_LIVEATC = false disables it

@@ -1,4 +1,4 @@
-/* Flight Deck v4.2 — runtime for the home page (sky, world, instruments, sections, AiRa).
+/* Flight Deck v4.3 — runtime for the home page (sky, world, instruments, sections, AiRa).
    Content comes from the #data JSON rendered by app/(deck)/page.tsx from lib/*.ts. */
 (function(){
 "use strict";
@@ -52,22 +52,23 @@ function mark(){}
 
 /* ================= sound ================= */
 let AC = null, soundOn = false;
+const MASTER = .55; // effects sit well under the live ATC audio
 function ac(){ if (!AC) { try { AC = new (window.AudioContext || window.webkitAudioContext)(); } catch(e){} } return AC; }
 function tone(f, d, type, vol, when){
   if (!soundOn) return; const c = ac(); if (!c) return;
   const t = c.currentTime + (when||0), o = c.createOscillator(), g = c.createGain();
-  o.type = type || 'sine'; o.frequency.value = f; g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(vol||.05, t+.01); g.gain.exponentialRampToValueAtTime(.0001, t+d);
+  o.type = type || 'sine'; o.frequency.value = f; g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime((vol||.05)*MASTER, t+.01); g.gain.exponentialRampToValueAtTime(.0001, t+d);
   o.connect(g).connect(c.destination); o.start(t); o.stop(t+d+.05);
 }
 function chime(){ tone(988,.35,'sine',.06); tone(740,.5,'sine',.05,.22); }
 let lastTick = 0;
-function tick(){ const n = performance.now(); if (n - lastTick < 28) return; lastTick = n; tone(1500+Math.random()*700,.02,'square',.012); }
+function tick(){ const n = performance.now(); if (n - lastTick < 70) return; lastTick = n; tone(1500+Math.random()*700,.015,'square',.006); }
 function noise(d, freq, vol, type){
   if (!soundOn) return; const c = ac(); if (!c) return;
   const len = Math.floor(c.sampleRate * d), b = c.createBuffer(1, len, c.sampleRate), x = b.getChannelData(0);
   for (let i=0;i<len;i++) x[i] = (Math.random()*2-1) * (1 - i/len);
   const s = c.createBufferSource(), f = c.createBiquadFilter(), g = c.createGain();
-  f.type = type || 'bandpass'; f.frequency.value = freq || 1800; f.Q.value = .8; g.gain.value = vol || .08;
+  f.type = type || 'bandpass'; f.frequency.value = freq || 1800; f.Q.value = .8; g.gain.value = (vol || .08)*MASTER;
   s.buffer = b; s.connect(f).connect(g).connect(c.destination); s.start();
 }
 const squelch = d => noise(d || .25, 1800, .08);
@@ -174,9 +175,10 @@ WP.forEach((w,i) => {
   b.addEventListener('click', () => go(w.id)); route.appendChild(b);
 });
 $('#menu').innerHTML = WP.map(w => `<button type="button" data-id="${w.id}"><b>${w.code}</b><span>${esc(w.name)}</span><small>${fmtAlt(w.alt)}</small></button>`).join('') +
-  `<div class="set"><button type="button" id="mSound">${ICON.sound} Sound</button><button type="button" id="mTheme">${ICON.sun} Day / Night</button><button type="button" id="mWx">${ICON.cloud} Weather</button><a href="${SITE}/sushin-bandha-resume.pdf" target="_blank" rel="noopener" aria-label="Resume (PDF)">${ICON.doc} PDF</a></div>`;
+  `<div class="set"><button type="button" id="mAtc" aria-pressed="false">${ICON.radio} Live ATC</button><button type="button" id="mSound">${ICON.sound} Sound</button><button type="button" id="mTheme">${ICON.sun} Day / Night</button><button type="button" id="mWx">${ICON.cloud} Weather</button><a href="${SITE}/sushin-bandha-resume.pdf" target="_blank" rel="noopener" aria-label="Resume (PDF)">${ICON.doc} PDF</a></div>`;
 $$('#menu > button').forEach(b => b.addEventListener('click', () => { closeMenu(); go(b.dataset.id); }));
 $('#mSound').addEventListener('click', () => setSound(!soundOn));
+$('#mAtc').addEventListener('click', () => { closeMenu(); laToggle(); });
 $('#mTheme').addEventListener('click', flipTheme);
 $('#mWx').addEventListener('click', () => { closeMenu(); toggleWx(true); });
 function closeMenu(){ $('#menu').hidden = true; $('#menuBtn').setAttribute('aria-expanded','false'); }
@@ -1143,9 +1145,9 @@ function spinCell(s, delay, run){
   const goal = s.dataset.t;
   if (reduce) { s.textContent = goal; return; }
   let k = 0; const steps = 5 + Math.floor(Math.random()*10);
-  setTimeout(function spin(){ if (run !== flapRun && run !== -1) return; k++; s.textContent = k >= steps ? goal : CH[Math.floor(Math.random()*CH.length)]; s.classList.remove('f'); void s.offsetWidth; s.classList.add('f'); tick(); if (k < steps) setTimeout(spin, 50); }, delay);
+  setTimeout(function spin(){ if (run !== flapRun && run !== -1) return; k++; s.textContent = k >= steps ? goal : CH[Math.floor(Math.random()*CH.length)]; s.classList.remove('f'); void s.offsetWidth; s.classList.add('f'); if (k < steps) setTimeout(spin, 50); }, delay);
 }
-function flipBoard(){ const run = ++flapRun; $('#await').hidden = true; $$('#brows .flap').forEach((s,i) => spinCell(s, i*4 + (i % 9)*20, run)); }
+function flipBoard(){ const run = ++flapRun; $('#await').hidden = true; noise(.9, 2600, .03, 'highpass'); $$('#brows .flap').forEach((s,i) => spinCell(s, i*4 + (i % 9)*20, run)); }
 const rowCool = new WeakMap();
 function flipRow(row){ if (!boardOpen) return; const n = performance.now(); if ((rowCool.get(row) || 0) > n) return; rowCool.set(row, n + 1200); $$('.flap', row).forEach((s,i) => spinCell(s, i*10, -1)); }
 const brows = $('#brows');
@@ -1162,7 +1164,7 @@ $('#board').addEventListener('keydown', e => { if ((e.key === 'r' || e.key === '
 $('#boardRefresh').addEventListener('click', () => { if (!boardOpen) { boardOpen = true; } flipBoard(); });
 function selRow(k, user){ const rows = $$('#brows .brow'); rows.forEach(x => x.classList.remove('sel')); rows[k].classList.add('sel'); printPass(flights[k - 1], user); }
 function printPass(f, user){
-  if (user) { mark('pass'); squelch(.12); }
+  if (user) { mark('pass'); tick(); }
   const live = f.liveUrl ? (f.liveUrl.startsWith('/') ? (window.FD_LIVE || SITE) + f.liveUrl : f.liveUrl) : null;
   const acts = [];
   if (live) acts.push(`<a class="ico" href="${esc(live)}" target="_blank" rel="noopener" aria-label="Open live demo" data-tip="Live demo" data-icon="ext"></a>`);
@@ -1223,17 +1225,21 @@ function openCert(i){
 }
 
 /* ================= CENTR radio ================= */
-const STATIONS = [
-  {f:119.600, id:'KLAF TWR', name:'Lafayette Tower', type:'twr', mounts:['klaf']},
-  {f:121.900, id:'KLAF GND', name:'Lafayette Ground', type:'gnd', mounts:['klaf1_gnd2', 'klaf1_gnd']},
-  {f:123.850, id:'GRISSOM APP', name:'Approach · Departure', type:'app', mounts:['klaf1_app']},
-  {f:127.750, id:'KLAF ATIS', name:'Information', type:'atis'},
-  {f:121.500, id:'GUARD', name:'Emergency', type:'guard'}
-];
+// Live feeds come from lib/atc-feeds.ts (via #data). The radio starts on the home field and
+// retunes to the LiveATC airport nearest the visitor once /api/wx reports a coarse location.
+const AIRPORTS = D.atc || [], HOME = D.atcHome || 'KLAF', TID = {twr:'TWR', gnd:'GND', app:'APP', dep:'DEP'};
+let apt = AIRPORTS.find(a => a.icao === HOME) || AIRPORTS[0] || null, aptDist = null, aptPicked = false, STATIONS = [], here = null;
+function buildStations(){
+  const S = apt ? apt.feeds.map(fd => ({f:fd.f, id:apt.icao + ' ' + TID[fd.t], name:fd.name, type:fd.t === 'dep' ? 'app' : fd.t, mounts:fd.mounts})) : [];
+  if (apt && apt.icao === 'KLAF') S.push({f:127.750, id:'KLAF ATIS', name:'Information', type:'atis'});
+  S.push({f:121.500, id:'GUARD', name:'Emergency', type:'guard'});
+  STATIONS = S;
+}
+buildStations();
 const LINES = {
-  twr:['Lafayette Tower, Cessna Four Two Romeo, holding short runway two eight, ready for departure.','Cessna Four Two Romeo, Lafayette Tower, runway two eight, cleared for takeoff.','Boiler Two One, make left traffic runway two eight, report midfield downwind.','Boiler Two One, runway two eight, cleared to land.','Piper Six Echo Lima, traffic two o\'clock, three miles, a Cessna on the downwind.'],
-  gnd:['Lafayette Ground, Piper Six Echo Lima, at the FBO with information Alpha, taxi for departure.','Piper Six Echo Lima, Lafayette Ground, runway two eight, taxi via Alpha.','Cessna Four Two Romeo, Lafayette Ground, taxi to parking via Alpha, monitor ground.'],
-  app:['Grissom Approach, Boiler One Four, level three thousand five hundred, information Alpha.','Boiler One Four, Grissom Approach, Purdue altimeter three zero zero two, expect visual approach runway two eight.','November Four Two Romeo, radar contact, climb and maintain four thousand.'],
+  twr:['{N}, Cessna Four Two Romeo, holding short runway two eight, ready for departure.','Cessna Four Two Romeo, {N}, runway two eight, cleared for takeoff.','Boiler Two One, make left traffic runway two eight, report midfield downwind.','Boiler Two One, runway two eight, cleared to land.','Piper Six Echo Lima, traffic two o\'clock, three miles, a Cessna on the downwind.'],
+  gnd:['{N}, Piper Six Echo Lima, at the FBO with information Alpha, taxi for departure.','Piper Six Echo Lima, {N}, runway two eight, taxi via Alpha.','Cessna Four Two Romeo, Lafayette Ground, taxi to parking via Alpha, monitor ground.'],
+  app:['{N}, Boiler One Four, level three thousand five hundred, information Alpha.','Boiler One Four, {N}, altimeter three zero zero two, expect visual approach runway two eight.','November Four Two Romeo, radar contact, climb and maintain four thousand.'],
   guard:['(Guard is quiet. Quiet is good.)']
 };
 function atis(){
@@ -1246,8 +1252,35 @@ function atis(){
 }
 let fA = 121.5, fS = 119.6, station = null, nextTx = 0, txBusy = false, radioVis = false;
 const ff = f => f.toFixed(3);
-$('#dir').innerHTML = STATIONS.map((s,i) => `<button type="button" data-i="${i}"><b>${ff(s.f)}</b>${esc(s.id)}${s.mounts ? '<i class="lv">LIVE</i>' : '<i>SIM</i>'}</button>`).join('');
-$$('#dir button').forEach(b => b.addEventListener('click', () => { fA = STATIONS[+b.dataset.i].f; showF(); tone(700,.05,'square',.03); }));
+function renderDir(){
+  $('#dir').innerHTML = STATIONS.map((s,i) => `<button type="button" data-i="${i}"><b>${ff(s.f)}</b>${esc(s.id)}${s.mounts ? '<i class="lv">LIVE</i>' : '<i>SIM</i>'}</button>`).join('');
+  $('#aptT').textContent = !apt ? '' : apt.icao + ' · ' + apt.city.toUpperCase() + (apt.icao === HOME ? ' · HOME BASE' : aptDist != null ? ' · ' + Math.round(aptDist) + ' MI FROM YOU' : '');
+}
+$('#dir').addEventListener('click', e => { const b = e.target.closest('button[data-i]'); if (!b) return; fA = STATIONS[+b.dataset.i].f; showF(); tone(700,.05,'square',.03); });
+function aptOptions(list){
+  $('#aptSel').innerHTML = list.map(a => `<option value="${a.icao}">${a.icao} · ${esc(a.city)}${a.d != null ? ' · ' + Math.round(a.d) + ' mi' : a.icao === HOME ? ' · home' : ''}</option>`).join('');
+  if (apt) $('#aptSel').value = apt.icao;
+}
+function setAirport(icao, d){
+  const a = AIRPORTS.find(x => x.icao === icao); if (!a || a === apt) return;
+  apt = a; aptDist = d == null ? null : d; buildStations();
+  const firstLive = STATIONS.find(x => x.mounts) || STATIONS[0], second = STATIONS.find(x => x !== firstLive) || firstLive;
+  fA = firstLive.f; fS = second.f; renderDir(); showF();
+  $('#aptSel').value = a.icao;
+}
+const mi = (la1, lo1, la2, lo2) => { const r = Math.PI/180, x = Math.sin((la2 - la1)*r/2), y = Math.sin((lo2 - lo1)*r/2); return 7917.5*Math.asin(Math.sqrt(x*x + Math.cos(la1*r)*Math.cos(la2*r)*y*y)); };
+function atcLocate(lat, lon){
+  if (typeof lat !== 'number' || typeof lon !== 'number' || !AIRPORTS.length) return;
+  here = {lat, lon};
+  const list = AIRPORTS.map(a => Object.assign({}, a, {d:mi(lat, lon, a.lat, a.lon)})).sort((p, q) => p.d - q.d);
+  aptOptions(list);
+  const near = list[0];
+  if (aptPicked || near.d > 250) return;
+  if (near.icao !== apt.icao) { setAirport(near.icao, near.d); feed(`<em>NEAREST</em> ${esc(near.icao)} · ${esc(near.city)} · about ${Math.round(near.d)} mi from you. Live feeds via LiveATC.net.`); }
+  else { aptDist = near.d; renderDir(); }
+}
+aptOptions([AIRPORTS.find(a => a.icao === HOME)].filter(Boolean).concat(AIRPORTS.filter(a => a.icao !== HOME).sort((p, q) => p.icao.localeCompare(q.icao))));
+$('#aptSel').addEventListener('change', e => { aptPicked = true; const a = AIRPORTS.find(x => x.icao === e.target.value); setAirport(e.target.value, a && here ? mi(here.lat, here.lon, a.lat, a.lon) : null); tone(700,.05,'square',.03); });
 rove($('#dir'), 'button', {h:true});
 
 /* Live ATC audio. Streams play straight from LiveATC.net's servers in the visitor's browser
@@ -1258,7 +1291,8 @@ const LA_OK = window.FD_LIVEATC !== false;
 function laEnsure(){
   if (LA.el) return;
   const a = new Audio(); a.crossOrigin = 'anonymous'; a.preload = 'none'; LA.el = a;
-  a.addEventListener('playing', () => laState('live'));
+  a.addEventListener('playing', () => { if (a.readyState >= 3) laState('live'); });
+  a.addEventListener('canplay', () => { if (!a.paused && LA.mount) laState('live'); });
   a.addEventListener('waiting', () => { if (LA.mount) laState('buffer'); });
   a.addEventListener('error', () => { if (LA.mount && a.error && a.getAttribute('src')) laFail(); });
   const c = ac();
@@ -1268,6 +1302,8 @@ function laEnsure(){
       hp.type = 'highpass'; hp.frequency.value = 250; lp.type = 'lowpass'; lp.frequency.value = 3600;
       LA.gain = c.createGain(); LA.gain.gain.value = LA.vol; LA.an = c.createAnalyser(); LA.an.fftSize = 512; LA.buf = new Uint8Array(LA.an.fftSize);
       src.connect(hp).connect(lp).connect(LA.gain).connect(c.destination); lp.connect(LA.an);
+      // tap the filtered feed for the transcriber (silent output keeps the processor running)
+      if (c.createScriptProcessor) { const sp = c.createScriptProcessor(4096, 1, 1), mute = c.createGain(); mute.gain.value = 0; TX.ratio = c.sampleRate/8000; sp.onaudioprocess = ev => txProcess(ev.inputBuffer.getChannelData(0), ev.inputBuffer.duration); lp.connect(sp); sp.connect(mute).connect(c.destination); }
     } catch(e){ LA.gain = LA.an = null; a.volume = LA.vol; }
   } else a.volume = LA.vol;
 }
@@ -1275,9 +1311,11 @@ function laState(s){
   const prev = LA.state; LA.state = s; const b = $('#lvBtn'), live = s === 'live';
   b.setAttribute('aria-pressed', String(LA.on)); b.classList.toggle('on', LA.on); b.classList.toggle('live', live);
   $('#lvT').textContent = !LA.on ? 'LISTEN LIVE' : s === 'live' ? 'LIVE · ' + (station ? station.id : '') : s === 'buffer' || s === 'connect' ? 'CONNECTING…' : s === 'down' ? 'FEED DOWN · SIM' : s === 'tap' ? 'TAP TO PLAY' : s === 'nolive' ? 'NO LIVE FEED' : 'LISTEN LIVE';
+  const hb = $('#atcBtn'); hb.setAttribute('aria-pressed', String(LA.on)); hb.classList.toggle('on', LA.on); hb.classList.toggle('live', live);
+  const mb = $('#mAtc'); if (mb) mb.setAttribute('aria-pressed', String(LA.on));
   const pill = $('#lvPill'); pill.hidden = !(LA.on && !radioVis && (live || s === 'buffer' || s === 'connect'));
   $('#lvPillT').textContent = station ? station.id + ' · ' + ff(station.f) : '';
-  if (s === 'live' && prev !== 'live' && station) feed(`<em>LIVE</em> ${esc(station.id)} ${ff(station.f)} · audio from <a href="https://www.liveatc.net/" target="_blank" rel="noopener">LiveATC.net</a>`);
+  if (s === 'live' && station && LA.said !== LA.mount && (LA.said = LA.mount)) feed(`<em>LIVE</em> ${esc(station.id)} ${ff(station.f)} · audio from <a href="https://www.liveatc.net/" target="_blank" rel="noopener">LiveATC.net</a>`);
   if (s === 'down' && prev !== 'down') feed(`<em>${station ? esc(station.id) : ''}</em> LiveATC feed is offline right now. Showing sample traffic.`);
 }
 function laStop(){
@@ -1343,9 +1381,9 @@ function laToggle(force){
   LA.on = on;
   if (on) {
     const c = ac(); if (c && c.resume) c.resume();
-    if (!station || !station.mounts) { fA = STATIONS[0].f; showF(); }
-    mark('radio'); laTune(); toast('LIVE ATC · <b>' + esc(station.id) + '</b> · audio from LiveATC.net', 3200);
-  } else { laStop(); laState('off'); feed('<em>LIVE</em> audio off'); }
+    if (!station || !station.mounts) { const fl = STATIONS.find(x => x.mounts); if (fl) { fA = fl.f; showF(); } }
+    mark('radio'); laTune(); toast('LIVE ATC · <b>' + esc(station ? station.id : '') + '</b> · audio from LiveATC.net' + (TX.off ? '' : ' · auto transcripts'), 3200);
+  } else { laStop(); if (TX.rec) txEnd(true); laState('off'); feed('<em>LIVE</em> audio off'); }
 }
 function laNext(){ const L = STATIONS.filter(s => s.mounts); const i = L.indexOf(station); fA = L[(i + 1) % L.length].f; showF(); tone(700,.05,'square',.03); }
 function laMeter(){
@@ -1358,6 +1396,7 @@ function laMeter(){
 }
 if (!LA_OK) $('#live').hidden = true;
 $('#lvBtn').addEventListener('click', () => laToggle());
+$('#atcBtn').addEventListener('click', () => laToggle());
 $('#lvVol').addEventListener('input', e => { LA.vol = +e.target.value; if (LA.gain) LA.gain.gain.value = LA.vol; else if (LA.el) LA.el.volume = LA.vol; });
 $('#lvPillNext').addEventListener('click', laNext);
 $('#lvPillX').addEventListener('click', () => laToggle(false));
@@ -1366,6 +1405,62 @@ document.addEventListener('visibilitychange', () => {
   else if (!document.hidden && LA.hiddenStop) { LA.hiddenStop = false; laTune(); }
 });
 setInterval(laMeter, 90);
+
+/* Live transcripts. Each transmission on the live feed (audio level up, then quiet for ~0.9 s)
+   is downsampled to 8 kHz mono, wrapped as WAV and sent to /api/atc-transcribe (Gemini). */
+const TX = {off:false, rec:false, pre:[], buf:[], len:0, quiet:0, loud:0, ratio:6, thr:.028, inflight:0, line:null, st:null};
+function txProcess(x, dur){
+  if (TX.off || !LA.on || LA.state !== 'live' || !station || !station.mounts) { if (TX.rec) txEnd(true); return; }
+  let e = 0; for (let i = 0; i < x.length; i += 2) e += x[i]*x[i];
+  const rms = Math.sqrt(e/(x.length/2)), r = TX.ratio, n = Math.floor(x.length/r), d = new Float32Array(n);
+  for (let i = 0; i < n; i++) { const j0 = Math.floor(i*r), j1 = Math.max(j0 + 1, Math.floor((i + 1)*r)); let a = 0; for (let j = j0; j < j1; j++) a += x[j]; d[i] = a/(j1 - j0); }
+  const loud = rms > TX.thr;
+  if (!TX.rec) {
+    TX.pre.push(d); if (TX.pre.length > 3) TX.pre.shift();
+    TX.loud = loud ? TX.loud + dur : 0;
+    if (TX.loud > .1) txStart();
+    return;
+  }
+  TX.buf.push(d); TX.len += dur; TX.quiet = loud ? 0 : TX.quiet + dur;
+  if (TX.quiet > .9 || TX.len > 15) txEnd(false);
+}
+function txStart(){
+  TX.rec = true; TX.buf = TX.pre.slice(); TX.pre = []; TX.len = 0; TX.quiet = 0; TX.loud = 0; TX.st = station;
+  TX.line = feed(`<em>${esc(station.id.split(' ').pop())}</em> <span class="txw">receiving…</span>`, 'live');
+}
+function wav(chunks){
+  const n = chunks.reduce((a, c) => a + c.length, 0), b = new ArrayBuffer(44 + n*2), v = new DataView(b);
+  const w = (o, t) => { for (let i = 0; i < t.length; i++) v.setUint8(o + i, t.charCodeAt(i)); };
+  w(0, 'RIFF'); v.setUint32(4, 36 + n*2, true); w(8, 'WAVE'); w(12, 'fmt '); v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
+  v.setUint32(24, 8000, true); v.setUint32(28, 16000, true); v.setUint16(32, 2, true); v.setUint16(34, 16, true); w(36, 'data'); v.setUint32(40, n*2, true);
+  let peak = .01; for (const c of chunks) for (let i = 0; i < c.length; i++) peak = Math.max(peak, Math.abs(c[i]));
+  const g = Math.min(8, .9/peak); let o = 44;
+  for (const c of chunks) for (let i = 0; i < c.length; i++, o += 2) v.setInt16(o, clamp(c[i]*g, -1, 1)*32767, true);
+  return new Blob([b], {type:'audio/wav'});
+}
+function txEnd(drop){
+  if (!TX.rec) return;
+  TX.rec = false; const chunks = TX.buf, line = TX.line, st = TX.st, speech = TX.len - TX.quiet;
+  TX.buf = []; TX.line = null;
+  const span = line && $('.txw', line);
+  if (drop || speech < .45) { if (line) line.remove(); return; }
+  if (window.FD_PREVIEW || TX.inflight >= 3) { if (line) line.remove(); return; }
+  TX.inflight++;
+  fetch('/api/atc-transcribe?station=' + encodeURIComponent(st.name), {method:'POST', headers:{'Content-Type':'audio/wav'}, body:wav(chunks)})
+    .then(r => r.json().catch(() => ({})).then(j => ({ok:r.ok, status:r.status, j})))
+    .then(({ok, status, j}) => {
+      if (!ok) {
+        if (status === 429 || status === 503) { TX.off = true; feed(`<em>LIVE</em> ${status === 429 ? 'Transcript limit reached for now.' : 'Transcripts are unavailable right now.'} Audio keeps playing.`); }
+        if (line) line.remove(); return;
+      }
+      const t = (j && j.text || '').trim();
+      if (!t) { if (line) line.remove(); return; }
+      if (span) { span.textContent = t; span.classList.add('done'); }
+      $('#lvPillTx').textContent = st.id.split(' ').pop() + ': ' + t;
+    })
+    .catch(() => { if (line) line.remove(); })
+    .finally(() => { TX.inflight--; });
+}
 
 function showF(){
   $('#fA').textContent = ff(fA); $('#fS').textContent = ff(fS); $('#knob').setAttribute('aria-valuenow', fS.toFixed(3));
@@ -1379,7 +1474,7 @@ function showF(){
     laTune();
   }
 }
-function feed(html){ const f = $('#feed'); f.insertAdjacentHTML('beforeend', `<p>${html}</p>`); while (f.children.length > 5) f.removeChild(f.firstChild); }
+function feed(html, cls){ const f = $('#feed'); f.insertAdjacentHTML('beforeend', `<p${cls ? ` class="${cls}"` : ''}>${html}</p>`); const p = f.lastElementChild; while (f.children.length > 6) f.removeChild(f.firstChild); return p; }
 function tune(d){ fS = Math.round(clamp(fS + d*.025, 118, 136.975)*1000)/1000; showF(); tick(); }
 function swapF(){ [fA, fS] = [fS, fA]; showF(); tone(700,.05,'square',.03); }
 $('#fUp').addEventListener('click', () => tune(1)); $('#fDn').addEventListener('click', () => tune(-1));
@@ -1393,19 +1488,19 @@ $('.rface').addEventListener('keydown', e => {
   if (/INPUT|TEXTAREA/.test(e.target.tagName)) return;
   if (e.target === knob && (e.key === 'ArrowUp' || e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === 'ArrowLeft')) { e.preventDefault(); tune(e.key === 'ArrowUp' || e.key === 'ArrowRight' ? 1 : -1); kAng += .15; knob.style.transform = `rotate(${kAng}rad)`; }
   if (e.key === 'x' || e.key === 'X') { e.preventDefault(); swapF(); }
-  if (e.key === 'l' || e.key === 'L') { e.preventDefault(); laToggle(); }
 });
 new IntersectionObserver(es => { radioVis = es[0].isIntersecting; laState(LA.state); }).observe($('.radio'));
 setInterval(() => {
   const n = nowS(); if (!station || !radioVis || txBusy || n < nextTx) return;
   if (LA.on && station.mounts && LA.state !== 'down') return;
-  const text = station.type === 'atis' ? atis() : LINES[station.type][Math.floor(Math.random()*LINES[station.type].length)];
+  const text = station.type === 'atis' ? atis() : LINES[station.type][Math.floor(Math.random()*LINES[station.type].length)].replace('{N}', station.name);
   txBusy = true; $('#rxInd').classList.add('rx');
   feed(`<em>${esc(station.id.split(' ').pop())}</em> ${esc(text)}`);
   squelch(.1);
   const done = () => { $('#rxInd').classList.remove('rx'); squelch(.08); txBusy = false; nextTx = nowS() + (station && station.type === 'atis' ? 4 : station && station.type === 'guard' ? 20 : 4 + Math.random()*5); };
   if (soundOn && station.type !== 'guard') say(text, 1.12, done); else setTimeout(done, Math.min(6000, 900 + text.length*45));
 }, 500);
+renderDir();
 showF();
 $('#cform').addEventListener('submit', e => {
   e.preventDefault();
@@ -1530,6 +1625,7 @@ addEventListener('keydown', e => {
   if (e.key === '/') { e.preventDefault(); return openChat(); }
   if (e.key === '[' || e.key === ']') { e.preventDefault(); return go(WP[clamp(curIdx + (e.key === ']' ? 1 : -1), 0, WP.length - 1)].id); }
   if (e.key === 'c' || e.key === 'C') { return toggleWx(); }
+  if (e.key === 'l' || e.key === 'L') { e.preventDefault(); return laToggle(); }
   if (heroKeysOK()) {
     const k = e.key.toLowerCase();
     if (k === 'enter' && document.activeElement === document.body) { e.preventDefault(); toast('N-BANDHA · <b>CLEARED FOR TAKEOFF</b> · runway 28 · climbing'); go('crews'); }
@@ -1592,7 +1688,7 @@ function onWaypoint(i){
     const pool = POOLS[w.id] || []; poolIdx[w.id] = ((poolIdx[w.id] == null ? -1 : poolIdx[w.id]) + 1) % (pool.length || 1);
     airaSay(pool[poolIdx[w.id]] || '', 'PASSING ' + w.code + ' · ' + fmtAlt(w.alt), 3800);
     decode($('#' + w.id + ' [data-code]'));
-    tone(1320,.06,'sine',.03); tone(1760,.08,'sine',.03,.07);
+    tone(1320,.06,'sine',.018); tone(1760,.08,'sine',.018,.07);
     if (i >= 2) mark('climb');
     say(w.id === 'centr' ? 'Level four one zero. Contact Center.' : 'Passing ' + (spoken[w.code] || w.code));
   }
@@ -1631,7 +1727,7 @@ function drawCursor(dt){
 const CALLOUTS = [[.16, 'AIRSPEED ALIVE', 'RWY 28 · KLAF'], [ROT - .02, 'ROTATE', 'V<sub>R</sub> 55 KT'], [.84, 'POSITIVE RATE', 'CLIMB · 3,000 FT · CREWS']];
 function callout(big, small){
   const c = $('#callout'); c.innerHTML = esc(big) + (small ? `<small>${small}</small>` : ''); c.classList.add('on');
-  tone(1180,.07,'sine',.03); tone(1580,.09,'sine',.03,.08);
+  tone(1180,.07,'sine',.02); tone(1580,.09,'sine',.02,.08);
   clearTimeout(calloutT); calloutT = setTimeout(() => c.classList.remove('on'), 1400);
 }
 
@@ -1701,7 +1797,8 @@ function frame(now){
 
 /* ================= live weather ================= */
 if (!window.FD_PREVIEW && !/wx=/.test(location.hash)) {
-  fetch('/api/wx').then(r => r.ok ? r.json() : null).then(d => {
+  fetch('/api/wx').then(r => r.json().catch(() => null)).then(d => {
+    if (d) atcLocate(d.lat, d.lon);
     if (!d || !d.condition) return;
     const cc = d.cloudCover || 0;
     WX.cond = d.condition === 'clear' ? (cc < 15 ? 'clear' : 'few') : d.condition === 'cloudy' ? (cc < 70 ? 'scattered' : 'broken') : d.condition;
