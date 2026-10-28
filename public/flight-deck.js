@@ -1,4 +1,4 @@
-/* Flight Deck v4.1 — runtime for the home page (sky, world, instruments, sections, AiRa).
+/* Flight Deck v4.2 — runtime for the home page (sky, world, instruments, sections, AiRa).
    Content comes from the #data JSON rendered by app/(deck)/page.tsx from lib/*.ts. */
 (function(){
 "use strict";
@@ -244,25 +244,26 @@ const hero = $('#klaf'), pfd = $('#pfd'), att = $('#att'), attWrap = $('#attWrap
 const HG = {W:0, H:0, gy:300, depth:400, tS:null, tA:null};
 const el = (tag, attrs, parent) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; };
 const setA = (e, attrs) => { for (const k in attrs) e.setAttribute(k, attrs[k]); };
+const stage = $('#stage'), copyEl = $('.hero .copy');
+const RW = {dNear:40, pool:false, last:''};
 function layoutHero(){
-  const r = hero.getBoundingClientRect(), W = r.width, H = r.height;
+  const r = stage.getBoundingClientRect(), W = r.width, H = r.height;
+  const keepT = copyEl.style.transform; copyEl.style.transform = 'none';
   const n1 = $('.n1').getBoundingClientRect(), n2 = $('.n2').getBoundingClientRect();
+  copyEl.style.transform = keepT;
   const gy = (n1.bottom + n2.top)/2 - r.top;
   HG.W = W; HG.H = H; HG.gy = gy; HG.depth = H - gy;
   pfd.setAttribute('viewBox', `0 0 ${W} ${H}`);
   attWrap.setAttribute('transform', `translate(${W/2} ${gy})`);
-  const depth = HG.depth + 60, bw = Math.min(W*.2, 300);
-  setA($('#rwyPoly'), {points:`-16,1 16,1 ${bw},${depth} ${-bw},${depth}`});
-  const dash = $('#rwyDash'); dash.innerHTML = '';
-  for (let i=3;i<8;i++){ const f0 = Math.pow(i/9, 1.7), f1 = Math.pow((i+.45)/9, 1.7); el('line', {x1:0, x2:0, y1:4 + f0*depth*.82, y2:4 + f1*depth*.82, 'stroke-width': 1 + f0*6, 'stroke-opacity':.8}, dash); }
-  const edge = $('#edge'); edge.innerHTML = '';
-  for (let i=0;i<18;i++){ const f = Math.pow(i/17, 1.7), y = 3 + f*depth, x = 16 + (bw-16)*(y/depth); [-x, x].forEach(xx => el('circle', {cx:xx*1.03, cy:y, r:.8 + f*3.2, fill:'#ffe7a8'}, edge)); }
-  const thr = $('#rwyThr'); thr.innerHTML = '';
-  { const yA = depth*.80, yB = depth*.93, xa = 16 + (bw-16)*(yA/depth), xb = 16 + (bw-16)*(yB/depth);
-    [-.88, -.68, -.48, -.28, .16, .36, .56, .76].forEach(L0 => { const L1 = L0 + .12; el('polygon', {points:`${L0*xa},${yA} ${L1*xa},${yA} ${L1*xb},${yB} ${L0*xb},${yB}`}, thr); }); }
-  setA($('#rwyNum'), {x:0, y:depth*.76, 'font-size': Math.max(26, depth*.12), opacity: W < 760 ? 0 : .9});
-  const papi = $('#papi'); papi.innerHTML = '';
-  if (W >= 760) { const y = depth*.55, x0 = -(16 + (bw-16)*(y/depth))*1.18; for (let i=0;i<4;i++) el('circle', {cx:x0 - i*Math.max(7, depth*.022), cy:y, r:Math.max(2.4, depth*.008), fill: i < 2 ? '#ff4a4a' : '#ffffff', class:'papi'}, papi); }
+  HG.bw = Math.min(W*.2, 300); HG.dep = HG.depth + 60;
+  if (!RW.pool) {
+    RW.pool = true;
+    RW.dash = Array.from({length:12}, () => el('line', {x1:0, x2:0, 'stroke-opacity':.8}, $('#rwyDash')));
+    RW.edge = Array.from({length:48}, () => el('circle', {fill:'#ffe7a8'}, $('#edge')));
+    RW.thr = Array.from({length:8}, () => el('polygon', {}, $('#rwyThr')));
+    RW.papi = Array.from({length:4}, (_,i) => el('circle', {fill: i < 2 ? '#ff4a4a' : '#ffffff', class:'papi'}, $('#papi')));
+  }
+  RW.last = '';
   const R = Math.max(120, Math.min(Math.max(n1.width, n2.width)/2 + 70, gy - 64 - 18));
   const s55 = Math.sin(55*Math.PI/180), c55 = Math.cos(55*Math.PI/180);
   $('#bankPath').setAttribute('d', `M ${-R*s55} ${-R*c55} A ${R} ${R} 0 0 1 ${R*s55} ${-R*c55}`);
@@ -279,6 +280,40 @@ function layoutHero(){
   }
   setA($('#spdV'), {x:HG.tS.x + HG.tS.w/2, y:HG.tS.cy + 7}); setA($('#spdL'), {x:HG.tS.x + HG.tS.w/2, y:HG.tS.top - 8});
   setA($('#altV'), {x:HG.tA.x + HG.tA.w/2, y:HG.tA.cy + 7}); setA($('#altSel'), {x:HG.tA.x + HG.tA.w/2, y:HG.tA.top - 8});
+}
+/* Runway in true perspective from the cockpit: a feature d feet ahead sits at y = dep*dNear*eye/d
+   below the horizon, and x scales with y, so everything streams toward you and slides underneath
+   as the roll distance s grows. eye > 1 is height above the runway once airborne. */
+function drawRunway(s, eye){
+  const key = s.toFixed(1) + '|' + eye.toFixed(3) + '|' + HG.W; if (key === RW.last || !RW.pool) return; RW.last = key;
+  const dep = HG.dep, bw = HG.bw, k = bw/dep, Y = d => d <= 0 ? 1e6 : dep*RW.dNear*eye/d, X = y => k*y/eye;
+  const yN = dep*eye;
+  setA($('#rwyPoly'), {points:`-16,1 16,1 ${X(yN) + 16},${yN} ${-X(yN) - 16},${yN}`});
+  // centerline stripes: 120 ft painted, 80 ft gap, starting 30 ft past the numbers
+  const per = 200, first = 70 - s; let j = 0;
+  const k0 = Math.max(0, Math.floor((RW.dNear*.5 - first)/per));
+  for (let i = k0; j < RW.dash.length; i++, j++) {
+    const d0 = first + i*per, d1 = d0 + 120, e = RW.dash[j];
+    if (d1 <= 1) { e.setAttribute('visibility', 'hidden'); continue; }
+    const y0 = Y(d1), y1 = Math.min(Y(Math.max(d0, 1)), yN + 40);
+    if (y0 < 2.5 || y0 > yN + 40) { e.setAttribute('visibility', 'hidden'); continue; }
+    setA(e, {y1:y0, y2:y1, 'stroke-width':(1 + 5.5*(y0/yN)).toFixed(2), visibility:'visible'});
+  }
+  // edge lights every 200 ft on both sides
+  const ef = 40 - (s % 200); j = 0;
+  for (let i = 0; j < RW.edge.length; i++) {
+    const d = ef + i*200; const y = Y(d); if (y < 2) { for (; j < RW.edge.length; j++) RW.edge[j].setAttribute('visibility', 'hidden'); break; }
+    const x = X(y)*1.03 + 16*(1 - y/yN), rr = .8 + 3.2*Math.min(1.4, y/yN);
+    for (const sx of [-1, 1]) { if (j >= RW.edge.length) break; setA(RW.edge[j++], {cx:sx*x, cy:y, r:rr.toFixed(2), visibility: y > yN + 30 ? 'hidden' : 'visible'}); }
+  }
+  // threshold bars 43–50 ft ahead at brake release, runway number just past them
+  const yA = Y(50 - s), yB = Math.min(Y(43 - s), yN + 60);
+  [-.88, -.68, -.48, -.28, .16, .36, .56, .76].forEach((L0, i) => { const L1 = L0 + .12, xa = X(yA) + 16*(1 - yA/yN), xb = X(yB) + 16*(1 - yB/yN); setA(RW.thr[i], {points:`${L0*xa},${yA} ${L1*xa},${yA} ${L1*xb},${yB} ${L0*xb},${yB}`, visibility: yA > yN + 40 ? 'hidden' : 'visible'}); });
+  const yNum = Y(52.6 - s);
+  setA($('#rwyNum'), {x:0, y:yNum, 'font-size': Math.max(26, dep*.12*(yNum/(dep*.76))), opacity: HG.W < 760 || yNum > yN + 80 ? 0 : .9});
+  // PAPI on the left, 72 ft ahead
+  const yP = Y(72 - s), xP = -(X(yP) + 16)*1.18, show = HG.W >= 760 && yP < yN + 20;
+  RW.papi.forEach((c, i) => setA(c, {cx:xP - i*Math.max(7, yP*.04), cy:yP, r:Math.max(2.4, yP*.014), visibility: show ? 'visible' : 'hidden'}));
 }
 function tape(g, val, step, px, T, side, fmt){
   while (g.firstChild) g.removeChild(g.firstChild);
@@ -437,7 +472,7 @@ addEventListener('pointermove', e => { mx = e.clientX; my = e.clientY; }, {passi
    and the horizon starts to curve near FL410. Every layer is projected from one
    eye height, so near things move faster than far ones. */
 const hash = (a, b) => { let h = (a*374761393 + b*668265263) | 0; h = (h ^ (h >>> 13))*1274126177 | 0; return ((h ^ (h >>> 16)) >>> 0)/4294967295; };
-const W0 = {z:0, camX:0};
+const W0 = {z:0, camX:0, hold:0, eye:400};
 const FIELD = [C('#6f7a46'), C('#8c8452'), C('#5b6b3c'), C('#7d6a44'), C('#91906a')];
 const towns = Array.from({length:42}, (_,i) => ({X:(rnd()*2-1)*160000, Z:rnd()*360000, n:6 + Math.floor(rnd()*26), r:900 + rnd()*3800, big:i % 9 === 0}));
 const townPts = towns.map(t => Array.from({length:t.n*(t.big ? 3 : 1)}, () => { const a = rnd()*6.283, q = Math.sqrt(rnd())*t.r*(t.big ? 1.8 : 1); return [Math.cos(a)*q, Math.sin(a)*q, rnd()]; }));
@@ -457,8 +492,8 @@ function ensureClouds(c){
 }
 function horizonAt(x, hy, curv){ const u = (x - SW/2)/(SW/2); return hy + curv*u*u; }
 function drawWorld(S, t, dt, hy, vsN){
-  const c = S.c, eye = Math.max(S.alt, 400), f = SH*1.1, day = S.day, night = 1 - day;
-  const gs = reduce ? 0 : lerp(140, 420, S.p);
+  const c = S.c, eye = Math.max(S.alt, W0.eye), f = SH*1.1, day = S.day, night = 1 - day;
+  const gs = reduce ? 0 : lerp(140, 420, S.p)*(1 - W0.hold);
   W0.z += dt*gs; W0.camX = Math.sin(t*.01)*4000;
   const visFt = Math.max(3000, c.vis*5280*(1.4 + S.p*7));
   const curv = smooth(14000, 41000, S.alt)*Math.min(SH*.05, 46);
@@ -572,13 +607,21 @@ function drawStreaks(S, dt, vsN){
 /* ================= altitude model ================= */
 let tops = [], maxScroll = 1;
 function measure(){ tops = WP.map(w => document.getElementById(w.id).getBoundingClientRect().top + scrollY); maxScroll = Math.max(1, document.documentElement.scrollHeight - innerHeight); layoutHero(); }
+const ROT = .6;
+const rollLen = () => reduce ? 1 : Math.max(1, hero.offsetHeight - stage.offsetHeight);
+const rollTk = y => reduce ? 0 : clamp((y - hero.offsetTop)/rollLen(), 0, 1);
+function rollDist(tk){ const a = clamp((tk - .03)/(ROT - .03), 0, 1); return tk <= ROT ? 1500*a*a : 1500 + (tk - ROT)*4000; }
+function heroAlt(tk){ return tk <= ROT ? 0 : 900*Math.pow((tk - ROT)/(1 - ROT), 1.3); }
 function altAt(y){
   if (y >= maxScroll - 4) return {alt:41000, i:WP.length-1};
+  const R = reduce ? 0 : rollLen(), h0 = hero.offsetTop;
+  if (!reduce && y < h0 + R) return {alt:heroAlt(rollTk(y)), i:0};
   const probe = y + innerHeight*.45; let i = 0;
   while (i < WP.length-1 && probe >= tops[i+1]) i++;
   if (i === WP.length-1) return {alt:41000, i};
-  const s0 = i === 0 ? innerHeight*.45 : tops[i];
-  return {alt: lerp(WP[i].alt, WP[i+1].alt, clamp((probe - s0)/(tops[i+1] - s0), 0, 1)), i};
+  const a0 = i === 0 ? (reduce ? 0 : 900) : WP[i].alt;
+  const s0 = i === 0 ? h0 + R + innerHeight*.45 : tops[i];
+  return {alt: lerp(a0, WP[i+1].alt, clamp((probe - s0)/Math.max(1, tops[i+1] - s0), 0, 1)), i};
 }
 addEventListener('resize', () => { sizeCanvases(); sizeTrail(); measure(); });
 new ResizeObserver(measure).observe($('#main'));
@@ -597,47 +640,65 @@ function drawAltRail(alt){
   ax.fillStyle = '#5be39a'; ax.font = '600 28px JetBrains Mono, monospace'; ax.textAlign = 'center'; ax.fillText(Math.round(alt).toLocaleString('en-US'), W/2, cy + 10);
 }
 
-/* ================= vitals monitor ================= */
-const V = {lastTouch:-99, base:72, hr:72, tapHR:72, exert:0, holding:false, taps:[], beats:[], next:0, svt:false, pause:0, spo2:98, rhythm:'NSR', charging:false};
+/* ================= vitals monitor =================
+   One patient monitor docked in the cockpit (bottom left once you're airborne) plus a thin
+   live ECG trace between sections. Normally it shows your own "pilot" vitals (climb and
+   scroll speed push the rate up). When a medical call comes in it becomes the patient's
+   monitor, and what you do in the call (compressions, shocks, epinephrine) shows on it. */
+const V = {lastTouch:-99, base:72, hr:72, tapHR:72, exert:0, holding:false, taps:[], beats:[], next:0, svt:false, pause:0, spo2:98, rhythm:'NSR', charging:false, pt:null};
 const mons = [];
 $$('.ecgd').forEach(d => {
   const sec = d.nextElementSibling, code = (WP.find(w => sec && w.id === sec.id) || {}).code || '';
-  d.innerHTML = `<div class="mon" tabindex="0" role="group" aria-label="Vitals monitor. Tap or press Space to pace, hold or press E to exert, arrows set resting rate, S shocks."><div class="wave"><canvas></canvas><span class="lbl">LEAD II · <b class="rh">NSR</b> · NEXT ${code}</span></div><div class="vit"><div class="hr"><small>HR <i>♥</i></small><b>72</b></div><div class="sp"><small>SpO₂ %</small><b>98</b></div><div class="bp"><small>NIBP</small><b>118/76</b></div></div><button class="shock" type="button" hidden>⚡ SYNC SHOCK · S</button><div class="clear">CLEAR!</div><span class="kh">Tap to pace · hold to exert · <kbd>Space</kbd> <kbd>E</kbd> <kbd>↑</kbd><kbd>↓</kbd> <kbd>S</kbd></span></div>`;
-  const m = $('.mon', d), o = {m, cv:$('canvas', m), hr:$('.hr b', m), heart:$('.hr i', m), sp:$('.sp b', m), bp:$('.bp b', m), rh:$('.rh', m), shock:$('.shock', m), clear:$('.clear', m), vis:false};
+  d.innerHTML = `<div class="trace" tabindex="-1" aria-hidden="true"><canvas></canvas><span class="lbl"><i>♥</i> <b class="hrv">72</b> BPM · LEAD II · <span class="rh">NSR</span> · NEXT ${code}</span></div>`;
+  const m = $('.trace', d);
+  const o = {kind:'trace', m, cv:$('canvas', m), hr:$('.hrv', m), rh:$('.rh', m), heart:$('i', m), vis:false};
   mons.push(o);
+  m.addEventListener('pointerdown', () => { V.lastTouch = nowS(); tapBeat(); });
+});
+const vm = $('#vmon');
+const dock = {kind:'dock', m:vm, cv:$('canvas', vm), hr:$('.hr b', vm), heart:$('.hr i', vm), sp:$('.sp b', vm), bp:$('.bp b', vm), rh:$('.rh', vm), who:$('.who', vm), hh:$('.hh', vm), shock:$('.shock', vm), clear:$('.clear', vm), vis:true};
+mons.push(dock);
+{
   let holdT = null;
+  const m = $('.scr', vm);
   m.addEventListener('pointerenter', () => { V.lastTouch = nowS(); });
-  m.addEventListener('focus', () => { V.lastTouch = nowS(); });
-  m.addEventListener('pointerdown', e => { V.lastTouch = nowS(); if (e.target.closest('.shock')) return; tapBeat(); holdT = setTimeout(() => { V.holding = true; }, 260); });
+  m.addEventListener('pointerdown', e => { V.lastTouch = nowS(); if (e.target.closest('button')) return; if (MED.on) return medTap(); tapBeat(); holdT = setTimeout(() => { V.holding = true; }, 260); });
   const up = () => { clearTimeout(holdT); V.holding = false; };
   m.addEventListener('pointerup', up); m.addEventListener('pointerleave', up); m.addEventListener('pointercancel', up);
-  m.addEventListener('keydown', e => {
-    if (e.target !== m) return;
-    if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); if (!e.repeat) tapBeat(); }
-    else if (e.key === 'e' || e.key === 'E') { e.preventDefault(); V.holding = true; mark('ecg'); }
+  vm.addEventListener('keydown', e => {
+    if (e.target !== $('.scr', vm)) return;
+    if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); if (!e.repeat) { if (MED.on) medTap(); else tapBeat(); } }
+    else if (e.key === 'e' || e.key === 'E') { e.preventDefault(); V.holding = true; }
     else if (e.key === 'ArrowUp' || e.key === 'ArrowDown') { e.preventDefault(); V.base = clamp(V.base + (e.key === 'ArrowUp' ? 4 : -4), 44, 120); toast('RESTING RATE <b>' + V.base + '</b> BPM'); }
     else if (e.key === 's' || e.key === 'S') { e.preventDefault(); shock(); }
   });
-  m.addEventListener('keyup', e => { if (e.key === 'e' || e.key === 'E') V.holding = false; });
-  o.shock.addEventListener('click', shock);
-});
+  vm.addEventListener('keyup', e => { if (e.key === 'e' || e.key === 'E') V.holding = false; });
+  dock.shock.addEventListener('click', shock);
+  $('#vmRun').addEventListener('click', () => medStart(null, true));
+  $('#vmMin').addEventListener('click', () => { vm.classList.toggle('min'); $('#vmMin').setAttribute('aria-expanded', String(!vm.classList.contains('min'))); });
+}
 const monIO = new IntersectionObserver(es => es.forEach(e => { const o = mons.find(x => x.m.parentElement === e.target); if (o) o.vis = e.isIntersecting; }));
 $$('.ecgd').forEach(d => monIO.observe(d));
+function beep(){ if (nowS() - V.lastTouch < 8 || MED.on) tone(560 + (V.spo2 - 90)*28, .06, 'sine', .025); }
 function addBeat(t, type){
-  V.beats.push({t, type}); if (V.beats.length > 30) V.beats.shift();
-  if (nowS() - V.lastTouch < 8 && mons.some(o => o.vis)) { tone(560 + (V.spo2 - 90)*28, .06, 'sine', .025); mons.forEach(o => { o.heart.classList.add('on'); setTimeout(() => o.heart.classList.remove('on'), 120); }); }
+  V.beats.push({t, type}); if (V.beats.length > 40) V.beats.shift();
+  if (type !== 'cpr') { beep(); mons.forEach(o => { if (!o.heart) return; o.heart.classList.add('on'); setTimeout(() => o.heart.classList.remove('on'), 120); }); }
 }
-function tapBeat(){ const n = nowS(); V.lastTouch = n; if (n < V.pause) return; V.taps.push(n); addBeat(n, 'p'); V.next = n + 60/Math.max(40, V.hr); mark('ecg'); }
+function tapBeat(){ const n = nowS(); V.lastTouch = n; if (n < V.pause) return; V.taps.push(n); addBeat(n, 'p'); V.next = n + 60/Math.max(40, V.hr); }
 function shock(){
-  if (!V.svt || V.charging) { if (!V.svt) toast('No shockable rhythm. Tap fast to push the rate past 165 first.'); return; }
-  V.charging = true; toast('CHARGING · <b>200 J</b> · stand clear', 1200);
-  if (soundOn) { const c = ac(); if (c) { const o = c.createOscillator(), g = c.createGain(); o.frequency.setValueAtTime(400, c.currentTime); o.frequency.linearRampToValueAtTime(1600, c.currentTime + 1); g.gain.value = .03; o.connect(g).connect(c.destination); o.start(); o.stop(c.currentTime + 1); } }
+  if (MED.on && MED.wantShock) return medShock();
+  if (!V.svt || V.charging) { if (!V.svt) toast('No shockable rhythm. Tap the monitor fast to push the rate past 165 first.'); return; }
+  V.charging = true; toast('CHARGING · <b>200 J</b> · stand clear', 1200); chargeTone();
   setTimeout(() => {
-    const n = nowS(); addBeat(n, 'shock'); mons.forEach(o => { o.clear.classList.remove('on'); void o.clear.offsetWidth; o.clear.classList.add('on'); });
-    noise(.25, 300, .2, 'lowpass');
-    V.svt = false; V.charging = false; V.taps = []; V.exert = 0; V.hr = 70; V.pause = n + 1.5; V.next = n + 1.5;
+    zap(); V.svt = false; V.charging = false; V.taps = []; V.exert = 0; V.hr = 70;
     toast('CONVERTED · normal sinus rhythm');
   }, 1000);
+}
+function chargeTone(){ if (soundOn) { const c = ac(); if (c) { const o = c.createOscillator(), g = c.createGain(); o.frequency.setValueAtTime(400, c.currentTime); o.frequency.linearRampToValueAtTime(1600, c.currentTime + 1); g.gain.value = .03; o.connect(g).connect(c.destination); o.start(); o.stop(c.currentTime + 1); } } }
+function zap(){
+  const n = nowS(); addBeat(n, 'shock'); V.pause = n + 1.5; V.next = n + 1.5;
+  dock.clear.classList.remove('on'); void dock.clear.offsetWidth; dock.clear.classList.add('on');
+  noise(.25, 300, .2, 'lowpass');
 }
 const G = (x, m, s) => Math.exp(-((x-m)*(x-m))/(2*s*s));
 function beatShape(d, type){
@@ -645,41 +706,285 @@ function beatShape(d, type){
   if (type === 'svt') return -.08*G(d,-.015,.008) + 1.0*G(d,0,.011) - .25*G(d,.022,.01) + .18*G(d,.16*ts,.045);
   if (type === 'p') return 1.15*G(d,-.045,.003) + .82*G(d,.02,.03) - .35*G(d,.24*ts,.06);
   if (type === 'shock') return 2.4*G(d,0,.025) - 1.8*G(d,.07,.05);
+  if (type === 'cpr') return .9*G(d,.08,.07) - .35*G(d,.26,.08);
   return .12*G(d,-.16,.03) - .1*G(d,-.02,.008) + 1.0*G(d,0,.011) - .28*G(d,.025,.01) + .26*G(d,.25*ts,.06);
 }
-function signal(tau){ let y = .012*Math.sin(tau*47) + .006*Math.sin(tau*131); for (const b of V.beats) { const d = tau - b.t; if (d > -.3 && d < .7) y += beatShape(d, b.type); } return y; }
+function signal(tau){
+  let y = .012*Math.sin(tau*47) + .006*Math.sin(tau*131);
+  const pt = V.pt;
+  if (pt && pt.rhythm === 'VF') y += .32*Math.sin(tau*29.1 + Math.sin(tau*3.1)*2) + .2*Math.sin(tau*41.7 + 1.3) + .12*Math.sin(tau*17.3);
+  for (const b of V.beats) { const d = tau - b.t; if (d > -.3 && d < .7) y += beatShape(d, b.type); }
+  return y;
+}
 let vitT = 0;
 function vitalsStep(n, dt){
   V.exert = V.holding ? Math.min(1, V.exert + dt*.22) : Math.max(0, V.exert - dt*.05);
   V.taps = V.taps.filter(x => n - x < 4);
-  const pacing = V.taps.length >= 2 && n - V.taps[V.taps.length-1] < 2.2;
+  const pt = V.pt;
+  const pacing = !pt && V.taps.length >= 2 && n - V.taps[V.taps.length-1] < 2.2;
   if (pacing) { const iv = (V.taps[V.taps.length-1] - V.taps[0])/(V.taps.length - 1); V.tapHR = 60/Math.max(.18, iv); if (V.tapHR > 165 && V.taps.length >= 5 && !V.svt) { V.svt = true; V.taps = []; toast('ALARM · <b>SVT 186</b> · press S or SYNC SHOCK', 3500); tone(880,.2,'square',.04); tone(880,.2,'square',.04,.3); } }
   let target = V.base + V.exert*95 + (document.body.classList.contains('mayday') ? 55 : 0) + Math.min(25, scrollKick);
   if (V.svt) target = 186;
-  V.hr = pacing && !V.svt ? lerp(V.hr, V.tapHR, .25) : lerp(V.hr, target, Math.min(1, dt*.9));
-  if (!pacing && n >= V.next && n >= V.pause) { addBeat(n, V.svt ? 'svt' : 'n'); V.next = n + 60/Math.max(30, V.hr)*(V.svt ? 1 : 1 + (Math.random() - .5)*.05); }
-  V.spo2 = V.svt ? 94 : V.exert > .6 ? 97 : 98;
-  V.rhythm = V.svt ? 'SVT' : pacing ? 'PACED' : V.hr < 60 ? 'SINUS BRADY' : V.hr > 100 ? 'SINUS TACH' : 'NSR';
+  if (pt) target = pt.hr;
+  V.hr = pacing && !V.svt ? lerp(V.hr, V.tapHR, .25) : lerp(V.hr, target, Math.min(1, dt*(pt ? 1.6 : .9)));
+  const noBeats = pt && (pt.rhythm === 'VF' || pt.rhythm === 'ASYSTOLE');
+  if (!pacing && !noBeats && n >= V.next && n >= V.pause) { addBeat(n, V.svt ? 'svt' : 'n'); V.next = n + 60/Math.max(30, V.hr)*(V.svt ? 1 : 1 + (Math.random() - .5)*.05); }
+  V.spo2 = pt ? (pt.spo2 == null ? 84 : Math.round(lerp(V.spo2, pt.spo2, Math.min(1, dt*2)))) : V.svt ? 94 : V.exert > .6 ? 97 : 98;
+  V.rhythm = pt ? pt.rhythm : V.svt ? 'SVT' : pacing ? 'PACED' : V.hr < 60 ? 'SINUS BRADY' : V.hr > 100 ? 'SINUS TACH' : 'NSR';
   vitT += dt;
   if (vitT > .25) {
     vitT = 0;
-    const sys = Math.round(118 + V.exert*38 - (V.svt ? 24 : 0)), dia = Math.round(76 + V.exert*8 - (V.svt ? 12 : 0));
-    mons.forEach(o => { if (!o.vis) return; o.hr.textContent = Math.round(V.hr); o.sp.textContent = V.spo2; o.bp.textContent = sys + '/' + dia; o.rh.textContent = V.rhythm; o.rh.classList.toggle('alarm', V.svt); o.shock.hidden = !V.svt; });
+    const sys = pt ? pt.bp[0] : Math.round(118 + V.exert*38 - (V.svt ? 24 : 0)), dia = pt ? pt.bp[1] : Math.round(76 + V.exert*8 - (V.svt ? 12 : 0));
+    const hrTxt = noBeats ? '---' : String(Math.round(V.hr)), alarm = V.svt || (pt && pt.alarm);
+    mons.forEach(o => {
+      if (!o.vis && o.kind !== 'dock') return;
+      o.hr.textContent = hrTxt; o.rh.textContent = V.rhythm; o.rh.classList.toggle('alarm', !!alarm);
+      if (o.kind === 'dock') { o.sp.textContent = pt && pt.spo2 == null ? '--' : V.spo2; o.bp.textContent = sys ? sys + '/' + dia : '--/--'; o.shock.hidden = !(V.svt || (MED.on && MED.wantShock)); o.who.textContent = pt ? pt.who : 'PILOT · N-BANDHA'; o.hh.textContent = hrTxt; }
+    });
+    vm.classList.toggle('alarm', !!alarm);
   }
 }
 function drawMon(o, n){
   const cv = o.cv, r = cv.getBoundingClientRect(), dpr = Math.min(2, devicePixelRatio || 1);
+  if (!r.width) return;
   if (cv.width !== Math.round(r.width*dpr)) { cv.width = Math.round(r.width*dpr); cv.height = Math.round(r.height*dpr); }
   const c = cv.getContext('2d'), W = r.width, H = r.height; c.setTransform(dpr,0,0,dpr,0,0); c.clearRect(0,0,W,H);
-  c.strokeStyle = 'rgba(91,227,154,.07)'; c.lineWidth = 1;
-  for (let x = 0; x < W; x += 18) { c.beginPath(); c.moveTo(x, 0); c.lineTo(x, H); c.stroke(); }
-  for (let y = 0; y < H; y += 18) { c.beginPath(); c.moveTo(0, y); c.lineTo(W, y); c.stroke(); }
-  const win = 5, col = V.svt ? '#ffcf5b' : '#5be39a';
-  c.lineWidth = 2; c.lineJoin = 'round'; c.strokeStyle = col; c.shadowColor = col; c.shadowBlur = 6; c.beginPath();
-  for (let x = 0; x <= W; x += 2) { const tau = n - win + (x/W)*win, y = H*.64 - signal(tau)*H*.42; x ? c.lineTo(x, y) : c.moveTo(x, y); }
+  const trace = o.kind === 'trace';
+  if (!trace) {
+    c.strokeStyle = 'rgba(91,227,154,.07)'; c.lineWidth = 1;
+    for (let x = 0; x < W; x += 16) { c.beginPath(); c.moveTo(x, 0); c.lineTo(x, H); c.stroke(); }
+    for (let y = 0; y < H; y += 16) { c.beginPath(); c.moveTo(0, y); c.lineTo(W, y); c.stroke(); }
+  }
+  const win = trace ? 6 : 4, alarm = V.svt || (V.pt && V.pt.alarm), col = alarm ? (V.pt ? '#ff6b6b' : '#ffcf5b') : '#5be39a';
+  const base = trace ? .62 : .6, amp = trace ? .5 : .42;
+  c.lineWidth = trace ? 1.6 : 2; c.lineJoin = 'round'; c.strokeStyle = col; c.shadowColor = col; c.shadowBlur = trace ? 8 : 6; c.beginPath();
+  for (let x = 0; x <= W; x += 2) { const tau = n - win + (x/W)*win, y = H*base - signal(tau)*H*amp; x ? c.lineTo(x, y) : c.moveTo(x, y); }
   c.stroke(); c.shadowBlur = 0;
-  c.fillStyle = '#e9fff1'; c.beginPath(); c.arc(W - 2, H*.64 - signal(n)*H*.42, 2.6, 0, 6.283); c.fill();
+  if (trace) { const g = c.createLinearGradient(0, 0, W, 0); g.addColorStop(0, 'rgba(0,0,0,1)'); g.addColorStop(.12, 'rgba(0,0,0,0)'); g.addColorStop(.88, 'rgba(0,0,0,0)'); g.addColorStop(1, 'rgba(0,0,0,1)'); c.globalCompositeOperation = 'destination-out'; c.fillStyle = g; c.fillRect(0, 0, W, H); c.globalCompositeOperation = 'source-over'; }
+  c.fillStyle = '#e9fff1'; c.beginPath(); c.arc(W - 2, H*base - signal(n)*H*amp, 2.6, 0, 6.283); c.fill();
 }
+
+/* ================= medical calls =================
+   Random in-flight medical emergencies. Each one is a short, timed call that teaches one
+   real skill. Training game only: the footer always says to call 911 in a real emergency.
+   Sources for the steps: AHA adult CPR (100–120/min, shock then resume compressions),
+   Stop the Bleed (tourniquet high and tight, 2–3 in above the wound, never on a joint),
+   Red Cross choking (5 back blows, 5 abdominal thrusts), anaphylaxis (epinephrine
+   auto-injector to the outer thigh), BE FAST stroke signs, and the rule of 15 for low sugar. */
+const ls = { get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }, set(k,v){ try { localStorage.setItem(k,v); } catch(e){} } };
+const MED = {on:false, sc:null, step:0, t0:0, limit:0, timer:null, tick:null, saves:+(ss.get('saves') || 0), runs:+(ss.get('runs') || 0), active:0, next:0, wantShock:false, comp:[], hold:null, data:{}};
+const SEATS = ['14C','22A','9F','31D','17B','26E','4A','11C'];
+const pick = a => a[Math.floor(Math.random()*a.length)];
+const SCEN = {
+  arrest:{title:'Cardiac arrest', who:'PT · CARDIAC ARREST', pt:{hr:0, spo2:null, bp:[0,0], rhythm:'VF', alarm:true}, limit:45,
+    scene: s => `The passenger in <b>${s}</b> collapsed. No response, and they're only gasping, not breathing normally. The crew is bringing the AED.`,
+    learn:'Push hard and fast in the center of the chest, 100–120 a minute, at least 2 inches deep. After a shock, go straight back to compressions.'},
+  bleed:{title:'Severe bleeding', who:'PT · HEMORRHAGE', pt:{hr:128, spo2:95, bp:[92,58], rhythm:'SINUS TACH', alarm:true}, limit:25,
+    scene: s => `A galley cart caught the passenger in <b>${s}</b>. Bright red blood is spurting from the forearm and direct pressure isn't stopping it.`,
+    learn:'Tourniquet high and tight: 2–3 inches above the wound, never over a joint. Tighten until the bleeding stops and note the time.'},
+  choke:{title:'Choking', who:'PT · AIRWAY OBSTRUCTION', pt:{hr:124, spo2:88, bp:[148,92], rhythm:'SINUS TACH', alarm:true}, limit:25,
+    scene: s => `The passenger in <b>${s}</b> is clutching their throat. They can't speak, cough or breathe. You ask "Are you choking?" and they nod.`,
+    learn:'Give 5 back blows between the shoulder blades, then 5 abdominal thrusts. Repeat until the object comes out or they become unresponsive (then start CPR).'},
+  ana:{title:'Anaphylaxis', who:'PT · ANAPHYLAXIS', pt:{hr:132, spo2:90, bp:[82,46], rhythm:'SINUS TACH', alarm:true}, limit:25,
+    scene: s => `The passenger in <b>${s}</b> just ate a snack mix. Hives, swollen lips, and they're wheezing. There's an epinephrine auto-injector in their bag.`,
+    learn:'Epinephrine first, into the outer thigh (through clothing is fine). Hold it in place about 3 seconds, get EMS, and be ready for a second dose if symptoms return.'},
+  stroke:{title:'Stroke', who:'PT · SUSPECTED STROKE', pt:{hr:88, spo2:96, bp:[184,104], rhythm:'NSR', alarm:true}, limit:25,
+    scene: s => `The passenger in <b>${s}</b> suddenly can't get words out. The right side of their face droops and their right arm drifts down when they lift both.`,
+    learn:'BE FAST: Balance, Eyes, Face, Arms, Speech, Time. Note when symptoms started and get them to a stroke center. Nothing by mouth.'},
+  sugar:{title:'Low blood sugar', who:'PT · HYPOGLYCEMIA · BGL 48', pt:{hr:112, spo2:98, bp:[126,80], rhythm:'SINUS TACH', alarm:true}, limit:20,
+    scene: s => `The passenger in <b>${s}</b> has type 1 diabetes. They're sweaty, shaky and confused, but awake and able to swallow.`,
+    learn:'Rule of 15: 15 g of fast sugar (juice, regular soda, glucose tabs), recheck in 15 minutes, repeat if still low. Only if they can swallow safely.'}
+};
+const med = $('#med'), mc = $('#mc');
+function medAllowed(){ return !document.hidden && !dlg.open && $('#chat').hidden && $('#keysHelp').hidden && $('#boot').hidden && !/INPUT|TEXTAREA|SELECT/.test((document.activeElement || {}).tagName || ''); }
+function medAuto(){ return ls.get('fd.med') !== 'off' && !reduce; }
+function medSchedule(first){ MED.next = MED.active + (first ? 28 + Math.random()*20 : 80 + Math.random()*70); }
+medSchedule(true);
+setInterval(() => {
+  if (MED.on || !mc.hidden || curIdx < 1 || !medAllowed()) return;
+  MED.active += 1;
+  if (medAuto() && MED.active >= MED.next && MED.runs < 4) { medSchedule(false); medAlert(); }
+}, 1000);
+function medAlert(){
+  const key = pick(Object.keys(SCEN)), seat = pick(SEATS);
+  MED.pending = {key, seat};
+  $('#mcT').innerHTML = `MEDICAL · <b>${esc(SCEN[key].title.toUpperCase())}</b> · ROW ${esc(seat)}`;
+  mc.hidden = false; mc.classList.remove('in'); void mc.offsetWidth; mc.classList.add('in');
+  chime(); tone(660,.25,'square',.03,.35); tone(660,.25,'square',.03,.7);
+  clearTimeout(MED.mcT); MED.mcT = setTimeout(() => { mc.hidden = true; }, 9000);
+}
+$('#mcGo').addEventListener('click', () => { mc.hidden = true; const p = MED.pending; medStart(p && p.key, false, p && p.seat); });
+$('#mcNo').addEventListener('click', () => { mc.hidden = true; });
+$('#mcOff').addEventListener('click', () => { mc.hidden = true; ls.set('fd.med', 'off'); toast('Random medical calls <b>OFF</b> · run one any time from the monitor'); });
+function medStart(key, manual, seat){
+  if (MED.on) return;
+  key = key || pick(Object.keys(SCEN)); seat = seat || pick(SEATS);
+  const S = SCEN[key]; MED.on = true; MED.sc = key; MED.step = 0; MED.data = {seat, misses:0}; MED.comp = []; MED.wantShock = false;
+  MED.runs++; ss.set('runs', MED.runs);
+  V.pt = Object.assign({who:S.who + ' · ' + seat}, JSON.parse(JSON.stringify(S.pt))); V.beats = []; V.next = nowS() + .3; V.svt = false;
+  vm.classList.remove('min'); document.body.classList.add('medcall');
+  $('#medK').textContent = S.title.toUpperCase(); $('#medWhere').textContent = 'ROW ' + seat;
+  $('#medScene').innerHTML = S.scene(seat);
+  med.hidden = false; med.classList.remove('done', 'fail');
+  MED.t0 = nowS(); MED.limit = S.limit;
+  clearInterval(MED.tick); MED.tick = setInterval(medClock, 100);
+  STEPS[key](0);
+  setTimeout(() => { const f = $('#medQ button, #medQ [tabindex]'); if (f) f.focus(); }, 60);
+}
+function medClock(){
+  const left = MED.limit - (nowS() - MED.t0);
+  $('#medT').textContent = Math.max(0, left).toFixed(1) + 's';
+  $('#medBar').style.width = clamp(left/MED.limit, 0, 1)*100 + '%';
+  $('#medBar').classList.toggle('low', left < 6);
+  if (left <= 0) medEnd(false, 'Out of time. The patient got worse while you were deciding.');
+}
+function q(html){ $('#medQ').innerHTML = html; }
+function choice(prompt, opts, onPick){
+  q(`<p class="mp">${prompt}</p><div class="mopts">${opts.map((o,i) => `<button type="button" data-i="${i}"><kbd>${i+1}</kbd>${o[0]}</button>`).join('')}</div><p class="mfb" id="mfb" aria-live="polite"></p>`);
+  $$('#medQ .mopts button').forEach(b => b.addEventListener('click', () => {
+    const o = opts[+b.dataset.i];
+    if (o[1]) { b.classList.add('ok'); tone(880,.08,'sine',.04); setTimeout(() => onPick(+b.dataset.i), 450); }
+    else { b.classList.add('no'); b.disabled = true; MED.data.misses++; $('#mfb').textContent = o[2] || 'Not that one.'; tone(220,.15,'square',.03); MED.t0 -= 3; }
+  }));
+}
+function holdBtn(label, secs, onDone, hint){
+  q(`<p class="mp">${hint}</p><button type="button" class="mhold" id="mhold"><span class="fill" id="mhf"></span><span class="lb">${label}</span></button><p class="mfb" id="mfb" aria-live="polite">Press and hold (or hold Space)</p>`);
+  const b = $('#mhold'); let st = null, raf = null, done = false;
+  const go = () => { if (st || done) return; st = nowS(); (function f(){ const p = clamp((nowS() - st)/secs, 0, 1); $('#mhf').style.width = p*100 + '%'; $('#mfb').textContent = p < 1 ? Math.ceil(secs - p*secs) + '…' : 'Done'; if (p >= 1) { done = true; tone(990,.1,'sine',.04); return onDone(); } raf = requestAnimationFrame(f); })(); };
+  const stop = () => { if (done || !st) return; cancelAnimationFrame(raf); st = null; $('#mhf').style.width = '0%'; $('#mfb').textContent = 'Let go too early. Hold it the whole time.'; MED.data.misses++; };
+  b.addEventListener('pointerdown', e => { e.preventDefault(); go(); }); b.addEventListener('pointerup', stop); b.addEventListener('pointerleave', stop);
+  b.addEventListener('keydown', e => { if ((e.key === ' ' || e.key === 'Enter') && !e.repeat) { e.preventDefault(); go(); } });
+  b.addEventListener('keyup', e => { if (e.key === ' ' || e.key === 'Enter') stop(); });
+}
+const STEPS = {
+  arrest(step){
+    if (step === 0) return choice('First move?', [['Start chest compressions now', true], ['Sit them up and give water', false, 'Never give anything by mouth to someone unresponsive.'], ['Wait for the AED before touching them', false, 'Every minute without compressions costs survival. Start now; the AED joins when it arrives.']], () => STEPS.arrest(1));
+    if (step === 1) { MED.data.target = 20; return compressions(() => STEPS.arrest(2)); }
+    if (step === 2) { MED.wantShock = true; V.pt.rhythm = 'VF'; q(`<p class="mp"><b>AED: "Shock advised."</b> Everyone clear. Press <kbd>SHOCK</kbd> on the monitor (or <kbd>S</kbd>).</p><button type="button" class="mshock" id="mshock">⚡ SHOCK · 200 J</button><p class="mfb" id="mfb"></p>`); $('#mshock').addEventListener('click', medShock); setTimeout(() => $('#mshock').focus(), 30); return; }
+    if (step === 3) return choice('Shock delivered. Now what?', [['Resume compressions immediately', true], ['Check for a pulse for 30 seconds', false, 'Go straight back to compressions. The AED re-checks rhythm every 2 minutes.'], ['Wait for the AED to re-analyze', false, 'Pauses kill. Compressions right away.']], () => { MED.data.target = 10; compressions(() => { V.pt.rhythm = 'NSR'; V.pt.hr = 96; V.pt.spo2 = 94; V.pt.bp = [104, 66]; V.pt.alarm = false; V.next = nowS() + .2; medEnd(true, 'Pulse is back (ROSC). Recovery position, keep watching their breathing until paramedics take over.'); }); });
+  },
+  bleed(step){
+    if (step === 0) {
+      q(`<p class="mp">Where does the tourniquet go?</p><div class="arm" role="group" aria-label="Arm diagram"><svg viewBox="0 0 420 120" aria-hidden="true"><path d="M10 60 Q60 40 130 46 L250 54 Q330 58 410 66" stroke="#d9b38c" stroke-width="44" stroke-linecap="round" fill="none"/><circle cx="196" cy="51" r="11" fill="#c2252b"/><circle cx="196" cy="51" r="18" fill="none" stroke="#ff6b6b" stroke-dasharray="4 4"/><text x="196" y="102" fill="#ffb4b4" font-family="JetBrains Mono" font-size="11" text-anchor="middle">WOUND</text><text x="40" y="20" fill="#9fb0c8" font-family="JetBrains Mono" font-size="10">SHOULDER</text><text x="360" y="22" fill="#9fb0c8" font-family="JetBrains Mono" font-size="10">HAND</text></svg>
+        <button type="button" class="zone" data-z="0" style="left:17%">A<small>Upper arm</small></button><button type="button" class="zone" data-z="1" style="left:31%">B<small>Elbow</small></button><button type="button" class="zone" data-z="2" style="left:46%">C<small>On the wound</small></button><button type="button" class="zone" data-z="3" style="left:68%">D<small>Wrist</small></button></div><p class="mfb" id="mfb" aria-live="polite"></p>`);
+      const fb = ['', 'Never over a joint. It won\'t compress the artery against bone.', 'Not on the wound. Go 2–3 inches above it, toward the heart.', 'Below the wound does nothing. Blood comes from the heart side.'];
+      $$('#medQ .zone').forEach(b => b.addEventListener('click', () => {
+        const z = +b.dataset.z;
+        if (z === 0) { b.classList.add('ok'); tone(880,.08,'sine',.04); setTimeout(() => STEPS.bleed(1), 450); }
+        else { b.classList.add('no'); b.disabled = true; MED.data.misses++; MED.t0 -= 3; $('#mfb').textContent = fb[z]; tone(220,.15,'square',.03); }
+      }));
+      return;
+    }
+    if (step === 1) return holdBtn('⟳ TIGHTEN WINDLASS', 2.4, () => { V.pt.hr = 112; V.pt.bp = [104, 64]; V.pt.alarm = false; const t = new Date().toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit', hour12:false}); medEnd(true, `Bleeding stopped. You wrote <b>TK ${t}</b> on the tourniquet. Leave it on for the paramedics.`); }, 'High and tight on the upper arm. Now crank it until the bleeding stops.');
+  },
+  choke(step){
+    if (step === 0) return choice('They nodded yes. What now?', [['5 back blows, then 5 abdominal thrusts', true], ['Give them water to wash it down', false, 'Liquids can make an obstruction worse.'], ['Reach in and sweep it out blind', false, 'Blind finger sweeps can push it deeper. Only remove it if you can see it.']], () => STEPS.choke(1));
+    if (step === 1) {
+      MED.data.bb = 0; MED.data.at = 0; const need = 3 + Math.floor(Math.random()*5);
+      q(`<p class="mp">Lean them forward. Alternate: 5 back blows, then 5 abdominal thrusts.</p><div class="mopts two"><button type="button" id="mBB"><kbd>B</kbd>Back blow <span id="nBB">0/5</span></button><button type="button" id="mAT"><kbd>T</kbd>Abdominal thrust <span id="nAT">0/5</span></button></div><p class="mfb" id="mfb" aria-live="polite"></p>`);
+      const press = kind => {
+        const d = MED.data, total = d.bb + d.at, phase = Math.floor(total/5) % 2 === 0 ? 'bb' : 'at';
+        if (kind !== phase) { $('#mfb').textContent = phase === 'bb' ? 'Finish your 5 back blows first.' : 'Now 5 abdominal thrusts.'; MED.data.misses++; tone(220,.12,'square',.03); return; }
+        d[kind]++; noise(.06, kind === 'bb' ? 400 : 250, .12, 'lowpass');
+        const cur = (total + 1) % 5 || 5;
+        $('#nBB').textContent = (kind === 'bb' ? cur : 0) + '/5'; $('#nAT').textContent = (kind === 'at' ? cur : 0) + '/5';
+        $('#mBB').classList.toggle('nx', cur === 5 ? kind === 'at' : kind === 'bb'); $('#mAT').classList.toggle('nx', cur === 5 ? kind === 'bb' : kind === 'at');
+        $('#mfb').textContent = '';
+        if (d.bb + d.at >= need + 5) { V.pt.spo2 = 97; V.pt.hr = 104; V.pt.alarm = false; medEnd(true, 'The object came out and they\'re coughing hard. Keep them seated; they should still get checked out.'); }
+      };
+      $('#mBB').addEventListener('click', () => press('bb')); $('#mAT').addEventListener('click', () => press('at'));
+      MED.keys = e => { if (e.key === 'b' || e.key === 'B') press('bb'); if (e.key === 't' || e.key === 'T') press('at'); };
+    }
+  },
+  ana(step){
+    if (step === 0) return choice('What first?', [['Epinephrine auto-injector, outer thigh', true], ['Antihistamine pill and wait', false, 'Antihistamines are too slow for airway swelling. Epinephrine first.'], ['Their asthma inhaler', false, 'An inhaler won\'t reverse anaphylaxis. Epinephrine first.']], () => STEPS.ana(1));
+    if (step === 1) return holdBtn('💉 HOLD AGAINST OUTER THIGH', 3, () => { V.pt.hr = 108; V.pt.bp = [108, 68]; V.pt.spo2 = 95; V.pt.alarm = false; medEnd(true, 'Wheezing eases within minutes. Note the time, get EMS, and keep a second injector ready in case symptoms come back.'); }, 'Blue cap off, orange tip to the outer thigh, push until it clicks, then hold.');
+  },
+  stroke(step){
+    if (step === 0) {
+      const opts = [['Face drooping', 1], ['Arm drifting', 1], ['Speech slurred', 1], ['Fever', 0], ['Rash', 0], ['Ear pain', 0]];
+      q(`<p class="mp">Tap every stroke sign you see (BE FAST).</p><div class="mopts chips">${opts.map((o,i) => `<button type="button" data-i="${i}" aria-pressed="false">${o[0]}</button>`).join('')}</div><button type="button" class="mgo" id="mgo">Confirm signs ⏎</button><p class="mfb" id="mfb" aria-live="polite"></p>`);
+      $$('#medQ .chips button').forEach(b => b.addEventListener('click', () => { const on = b.getAttribute('aria-pressed') !== 'true'; b.setAttribute('aria-pressed', String(on)); tick(); }));
+      $('#mgo').addEventListener('click', () => {
+        const sel = $$('#medQ .chips button').map(b => b.getAttribute('aria-pressed') === 'true'), ok = sel.every((v,i) => v === !!opts[i][1]);
+        if (ok) { tone(880,.08,'sine',.04); STEPS.stroke(1); } else { MED.data.misses++; MED.t0 -= 3; tone(220,.15,'square',.03); $('#mfb').textContent = 'Look again: face, arms and speech are the classic three.'; }
+      });
+      return;
+    }
+    if (step === 1) return choice('What matters most next?', [['Note the time it started and get them to a stroke center', true], ['Give an aspirin', false, 'Not until a CT rules out a bleed. Aspirin can make a bleeding stroke worse.'], ['Let them rest and see if it passes', false, 'Time is brain. Every minute counts, even if symptoms fade.']], () => { V.pt.alarm = false; medEnd(true, 'Symptom onset logged and the captain is diverting to a field with a stroke center. That timestamp decides which treatments they can get.'); });
+  },
+  sugar(step){
+    if (step === 0) return choice('They can swallow. What do you give?', [['15 g fast sugar: juice or glucose tabs', true], ['A dose from their insulin pen', false, 'Insulin drops sugar further. That\'s the opposite of what they need.'], ['Nothing, wait for EMS', false, 'If they can swallow safely, fast sugar now is the fix.']], () => { V.pt.hr = 92; V.pt.alarm = false; V.pt.who = 'PT · BGL 96'; medEnd(true, 'Ten minutes later they\'re clear-headed. Recheck in 15 minutes, then a real snack.'); });
+  }
+};
+function compressions(onDone){
+  MED.comp = []; const target = MED.data.target;
+  q(`<p class="mp">Hands center of chest. Push at <b>100–120 per minute</b>: tap the pad (or press <kbd>Space</kbd>).</p><button type="button" class="mpad" id="mpad"><b id="mcnt">0/${target}</b><span id="mrate">— /min</span></button><div class="mgauge" aria-hidden="true"><i class="band"></i><i class="ndl" id="mndl"></i><span>60</span><span>100</span><span>120</span><span>160</span></div><p class="mfb" id="mfb" aria-live="polite"></p>`);
+  MED.onComp = () => {
+    const n = nowS(); MED.comp.push(n); addBeat(n, 'cpr'); tone(140,.05,'sine',.05);
+    const c = MED.comp, k = c.length; $('#mcnt').textContent = k + '/' + target;
+    if (k >= 2) {
+      const iv = c.slice(-4), rate = 60/((iv[iv.length-1] - iv[0])/(iv.length - 1));
+      $('#mrate').textContent = Math.round(rate) + ' /min';
+      $('#mndl').style.left = clamp((rate - 60)/100, 0, 1)*100 + '%';
+      const good = rate >= 98 && rate <= 125; MED.data.good = (MED.data.good || 0) + (good ? 1 : 0); MED.data.cn = (MED.data.cn || 0) + 1;
+      $('#mfb').textContent = rate < 98 ? 'Faster.' : rate > 125 ? 'Slow down a little.' : 'Good rate. Keep going.';
+      $('#mpad').classList.toggle('good', good);
+    }
+    if (k >= target) { MED.onComp = null; onDone(); }
+  };
+  $('#mpad').addEventListener('pointerdown', e => { e.preventDefault(); MED.onComp && MED.onComp(); });
+  $('#mpad').addEventListener('keydown', e => { if ((e.key === ' ' || e.key === 'Enter') && !e.repeat) { e.preventDefault(); MED.onComp && MED.onComp(); } });
+  setTimeout(() => $('#mpad').focus(), 30);
+}
+function medTap(){ if (MED.onComp) MED.onComp(); }
+function medShock(){
+  if (!MED.wantShock || V.charging) return; V.charging = true; MED.wantShock = false; chargeTone();
+  $('#mfb') && ($('#mfb').textContent = 'Charging… everyone clear!');
+  setTimeout(() => { zap(); V.charging = false; V.pt.rhythm = 'ASYSTOLE'; STEPS.arrest(3); }, 1000);
+}
+function medEnd(ok, msg){
+  if (!MED.on || med.classList.contains('done') || med.classList.contains('fail')) return;
+  clearInterval(MED.tick); MED.onComp = null; MED.keys = null; MED.wantShock = false;
+  const secs = nowS() - MED.t0, S = SCEN[MED.sc];
+  let score = 0;
+  if (ok) {
+    MED.saves++; ss.set('saves', MED.saves);
+    const cq = MED.data.cn ? MED.data.good/MED.data.cn : 1;
+    score = Math.round(clamp(100 - MED.data.misses*12 - Math.max(0, secs - S.limit*.4)*1.2, 35, 100)*(.6 + .4*cq));
+  }
+  $('#vmSaves').textContent = MED.saves;
+  med.classList.add(ok ? 'done' : 'fail');
+  q(`<div class="mres"><b>${ok ? '✓ PATIENT STABLE' : '✕ PATIENT DETERIORATED'}</b>${ok ? `<span>SCORE ${score} · ${secs.toFixed(1)} s${MED.data.cn ? ' · CPR RATE ON TARGET ' + Math.round(MED.data.good/MED.data.cn*100) + '%' : ''}</span>` : ''}</div>
+    <p class="mp">${msg}</p><p class="mlearn"><b>Remember</b> ${esc(S.learn)}</p>
+    <p class="mwho">Sushin is a licensed EMT (NREMT · New Jersey · Indiana) with 56+ clinical hours across the ER and the ambulance.</p>
+    <div class="mopts two"><button type="button" id="mLog">Read his run reports · LOGBK</button><button type="button" id="mAgain">${ok ? 'Run another call' : 'Try again'}</button></div>`);
+  $('#mLog').addEventListener('click', () => { medClose(); go('logbk'); });
+  $('#mAgain').addEventListener('click', () => { const k = ok ? null : MED.sc; medClose(); setTimeout(() => medStart(k, true), 200); });
+  setTimeout(() => $('#mAgain').focus(), 30);
+  if (ok) { chime(); toast('SAVE <b>' + MED.saves + '</b> · ' + esc(S.title)); } else tone(180,.4,'sawtooth',.03);
+  setTimeout(() => { if (V.pt) { V.pt = null; V.beats = []; V.next = nowS() + .3; vm.classList.remove('alarm'); } }, ok ? 6000 : 1500);
+}
+function medClose(){
+  clearInterval(MED.tick); med.hidden = true; MED.on = false; MED.onComp = null; MED.keys = null; MED.wantShock = false;
+  document.body.classList.remove('medcall');
+  if (V.pt) { V.pt = null; V.beats = []; V.next = nowS() + .3; }
+}
+$('#medX').addEventListener('click', medClose);
+med.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); return medClose(); }
+  if (MED.keys) MED.keys(e);
+  if (/^[1-4]$/.test(e.key)) { const b = $$('#medQ .mopts:not(.chips):not(.two) button')[+e.key - 1]; if (b && !b.disabled) { e.preventDefault(); b.click(); } }
+  if ((e.key === 's' || e.key === 'S') && MED.wantShock) { e.preventDefault(); medShock(); }
+});
+if (/fdtest/.test(location.hash)) window.FD_TEST = {medStart, medEnd};
+$('#vmSaves').textContent = MED.saves;
+$('#vmAuto').addEventListener('click', () => { const off = ls.get('fd.med') === 'off'; ls.set('fd.med', off ? 'on' : 'off'); $('#vmAuto').setAttribute('aria-pressed', String(off)); toast('Random medical calls <b>' + (off ? 'ON' : 'OFF') + '</b>'); });
+$('#vmAuto').setAttribute('aria-pressed', String(ls.get('fd.med') !== 'off'));
+addEventListener('keydown', e => {
+  if (!MED.onComp || e.key !== ' ' || e.repeat || /INPUT|TEXTAREA|SELECT|BUTTON/.test(e.target.tagName)) return;
+  e.preventDefault(); MED.onComp();
+}, true);
 
 /* ================= radar ================= */
 const scope = $('#scope'), rc = scope.getContext('2d'), RC = 450, RR = 410;
@@ -919,14 +1224,16 @@ function openCert(i){
 
 /* ================= CENTR radio ================= */
 const STATIONS = [
-  {f:118.700, id:'KLAF TWR', name:'Purdue Tower', type:'twr'},
-  {f:121.800, id:'KLAF GND', name:'Purdue Ground', type:'gnd'},
-  {f:120.750, id:'KLAF ATIS', name:'Information', type:'atis'},
+  {f:119.600, id:'KLAF TWR', name:'Lafayette Tower', type:'twr', mounts:['klaf']},
+  {f:121.900, id:'KLAF GND', name:'Lafayette Ground', type:'gnd', mounts:['klaf1_gnd2', 'klaf1_gnd']},
+  {f:123.850, id:'GRISSOM APP', name:'Approach · Departure', type:'app', mounts:['klaf1_app']},
+  {f:127.750, id:'KLAF ATIS', name:'Information', type:'atis'},
   {f:121.500, id:'GUARD', name:'Emergency', type:'guard'}
 ];
 const LINES = {
-  twr:['Purdue Tower, Cessna Four Two Romeo, holding short runway two eight, ready for departure.','Cessna Four Two Romeo, Purdue Tower, runway two eight, cleared for takeoff.','Boiler Two One, make left traffic runway two eight, report midfield downwind.','Boiler Two One, runway two eight, cleared to land.','Piper Six Echo Lima, traffic two o\'clock, three miles, a Cessna on the downwind.'],
-  gnd:['Purdue Ground, Piper Six Echo Lima, at the FBO with information Alpha, taxi for departure.','Piper Six Echo Lima, Purdue Ground, runway two eight, taxi via Alpha.','Cessna Four Two Romeo, Purdue Ground, taxi to parking via Alpha, monitor ground.'],
+  twr:['Lafayette Tower, Cessna Four Two Romeo, holding short runway two eight, ready for departure.','Cessna Four Two Romeo, Lafayette Tower, runway two eight, cleared for takeoff.','Boiler Two One, make left traffic runway two eight, report midfield downwind.','Boiler Two One, runway two eight, cleared to land.','Piper Six Echo Lima, traffic two o\'clock, three miles, a Cessna on the downwind.'],
+  gnd:['Lafayette Ground, Piper Six Echo Lima, at the FBO with information Alpha, taxi for departure.','Piper Six Echo Lima, Lafayette Ground, runway two eight, taxi via Alpha.','Cessna Four Two Romeo, Lafayette Ground, taxi to parking via Alpha, monitor ground.'],
+  app:['Grissom Approach, Boiler One Four, level three thousand five hundred, information Alpha.','Boiler One Four, Grissom Approach, Purdue altimeter three zero zero two, expect visual approach runway two eight.','November Four Two Romeo, radar contact, climb and maintain four thousand.'],
   guard:['(Guard is quiet. Quiet is good.)']
 };
 function atis(){
@@ -937,11 +1244,129 @@ function atis(){
   const wx = c.storm ? ' Thunderstorm, heavy rain.' : c.kind === 'rain' ? ' Light rain.' : c.kind === 'snow' ? ' Snow.' : c.fog ? ' Fog.' : '';
   return `Purdue University Airport information Alpha, ${spell(z)} Zulu. Wind ${wind}. Visibility ${vis}.${wx} ${sky.charAt(0).toUpperCase() + sky.slice(1)}. Altimeter three zero zero two. Runway two eight in use. Advise on initial contact you have information Alpha.`;
 }
-let fA = 121.5, fS = 118.7, station = null, nextTx = 0, txBusy = false, radioVis = false;
+let fA = 121.5, fS = 119.6, station = null, nextTx = 0, txBusy = false, radioVis = false;
 const ff = f => f.toFixed(3);
-$('#dir').innerHTML = STATIONS.map((s,i) => `<button type="button" data-i="${i}"><b>${ff(s.f)}</b>${esc(s.id)}</button>`).join('');
+$('#dir').innerHTML = STATIONS.map((s,i) => `<button type="button" data-i="${i}"><b>${ff(s.f)}</b>${esc(s.id)}${s.mounts ? '<i class="lv">LIVE</i>' : '<i>SIM</i>'}</button>`).join('');
 $$('#dir button').forEach(b => b.addEventListener('click', () => { fA = STATIONS[+b.dataset.i].f; showF(); tone(700,.05,'square',.03); }));
 rove($('#dir'), 'button', {h:true});
+
+/* Live ATC audio. Streams play straight from LiveATC.net's servers in the visitor's browser
+   (never proxied or re-served by this site), only after the visitor presses LISTEN LIVE,
+   and stop when the tab is hidden so idle tabs don't hold one of LiveATC's connections. */
+const LA = {on:false, el:null, gain:null, an:null, buf:null, st:null, mi:0, mount:null, state:'off', vol:.8, level:0, hiddenStop:false};
+const LA_OK = window.FD_LIVEATC !== false;
+function laEnsure(){
+  if (LA.el) return;
+  const a = new Audio(); a.crossOrigin = 'anonymous'; a.preload = 'none'; LA.el = a;
+  a.addEventListener('playing', () => laState('live'));
+  a.addEventListener('waiting', () => { if (LA.mount) laState('buffer'); });
+  a.addEventListener('error', () => { if (LA.mount && a.error && a.getAttribute('src')) laFail(); });
+  const c = ac();
+  if (c && c.createMediaElementSource) {
+    try {
+      const src = c.createMediaElementSource(a), hp = c.createBiquadFilter(), lp = c.createBiquadFilter();
+      hp.type = 'highpass'; hp.frequency.value = 250; lp.type = 'lowpass'; lp.frequency.value = 3600;
+      LA.gain = c.createGain(); LA.gain.gain.value = LA.vol; LA.an = c.createAnalyser(); LA.an.fftSize = 512; LA.buf = new Uint8Array(LA.an.fftSize);
+      src.connect(hp).connect(lp).connect(LA.gain).connect(c.destination); lp.connect(LA.an);
+    } catch(e){ LA.gain = LA.an = null; a.volume = LA.vol; }
+  } else a.volume = LA.vol;
+}
+function laState(s){
+  const prev = LA.state; LA.state = s; const b = $('#lvBtn'), live = s === 'live';
+  b.setAttribute('aria-pressed', String(LA.on)); b.classList.toggle('on', LA.on); b.classList.toggle('live', live);
+  $('#lvT').textContent = !LA.on ? 'LISTEN LIVE' : s === 'live' ? 'LIVE · ' + (station ? station.id : '') : s === 'buffer' || s === 'connect' ? 'CONNECTING…' : s === 'down' ? 'FEED DOWN · SIM' : s === 'tap' ? 'TAP TO PLAY' : s === 'nolive' ? 'NO LIVE FEED' : 'LISTEN LIVE';
+  const pill = $('#lvPill'); pill.hidden = !(LA.on && !radioVis && (live || s === 'buffer' || s === 'connect'));
+  $('#lvPillT').textContent = station ? station.id + ' · ' + ff(station.f) : '';
+  if (s === 'live' && prev !== 'live' && station) feed(`<em>LIVE</em> ${esc(station.id)} ${ff(station.f)} · audio from <a href="https://www.liveatc.net/" target="_blank" rel="noopener">LiveATC.net</a>`);
+  if (s === 'down' && prev !== 'down') feed(`<em>${station ? esc(station.id) : ''}</em> LiveATC feed is offline right now. Showing sample traffic.`);
+}
+function laStop(){
+  LA.tok = (LA.tok || 0) + 1; LA.mount = null;
+  if (LA.ctl) { try { LA.ctl.abort(); } catch(e){} LA.ctl = null; }
+  if (!LA.el) return;
+  try { LA.el.pause(); LA.el.removeAttribute('src'); LA.el.load(); } catch(e){}
+}
+// LiveATC feeds are ~8 kbps MP3, so a bare <audio src> can buffer 20+ seconds before it starts.
+// Feeding the same stream into MediaSource starts playback as soon as the first bytes arrive.
+function laPlay(mount){
+  laEnsure(); if (LA.mount === mount) return;
+  laStop(); LA.mount = mount; const tok = LA.tok; laState('connect'); squelch(.18);
+  const url = 'https://d.liveatc.net/' + mount + '?nocache=' + Date.now(), a = LA.el;
+  const MS = window.ManagedMediaSource || window.MediaSource;
+  let mse = false; try { mse = !!(MS && MS.isTypeSupported('audio/mpeg') && window.fetch && window.ReadableStream && window.AbortController); } catch(e){}
+  if (!mse) return laDirect(url, tok);
+  const ms = new MS(), ctl = new AbortController(); LA.ctl = ctl;
+  a.disableRemotePlayback = true; a.src = URL.createObjectURL(ms);
+  const p0 = a.play(); if (p0 && p0.catch) p0.catch(() => { if (tok === LA.tok && LA.state !== 'live') laState('tap'); });
+  ms.addEventListener('sourceopen', async () => {
+    if (tok !== LA.tok) return;
+    let sb; try { sb = ms.addSourceBuffer('audio/mpeg'); sb.mode = 'sequence'; } catch(e){ return laDirect(url, tok); }
+    let q = [], started = false;
+    const pump = () => {
+      if (tok !== LA.tok || sb.updating || !q.length) return;
+      try {
+        if (a.buffered.length && a.currentTime - a.buffered.start(0) > 40) { sb.remove(a.buffered.start(0), a.currentTime - 10); return; }
+        sb.appendBuffer(q.shift());
+      } catch(e){ q = []; }
+    };
+    sb.addEventListener('updateend', pump);
+    try {
+      const res = await fetch(url, {signal:ctl.signal, cache:'no-store'});
+      if (!res.ok || !res.body) throw new Error('feed ' + res.status);
+      const rd = res.body.getReader();
+      for (;;) {
+        const r = await rd.read(); if (r.done || tok !== LA.tok) break;
+        q.push(r.value); pump();
+        if (!started) { started = true; if (a.paused) { const pp = a.play(); if (pp && pp.catch) pp.catch(() => { if (tok === LA.tok) laState('tap'); }); } }
+        if (a.buffered.length) { const end = a.buffered.end(a.buffered.length - 1); if (end - a.currentTime > 6) a.currentTime = end - 1.5; }
+      }
+      if (tok === LA.tok) laFail();
+    } catch(e){ if (tok === LA.tok && !ctl.signal.aborted) laFail(); }
+  }, {once:true});
+}
+function laDirect(url, tok){
+  if (tok !== LA.tok) return; LA.el.src = url;
+  const pp = LA.el.play(); if (pp && pp.catch) pp.catch(() => { if (tok === LA.tok) laFail(); });
+}
+function laFail(){
+  const s = station; if (!LA.on || !s || !s.mounts) return;
+  if (LA.mi + 1 < s.mounts.length) { LA.mi++; LA.mount = null; return laPlay(s.mounts[LA.mi]); }
+  laStop(); laState('down');
+}
+function laTune(){
+  if (!LA.on || !LA_OK) return;
+  if (station && station.mounts) { if (!LA.mount || !station.mounts.includes(LA.mount)) { LA.mi = 0; laPlay(station.mounts[0]); } }
+  else { laStop(); laState('nolive'); }
+}
+function laToggle(force){
+  const on = force == null ? !LA.on : force; if (on === LA.on) return;
+  LA.on = on;
+  if (on) {
+    const c = ac(); if (c && c.resume) c.resume();
+    if (!station || !station.mounts) { fA = STATIONS[0].f; showF(); }
+    mark('radio'); laTune(); toast('LIVE ATC · <b>' + esc(station.id) + '</b> · audio from LiveATC.net', 3200);
+  } else { laStop(); laState('off'); feed('<em>LIVE</em> audio off'); }
+}
+function laNext(){ const L = STATIONS.filter(s => s.mounts); const i = L.indexOf(station); fA = L[(i + 1) % L.length].f; showF(); tone(700,.05,'square',.03); }
+function laMeter(){
+  let lvl = 0;
+  if (LA.an && LA.state === 'live') { LA.an.getByteTimeDomainData(LA.buf); let s = 0; for (let i = 0; i < LA.buf.length; i += 4) { const v = (LA.buf[i] - 128)/128; s += v*v; } lvl = Math.sqrt(s/(LA.buf.length/4)); }
+  else if (LA.state === 'live') lvl = .05 + Math.random()*.05;
+  LA.level = lerp(LA.level, lvl, .4);
+  $('#lvMeter').style.width = Math.round(clamp(LA.level*6, 0, 1)*100) + '%';
+  if (LA.on && LA.state === 'live') $('#rxInd').classList.toggle('rx', LA.level > .035);
+}
+if (!LA_OK) $('#live').hidden = true;
+$('#lvBtn').addEventListener('click', () => laToggle());
+$('#lvVol').addEventListener('input', e => { LA.vol = +e.target.value; if (LA.gain) LA.gain.gain.value = LA.vol; else if (LA.el) LA.el.volume = LA.vol; });
+$('#lvPillNext').addEventListener('click', laNext);
+$('#lvPillX').addEventListener('click', () => laToggle(false));
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden && LA.on && LA.mount) { LA.hiddenStop = true; laStop(); }
+  else if (!document.hidden && LA.hiddenStop) { LA.hiddenStop = false; laTune(); }
+});
+setInterval(laMeter, 90);
+
 function showF(){
   $('#fA').textContent = ff(fA); $('#fS').textContent = ff(fS); $('#knob').setAttribute('aria-valuenow', fS.toFixed(3));
   const s = STATIONS.find(x => Math.abs(x.f - fA) < .001) || null;
@@ -949,8 +1374,9 @@ function showF(){
   if (s !== station) {
     station = s; nextTx = nowS() + 1.2; try { speechSynthesis.cancel(); } catch(e){}
     $('#stn').textContent = s ? `${s.id} · ${s.name}` : `${ff(fA)} · NO STATION`;
-    feed(s ? `<em>TUNED</em> ${esc(s.id)} on ${ff(fA)} (simulated)` : `<em>${ff(fA)}</em> static… no station`);
+    if (!LA.on || !s || !s.mounts) feed(s ? `<em>TUNED</em> ${esc(s.id)} on ${ff(fA)}${s.mounts ? ' · press LISTEN LIVE for live audio' : ' (simulated)'}` : `<em>${ff(fA)}</em> static… no station`);
     if (s && s.type !== 'guard') mark('radio');
+    laTune();
   }
 }
 function feed(html){ const f = $('#feed'); f.insertAdjacentHTML('beforeend', `<p>${html}</p>`); while (f.children.length > 5) f.removeChild(f.firstChild); }
@@ -967,10 +1393,12 @@ $('.rface').addEventListener('keydown', e => {
   if (/INPUT|TEXTAREA/.test(e.target.tagName)) return;
   if (e.target === knob && (e.key === 'ArrowUp' || e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === 'ArrowLeft')) { e.preventDefault(); tune(e.key === 'ArrowUp' || e.key === 'ArrowRight' ? 1 : -1); kAng += .15; knob.style.transform = `rotate(${kAng}rad)`; }
   if (e.key === 'x' || e.key === 'X') { e.preventDefault(); swapF(); }
+  if (e.key === 'l' || e.key === 'L') { e.preventDefault(); laToggle(); }
 });
-new IntersectionObserver(es => radioVis = es[0].isIntersecting).observe($('.radio'));
+new IntersectionObserver(es => { radioVis = es[0].isIntersecting; laState(LA.state); }).observe($('.radio'));
 setInterval(() => {
   const n = nowS(); if (!station || !radioVis || txBusy || n < nextTx) return;
+  if (LA.on && station.mounts && LA.state !== 'down') return;
   const text = station.type === 'atis' ? atis() : LINES[station.type][Math.floor(Math.random()*LINES[station.type].length)];
   txBusy = true; $('#rxInd').classList.add('rx');
   feed(`<em>${esc(station.id.split(' ').pop())}</em> ${esc(text)}`);
@@ -1109,6 +1537,49 @@ addEventListener('keydown', e => {
 });
 addEventListener('keyup', e => { const k = e.key.toLowerCase(); if (k === 'arrowleft' || k === 'a') hk.l = 0; if (k === 'arrowright' || k === 'd') hk.r = 0; if (k === 'w') hk.u = 0; if (k === 's') hk.d = 0; });
 
+/* ================= waypoint arrival =================
+   Each section waits off-screen until you reach its flight level: panels on the left slide in
+   from the left, panels on the right from the right, and centered ones come up from in front. */
+const lvl = $('#lvl');
+let lvlT = null;
+function levelOff(w){
+  if (!lvl) return;
+  lvl.innerHTML = `<small>LEVEL OFF</small><b>${esc(fmtAlt(w.alt))}</b><span>${esc(w.code)} · ${esc(w.name.toUpperCase())}</span>`;
+  lvl.classList.remove('on'); void lvl.offsetWidth; lvl.classList.add('on');
+  clearTimeout(lvlT); lvlT = setTimeout(() => lvl.classList.remove('on'), 1700);
+}
+function prepArrivals(){
+  if (reduce || !('IntersectionObserver' in window)) return;
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (!e.isIntersecting) return;
+    const sec = e.target; io.unobserve(sec); sec.classList.add('arr');
+    const w = WP.find(x => x.id === sec.id); if (w && afterBootDone) levelOff(w);
+  }), {rootMargin:'0px 0px -40% 0px'});
+  const vw = innerWidth;
+  WP.slice(1).forEach(w => {
+    const sec = document.getElementById(w.id), wrap = sec && $('.wrap', sec); if (!wrap) return;
+    const r0 = sec.getBoundingClientRect(); if (r0.top < innerHeight*.68) return; // already in view on load
+    const items = [];
+    for (const ch of wrap.children) {
+      const cs = getComputedStyle(ch), kids = Array.from(ch.children).filter(k => k.offsetWidth && getComputedStyle(k).position !== 'absolute');
+      if ((cs.display.includes('grid') || cs.display.includes('flex')) && kids.length > 1 && kids.length <= 12 && kids.some(k => k.offsetWidth < ch.offsetWidth*.8)) items.push(...kids); else items.push(ch);
+    }
+    $$('#lbRows > *', sec).slice(0, 10).forEach(k => items.push(k));
+    const side = Math.min(vw*.18, 220);
+    items.forEach((it, i) => {
+      const b = it.getBoundingClientRect(), c = (b.left + b.width/2)/vw;
+      const dir = b.width > vw*.7 ? 0 : c < .42 ? -1 : c > .58 ? 1 : 0;
+      it.classList.add('fly');
+      it.style.setProperty('--fx', dir*side + 'px');
+      it.style.setProperty('--fy', dir ? '24px' : '70px');
+      it.style.setProperty('--fs', dir ? '.96' : '.84');
+      it.style.setProperty('--fr', dir*-14 + 'deg');
+      it.style.setProperty('--fd', Math.min(i*70, 700) + 'ms');
+    });
+    sec.classList.add('pre'); io.observe(sec);
+  });
+}
+
 /* ================= section tracking ================= */
 let curIdx = 0, lastAnnounced = 0;
 function onWaypoint(i){
@@ -1156,8 +1627,17 @@ function drawCursor(dt){
   if (pts.length > 80) pts.splice(0, pts.length - 80);
 }
 
+/* ================= takeoff callouts ================= */
+const CALLOUTS = [[.16, 'AIRSPEED ALIVE', 'RWY 28 · KLAF'], [ROT - .02, 'ROTATE', 'V<sub>R</sub> 55 KT'], [.84, 'POSITIVE RATE', 'CLIMB · 3,000 FT · CREWS']];
+function callout(big, small){
+  const c = $('#callout'); c.innerHTML = esc(big) + (small ? `<small>${small}</small>` : ''); c.classList.add('on');
+  tone(1180,.07,'sine',.03); tone(1580,.09,'sine',.03,.08);
+  clearTimeout(calloutT); calloutT = setTimeout(() => c.classList.remove('on'), 1400);
+}
+
 /* ================= main loop ================= */
 let heroVis = true; new IntersectionObserver(es => heroVis = es[0].isIntersecting).observe(hero);
+let rollS = 0, lastTk = 0, calloutT = null; const copyStyle = copyEl.style;
 let lastClip = '', altShown = 0, lastT = performance.now(), lastAlt = 0, vs = 0, lastSY = scrollY, spd = 0, scrollKick = 0, colorT = 0;
 const altV = $('#altV'), spdV = $('#spdV'), altT = $('#altT'), spdT = $('#spdT'), bankPtr = $('#bankPtr');
 function frame(now){
@@ -1168,13 +1648,19 @@ function frame(now){
   const dy = scrollY - lastSY; lastSY = scrollY;
   vs = lerp(vs, (altShown - lastAlt)/Math.max(dt, .001)*60, .1); lastAlt = altShown;
   scrollKick = Math.max(scrollKick*Math.pow(.3, dt), Math.abs(dy)*1.2);
-  const inH = scrollY < hero.offsetHeight*.82; document.body.classList.toggle('inhero', inH);
-  const clipB = inH ? `inset(0 0 ${Math.max(0, innerHeight - (hero.offsetHeight - scrollY))}px 0)` : 'none';
+  const R = rollLen(), tk = rollTk(scrollY), hEnd = hero.offsetTop + hero.offsetHeight;
+  const inH = scrollY < hEnd - innerHeight*.18; document.body.classList.toggle('inhero', inH);
+  const clipB = inH ? `inset(0 0 ${Math.max(0, innerHeight - (hEnd - scrollY))}px 0)` : 'none';
   if (clipB !== lastClip) { lastClip = clipB; $('#fx').style.clipPath = clipB; }
   const p = altShown/41000, S = skyAt(p);
-  const heroGap = HG.gy - scrollY;
   const cruiseY = SH*(.64 + .08*smooth(0, 1, p));
-  const hy = lerp(clamp(heroGap, SH*.25, SH), cruiseY, smooth(.1, .75, scrollY/Math.max(1, hero.offsetHeight)));
+  const pitchMax = Math.max(0, SH*1.08 - HG.gy), pitch = reduce ? 0 : pitchMax*smooth(ROT - .02, 1, tk);
+  let hy;
+  if (reduce) hy = lerp(clamp(HG.gy - scrollY, SH*.25, SH), cruiseY, smooth(.1, .75, scrollY/Math.max(1, hero.offsetHeight)));
+  else { const after = scrollY - (hero.offsetTop + R); hy = after <= 0 ? HG.gy + pitch : lerp(HG.gy + pitchMax, cruiseY, smooth(0, innerHeight*1.1, after)); }
+  const rS = reduce ? 0 : rollDist(tk);
+  if (!reduce) { W0.z += (rS - rollS)*1.6; W0.hold = 1 - smooth(ROT, 1, tk); W0.eye = lerp(150, 400, smooth(.2, 1, tk)); }
+  rollS = rS;
   drawSky(S, t, hy, dt, clamp(vs/6000, -1.5, 1.5)); drawFx(S, dt, t);
   if ((colorT += dt) > 1) { colorT = 0; heroColors(); }
   const rw = route.clientWidth - 28, rp = clamp((curIdx + (WP[curIdx+1] ? (st.alt - WP[curIdx].alt)/(WP[curIdx+1].alt - WP[curIdx].alt) : 0))/(WP.length - 1), 0, 1);
@@ -1189,9 +1675,19 @@ function frame(now){
     curR = lerp(curR, reduce ? 0 : tr, .07); curP = lerp(curP, reduce ? 0 : tp, .07);
     const climb = clamp(altShown/3000, 0, 1);
 
-    const rs = 1/(1 + altShown/700); rwy.setAttribute('transform', `scale(${rs.toFixed(4)})`); const hf = smooth(.04, .4, scrollY/Math.max(1, hero.offsetHeight)); rwy.setAttribute('opacity', (1 - hf).toFixed(2)); $('#hzLine').setAttribute('stroke-opacity', (.75*(1 - hf)).toFixed(2)); $('#papi').setAttribute('opacity', (1 - hf).toFixed(2));
+    att.setAttribute('transform', `translate(0 ${pitch.toFixed(1)})`);
+    drawRunway(rS, 1 + (reduce ? 0 : heroAlt(tk)/120));
+    $('#hzLine').setAttribute('stroke-opacity', (.75*(1 - smooth(ROT, .9, tk))).toFixed(2));
+    if (!reduce) {
+      const cf = smooth(.04, .28, tk);
+      copyStyle.opacity = (1 - cf).toFixed(3); copyStyle.transform = cf > 0 ? `translateY(${(-cf*80).toFixed(1)}px) scale(${(1 + cf*.08).toFixed(3)})` : '';
+      copyStyle.visibility = cf > .98 ? 'hidden' : '';
+      for (const [at, big, small] of CALLOUTS) if (lastTk < at && tk >= at) callout(big, small);
+      lastTk = tk;
+    }
     bankPtr.setAttribute('transform', `rotate(${(-curR).toFixed(2)})`);
-    spd = lerp(spd, (scrollY > 4 ? 60 + clamp(altShown/10000, 0, 1)*200 : 0) + Math.abs(dy)*.8, .06);
+    const spT = reduce || scrollY > hero.offsetTop + R ? (scrollY > 4 ? 74 + clamp(altShown/10000, 0, 1)*200 : 0) + Math.abs(dy)*.8 : tk <= ROT ? 58*Math.pow(clamp((tk - .03)/(ROT - .03), 0, 1), .85) : 58 + 16*smooth(ROT, .9, tk);
+    spd = lerp(spd, spT, .15);
     if (innerWidth > 900 && HG.tS) {
       tape(altT, altShown, 100, 58, HG.tA, 'R', v => v.toLocaleString('en-US'));
       tape(spdT, spd, 10, 46, HG.tS, 'L');
@@ -1217,6 +1713,7 @@ if (!window.FD_PREVIEW && !/wx=/.test(location.hash)) {
 
 /* ================= start ================= */
 sizeCanvases(); measure(); heroColors(); selectCat(1);
+prepArrivals();
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { measure(); });
 onWaypoint(0);
 runBoot(false);

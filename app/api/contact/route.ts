@@ -7,6 +7,11 @@ import { saveContactSubmission, getIpGeolocation } from "@/lib/db"
 // Initialize Resend - Vercel will automatically provide RESEND_API_KEY
 const resend = new Resend(process.env.RESEND_API_KEY || "")
 
+// Everything a visitor types is escaped before it goes into an email body, so the form can't be
+// used to send arbitrary HTML from noreply@sushinbandha.com.
+const esc = (v: string) =>
+  v.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c] as string)
+
 interface ContactFormData {
   name: string
   email: string
@@ -42,7 +47,9 @@ export async function POST(request: NextRequest) {
     const data: ContactFormData = await request.json()
 
     // Validate required fields
-    if (!data.name || !data.email || !data.subject || !data.message) {
+    // Subject is optional on the form; give it a default instead of rejecting the message.
+    data.subject = (data.subject || "").trim() || "Message from your portfolio"
+    if (!data.name || !data.email || !data.message || !/^\S+@\S+\.\S+$/.test(data.email)) {
       return NextResponse.json(
         { error: "Missing required fields" },
         { status: 400 }
@@ -132,8 +139,8 @@ export async function POST(request: NextRequest) {
       subject: "Thanks for reaching out!",
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2 style="color: #00c1ff;">Thank you, ${data.name}!</h2>
-          <p>I received your message about "${data.subject}" and appreciate you taking the time to reach out.</p>
+          <h2 style="color: #00c1ff;">Thank you, ${esc(data.name)}!</h2>
+          <p>I received your message about "${esc(data.subject)}" and appreciate you taking the time to reach out.</p>
           
           <hr style="border: none; border-top: 1px solid #ccc; margin: 20px 0;">
           
@@ -152,17 +159,13 @@ export async function POST(request: NextRequest) {
           
           <hr style="border: none; border-top: 1px solid #ccc; margin: 20px 0;">
           
-      ...(resumeBuffer && {
-        attachments: [
-          {
-            filename: "Sushin-Bandha-Resume.pdf",
-            content: resumeBuffer,
-          },
-        ],
-      })     <a href="https://linkedin.com" style="color: #00c1ff; text-decoration: none;">LinkedIn</a> | 
-            <a href="https://github.com" style="color: #00c1ff; text-decoration: none;">GitHub</a>
+          <p>Best,<br>Sushin Bandha</p>
+          <p>
+            <a href="https://linkedin.com/in/sushin-bandha" style="color: #00c1ff; text-decoration: none;">LinkedIn</a> |
+            <a href="https://github.com/bsushin0" style="color: #00c1ff; text-decoration: none;">GitHub</a> |
+            <a href="https://www.sushinbandha.com" style="color: #00c1ff; text-decoration: none;">sushinbandha.com</a>
           </p>
-          <p style="font-size: 12px; color: #999;">Your message: "${data.subject}"</p>
+          <p style="font-size: 12px; color: #999;">Your message: "${esc(data.subject)}"</p>
         </div>
       `,
       attachments: [
@@ -195,19 +198,20 @@ export async function POST(request: NextRequest) {
     const notificationResponse = await resend.emails.send({
       from: "noreply@sushinbandha.com",
       to: "bsushin1@gmail.com",
+      replyTo: data.email,
       subject: `New Contact Form Submission: ${data.subject}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <h2 style="color: #00c1ff;">New Message from Your Portfolio</h2>
-          <p><strong>Name:</strong> ${data.name}</p>
-          <p><strong>Email:</strong> <a href="mailto:${data.email}">${data.email}</a></p>
-          <p><strong>Subject:</strong> ${data.subject}</p>
+          <p><strong>Name:</strong> ${esc(data.name)}</p>
+          <p><strong>Email:</strong> <a href="mailto:${esc(data.email)}">${esc(data.email)}</a></p>
+          <p><strong>Subject:</strong> ${esc(data.subject)}</p>
           <p><strong>IP Address:</strong> ${ip}</p>
           ${geoData.city ? `<p><strong>Location:</strong> ${geoData.city}, ${geoData.region}, ${geoData.country}</p>` : ''}
           <hr style="border: none; border-top: 1px solid #ccc; margin: 20px 0;">
           <h3>Message:</h3>
           <p style="background: #f5f5f5; padding: 15px; border-left: 4px solid #00c1ff;">
-            ${data.message.replace(/\n/g, "<br>")}
+            ${esc(data.message).replace(/\n/g, "<br>")}
           </p>
           <hr style="border: none; border-top: 1px solid #ccc; margin: 20px 0;">
           <p style="font-size: 12px; color: #999;">Received at ${new Date().toLocaleString()}</p>

@@ -15,6 +15,18 @@ All active goals and work logs are recorded here by Mira and her team.
 
 -->
 
+## [2026-10-28] claude — v4.2.0 live ATC, takeoff roll, medical calls
+- Task: Owner asked for live LiveATC audio with channel switching, a takeoff-roll scroll where the runway passes underneath and each waypoint's panels arrive at its flight level, a more embedded EMT experience with random life-saving events, and a check of Resend and other connections
+- Radio: real KLAF frequencies (TWR 119.600, GND 121.900, Grissom APP 123.850, ATIS 127.750 simulated, Guard 121.500 simulated). LISTEN LIVE streams LiveATC mounts klaf / klaf1_gnd2 (fallback klaf1_gnd) / klaf1_app straight from d.liveatc.net in the browser through MediaSource (starts in a few seconds; a bare <audio> took 20+ s on the 8 kbps feeds), radio band-pass, real level meter driving the RX light, floating LIVE ATC pill with channel switch when the radio is off-screen, stops when the tab is hidden, LiveATC.net credit links. Not proxied (ToS 3.3). ToS 3.15 asks to consult LiveATC before linking directly to streams; window.FD_LIVEATC = false disables it
+- Hero: pinned takeoff roll (stage sticky over +160vh): runway drawn in true perspective streams toward and under the viewer, callouts AIRSPEED ALIVE / ROTATE / POSITIVE RATE, pitch-up drops the horizon, level-off back to cruise before CREWS
+- Waypoints: panels fly in from the left/right/front when the section reaches its flight level, with a LEVEL OFF readout
+- EMT: the 7 boxed monitors became thin live ECG traces; one docked patient monitor (bottom left, compact until hover/focus); random medical calls (cardiac arrest with CPR rate meter and AED shock, tourniquet, choking, anaphylaxis, stroke BE FAST, hypoglycemia), timed and scored, max 4 random per session, AUTO toggle, RUN A CALL on demand
+- Contact API: confirmation email contained raw code text ("...(resumeBuffer && {...})") in its HTML and no sign-off — fixed; subject is optional (the form allowed blank but the API rejected it with "Missing required fields"); visitor input HTML-escaped in both emails; notification email sets reply-to; real LinkedIn/GitHub links
+- Files: public/flight-deck.js, app/(deck)/deck-markup.html, app/(deck)/deck.css, app/api/contact/route.ts, package.json 4.2.0
+- Verified: harness at 1440x900 and 390x844 (no horizontal overflow, no page errors), live audio through LiveATC in headless Chromium for TWR and GND with channel switching, all six medical calls end to end
+- Status: COMPLETE (awaiting owner review on the Vercel preview)
+- Next: NONE
+
 ## [2026-10-09] claude — v4.1.0 Flight Deck from the approved mock
 - Task: Rebuild the home page from the approved v4 walk-through mock (owner: "this is not what we had in the last iteration"), remove the airplane, keep a centered runway, and make the climb drive background effects all the way to the bottom
 - Source: mock recovered by replaying session 4a541f6b (artifact links had expired); patched for resume-synced content, no aircraft, projected world background, live endpoints
