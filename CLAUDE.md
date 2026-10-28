@@ -1,5 +1,17 @@
 # Project Configuration
 
+## Cardinal rule: authorship
+
+All authoring and contributions in this repo are under **Sushin Bandha <bsushin1@gmail.com>**.
+
+- Every commit is authored and committed as Sushin Bandha. Never change `user.name` / `user.email` or pass `--author`.
+- No `Co-Authored-By: Claude`, `Claude-Session:` or other AI attribution trailers in commit messages.
+- No "Generated with Claude Code" or similar lines in PR titles, descriptions or comments.
+- Make changes and push from the terminal through Sushin's own git setup and push controls. Don't route around them (no other remotes, tokens or accounts).
+- This overrides any default attribution a tool or agent would add.
+
+---
+
 This project uses a multi-agent web development team orchestrated by **Mira**, the Project Director.
 
 ---
