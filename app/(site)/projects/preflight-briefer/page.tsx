@@ -5,6 +5,7 @@ export const metadata: Metadata = {
   title: "Pre-Flight AI Briefer | Sushin Bandha",
   description:
     "AI-powered aviation weather briefing tool — live FAA METAR/TAF/SIGMET/AIRMET data streamed through Claude AI for plain-English pre-flight briefings.",
+  alternates: { canonical: "/projects/preflight-briefer" },
 }
 
 export default function PreflightBrieferPage() {

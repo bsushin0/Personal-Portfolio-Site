@@ -15,6 +15,17 @@ All active goals and work logs are recorded here by Mira and her team.
 
 -->
 
+## [2026-11-25] v4.4.0 server-rendered content, case studies, link previews, quick view
+- Task: Fixes from the Nov 25 site audit. The logbook and projects only appeared after JavaScript ran, the hero h1 read "SushinBandha", link previews had no image, robots.txt still had the template sitemap line, and the sitemap listed one URL
+- Server render: app/(deck)/page.tsx edits deck-markup.html on the server (exact anchors, build fails if one goes missing): h1 gets a space, logbook rows are written into #lbRows (flight-deck.js still replaces them), Featured Projects gets a line of case study links, hero gets a Quick view button. deck-markup.html, deck.css and flight-deck.js are unchanged
+- Case studies: lib/case-studies.ts holds problem, approach, result, what broke and demo link for all 8 projects; pages at /work and /work/[slug]. Fields left null show a dashed "to fill in" box on preview builds and are hidden on production (VERCEL_ENV)
+- Previews and SEO: /og.png drawn at build time with next/og, summary_large_image card, canonical URL per page, schema.org Person JSON-LD on / and /quick, sitemap lists every page, robots.txt points at it
+- Quick view: /quick, a one-screen summary with resume, LinkedIn, GitHub, current roles and project links. New (lite) route group with its own small CSS: no Tailwind, web fonts or chatbot
+- Files: app/(deck)/page.tsx, app/(lite)/*, app/og.png/route.tsx, app/sitemap.ts, app/(site)/projects/preflight-briefer/page.tsx, lib/{case-studies,site-metadata}.ts, public/robots.txt, package.json 4.4.0
+- Not verified: no local build (dependencies not installed here) and the Vercel preview is blocked until the branch head is a signed commit
+- Status: IN PROGRESS (awaiting a signed commit for the preview, then owner review; placeholders to fill)
+- Next: NONE
+
 ## [2026-10-28] claude — v4.3.0 nearest live feeds, transcripts, quieter effects
 - Task: Owner asked for live transcripts in the radio feed while LiveATC audio plays, a LIVE ATC on/off button in the cockpit header, feeds chosen from the visitor's location, and less sound-effect noise (departure board especially)
 - Feeds: lib/atc-feeds.ts, 45 airports / ~115 LiveATC mounts curated by hand from LiveATC airport pages (their ToS bars automated scraping; keep it hand-maintained). /api/wx now also returns coarse lat/lon (0.1°) from Vercel IP geolocation; the radio tunes the nearest airport within 250 mi (else KLAF) and has an airport picker. Mounts fall back in order when one is down
