@@ -175,7 +175,7 @@ WP.forEach((w,i) => {
   b.addEventListener('click', () => go(w.id)); route.appendChild(b);
 });
 $('#menu').innerHTML = WP.map(w => `<button type="button" data-id="${w.id}"><b>${w.code}</b><span>${esc(w.name)}</span><small>${fmtAlt(w.alt)}</small></button>`).join('') +
-  `<div class="set"><button type="button" id="mAtc" aria-pressed="false">${ICON.radio} Live ATC</button><button type="button" id="mSound">${ICON.sound} Sound</button><button type="button" id="mTheme">${ICON.sun} Day / Night</button><button type="button" id="mWx">${ICON.cloud} Weather</button><a href="${SITE}/sushin-bandha-resume.pdf" target="_blank" rel="noopener" aria-label="Resume (PDF)">${ICON.doc} PDF</a></div>`;
+  `<div class="set"><button type="button" id="mAtc" aria-pressed="false">${ICON.radio} Live ATC</button><button type="button" id="mSound">${ICON.sound} Sound</button><button type="button" id="mTheme">${ICON.sun} Day / Night</button><button type="button" id="mWx">${ICON.cloud} Weather</button><a href="${SITE}/sushin-bandha-resume.pdf" target="_blank" rel="noopener" aria-label="Resume (PDF)">${ICON.doc} PDF</a><a href="${SITE}/quick">${ICON.doc} Quick view</a></div>`;
 $$('#menu > button').forEach(b => b.addEventListener('click', () => { closeMenu(); go(b.dataset.id); }));
 $('#mSound').addEventListener('click', () => setSound(!soundOn));
 $('#mAtc').addEventListener('click', () => { closeMenu(); laToggle(); });
@@ -1085,11 +1085,7 @@ function openSkill(ci, si){
 
 /* ================= CREWS ================= */
 (function(){
-  const about = [
-    "I'm an Artificial Intelligence student at Purdue University (B.S. AI, class of 2027), pursuing a private pilot license on the side, and a licensed EMT (NREMT, New Jersey, and Indiana) actively practicing inter-facility transport — because I genuinely believe the best builders understand the systems and people they serve. My academic trajectory reflects that: I joined The Data Mine corporate partners program as a machine learning practitioner on a BASF project, completed the CERIAS cybersecurity seminar, and earned the Google AI Professional Certificate.",
-    "Professionally, I've spent two summers at PSEG as a Product Intern — owning an IAM product backlog of 50+ items, executing 300+ UAT and SIT cases, and leading a cross-functional team of 25 interns to ship a company-wide onboarding site. In parallel, I built a time-series ML forecasting system for BASF that achieved ~92% accuracy and cut model update time from days to hours. The throughline: I care about shipping things that actually work in production, not just demos. I'm especially drawn to Aerospace and National Security — domains where product rigor, secure AI, and reliability are not optional.",
-    "This semester I'm the project manager on a three-person team building a pilot-training tracking system for a simulated aviation client, and I'm building Relay on my own, a platform that sends an incident to the nearest qualified responder no matter which department they work for. Both come out of things I've seen working as an EMT and at large events."
-  ];
+  const about = D.about || [];
   $('#aboutText').innerHTML = `<span class="eyebrow">Captain's notes</span>` + about.map(p => `<p>${esc(p)}</p>`).join('');
   const quals = [
     ['Education','B.S. Artificial Intelligence at Purdue University (Minor: CNIT), expected May 2027 — Google AI Professional Certificate holder, BASF x The Data Mine ML practitioner, student pilot in private pilot training.','<path d="M22 10 12 5 2 10l10 5 10-5zM6 12v5c3 2 9 2 12 0v-5"/>'],
@@ -1138,6 +1134,7 @@ const flights = D.projects.map((p,i) => {
 });
 const CH = ' ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 const cells = (t, n, extra) => `<span class="flaps ${extra || ''}">${Array.from({length:n}, (_,i) => `<span class="flap" data-t="${esc(t[i] || ' ')}"> </span>`).join('')}</span>`;
+$$('#brows [data-ssr]').forEach(n => n.parentNode.removeChild(n));
 $('#brows').insertAdjacentHTML('beforeend', `<div class="brow hd" aria-hidden="true"><span class="c-f" style="width:${5*1.15 + .4}em">FLIGHT</span><span style="min-width:${17*1.15}em">DESTINATION</span><span class="c-g" style="min-width:${3*1.15}em">GATE</span><span>STATUS</span></div>` +
   flights.map((f,i) => `<button type="button" class="brow ${f.cls}" data-i="${i}" aria-label="${esc(f.title)}, ${f.st}">${cells(f.fl,5,'c-f')}${cells(f.dest,17)}${cells(f.gate,3,'c-g')}${cells(f.st,9,'st')}</button>`).join(''));
 let boardOpen = false, flapRun = 0;
@@ -1167,6 +1164,7 @@ function printPass(f, user){
   if (user) { mark('pass'); tick(); }
   const live = f.liveUrl ? (f.liveUrl.startsWith('/') ? (window.FD_LIVE || SITE) + f.liveUrl : f.liveUrl) : null;
   const acts = [];
+  if (f.slug) acts.push(`<a class="ico" href="${SITE}/work/${esc(f.slug)}" aria-label="Read the case study" data-tip="Case study" data-icon="doc"></a>`);
   if (live) acts.push(`<a class="ico" href="${esc(live)}" target="_blank" rel="noopener" aria-label="Open live demo" data-tip="Live demo" data-icon="ext"></a>`);
   if (f.githubUrl) acts.push(`<a class="ico" href="${esc(f.githubUrl)}" target="_blank" rel="noopener" aria-label="View code on GitHub" data-tip="Code" data-icon="gh"></a>`);
   const img = BAN[f.image];

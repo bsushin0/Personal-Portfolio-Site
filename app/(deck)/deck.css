@@ -789,3 +789,10 @@ body.mayday::after{content:"";position:fixed;inset:0;pointer-events:none;z-index
 .lvpill .ptx{max-width:340px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#e9fff1;font-size:.62rem;letter-spacing:.02em}
 .lvpill .ptx:empty{display:none}
 @media (max-width:900px){.lvpill .ptx{max-width:160px}}
+
+/* v4.4 server-rendered fallbacks: shown only until flight-deck.js builds the board */
+.ssr-list{list-style:none;margin:0;padding:12px 4px;display:grid;gap:10px;font-size:.9rem;line-height:1.45}
+.ssr-list a{color:inherit}
+.ssr-list span{color:var(--soft)}
+.nav .qv{text-decoration:none;color:inherit}
+.foot a.qvl{color:inherit;text-decoration:underline;text-underline-offset:3px}
